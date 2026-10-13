@@ -1,0 +1,372 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Eniac Inc. Employee Management System API",
+    "version": "1.0.0",
+    "description": "Backend API for the Eniac Inc. Employee Management System."
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "API v1 base path"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Authentication required",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean", "example": false },
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string", "example": "AUTHENTICATION_ERROR" },
+                    "message": { "type": "string", "example": "Invalid credentials." }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ForbiddenError": {
+        "description": "Insufficient permissions",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": { "type": "boolean", "example": false },
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "string", "example": "AUTHORIZATION_ERROR" },
+                    "message": { "type": "string", "example": "Insufficient permissions." }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    { "bearerAuth": [] }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Health check",
+        "description": "Simple health check endpoint.",
+        "responses": {
+          "200": { "description": "Service is running", "content": { "application/json": { "schema": { "type": "object", "properties": { "status": { "type": "string", "example": "ok" } } } } } }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Readiness check",
+        "description": "Checks MongoDB connectivity.",
+        "responses": {
+          "200": { "description": "Database is ready" },
+          "503": { "description": "Service unavailable" }
+        }
+      }
+    },
+    "/health/live": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Liveness check",
+        "responses": { "200": { "description": "Service is alive" } }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login",
+        "description": "Authenticate with email and password. Rate limited to 50 req/15min.",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "password": { "type": "string", "minLength": 1 }
+                },
+                "required": ["email", "password"]
+              },
+              "example": { "email": "admin@eniac.demo", "password": "demo123" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Get current user",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Current user info" },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Refresh access token",
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": { "refreshToken": { "type": "string" } },
+                "required": ["refreshToken"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Token refreshed" },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Logout",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Logged out" }
+        }
+      }
+    },
+    "/employees": {
+      "get": {
+        "tags": ["Employees"],
+        "summary": "List employees",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer", "minimum": 1, "default": 1 } },
+          { "name": "pageSize", "in": "query", "schema": { "type": "integer", "minimum": 1, "max": 100, "default": 20 } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } },
+          { "name": "department", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Paginated employee list" },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" }
+        }
+      },
+      "post": {
+        "tags": ["Employees"],
+        "summary": "Create employee (HR only)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } },
+        "responses": {
+          "201": { "description": "Employee created" },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" }
+        }
+      }
+    },
+    "/employees/{employeeId}": {
+      "get": {
+        "tags": ["Employees"],
+        "summary": "Get employee by ID",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Employee detail" },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" },
+          "404": { "description": "Employee not found" }
+        }
+      },
+      "patch": {
+        "tags": ["Employees"],
+        "summary": "Update employee",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Employee updated" },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" },
+          "404": { "description": "Employee not found" }
+        }
+      }
+    },
+    "/employees/{employeeId}/{action}": {
+      "post": {
+        "tags": ["Employees"],
+        "summary": "Lifecycle action (activate, suspend, resign, terminate, deactivate) — HR only",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Status changed" },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "403": { "$ref": "#/components/responses/ForbiddenError" }
+        }
+      }
+    },
+    "/onboarding": {
+      "get": {
+        "tags": ["Onboarding"],
+        "summary": "List onboarding records",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Onboarding list" } }
+      },
+      "post": {
+        "tags": ["Onboarding"],
+        "summary": "Create onboarding record — HR only",
+        "security": [{ "bearerAuth": [] }],
+        "responses": { "200": { "description": "Onboarding created" } }
+      }
+    },
+    "/onboarding/{employeeId}": {
+      "get": { "tags": ["Onboarding"], "summary": "Get onboarding record by employee ID", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Onboarding record" } } },
+      "patch": { "tags": ["Onboarding"], "summary": "Update onboarding — HR only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Onboarding updated" } } },
+      "post": { "tags": ["Onboarding"], "summary": "Submit/approve/reject/activate onboarding", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Action completed" } } }
+    },
+    "/documents": {
+      "get": { "tags": ["Documents"], "summary": "List documents — HR/Owner", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Document list" } } },
+      "post": { "tags": ["Documents"], "summary": "Upload document", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Document uploaded" } } }
+    },
+    "/documents/{documentId}": {
+      "get": { "tags": ["Documents"], "summary": "Get document detail", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Document" } } },
+      "patch": { "tags": ["Documents"], "summary": "Review/approve document", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Document updated" } } }
+    },
+    "/attendance": {
+      "get": { "tags": ["Attendance"], "summary": "List attendance records — HR/Manager/Self", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Attendance list" } } }
+    },
+    "/attendance/check-in": {
+      "post": { "tags": ["Attendance"], "summary": "Mark check-in — Employee only", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Check-in recorded" } } }
+    },
+    "/attendance/check-out": {
+      "post": { "tags": ["Attendance"], "summary": "Mark check-out — Employee only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Check-out recorded" } } }
+    },
+    "/attendance/{employeeId}": {
+      "get": { "tags": ["Attendance"], "summary": "Get attendance by employee ID", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Attendance records" } } }
+    },
+    "/attendance/corrections": {
+      "get": { "tags": ["Attendance"], "summary": "List corrections — HR/Admin only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Correction list" } } }
+    },
+    "/attendance/{attendanceId}/correction": {
+      "post": { "tags": ["Attendance"], "summary": "Request correction", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Correction requested" } } }
+    },
+    "/attendance/corrections/{correctionId}/{action}": {
+      "post": { "tags": ["Attendance"], "summary": "Review correction (approve/reject) — HR/Admin", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Correction reviewed" } } }
+    },
+    "/attendance/{attendanceId}": {
+      "patch": { "tags": ["Attendance"], "summary": "Update attendance record — HR/Admin", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Attendance updated" } } }
+    },
+    "/leave": {
+      "get": { "tags": ["Leave"], "summary": "List leave requests", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Leave list" } } }
+    },
+    "/leave/request": {
+      "post": { "tags": ["Leave"], "summary": "Request leave", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Leave requested" } } }
+    },
+    "/leave/{requestId}": {
+      "get": { "tags": ["Leave"], "summary": "Get leave request detail", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Leave request" } } }
+    },
+    "/leave/{requestId}/{action}": {
+      "post": { "tags": ["Leave"], "summary": "Approve/reject leave — Manager/HR", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Leave resolved" } } }
+    },
+    "/clients": {
+      "get": { "tags": ["Clients"], "summary": "List clients", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Client list" } } },
+      "post": { "tags": ["Clients"], "summary": "Create client — Manager only", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Client created" } } }
+    },
+    "/clients/{clientId}": {
+      "get": { "tags": ["Clients"], "summary": "Get client detail", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Client" } } },
+      "patch": { "tags": ["Clients"], "summary": "Update client — Manager only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Client updated" } } },
+      "post": { "tags": ["Clients"], "summary": "Deactivate client — Manager only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Client deactivated" } } }
+    },
+    "/projects": {
+      "get": { "tags": ["Projects"], "summary": "List projects", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Project list" } } },
+      "post": { "tags": ["Projects"], "summary": "Create project — Manager only", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Project created" } } }
+    },
+    "/projects/{projectId}": {
+      "get": { "tags": ["Projects"], "summary": "Get project detail", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Project" } } },
+      "patch": { "tags": ["Projects"], "summary": "Update project — Manager only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Project updated" } } }
+    },
+    "/projects/{projectId}/*": {
+      "post": { "tags": ["Projects"], "summary": "Update project status/progress", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Updated" } } }
+    },
+    "/assignments": {
+      "get": { "tags": ["Assignments"], "summary": "List assignments", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Assignment list" } } },
+      "post": { "tags": ["Assignments"], "summary": "Create assignment — Manager only", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Assignment created" } } }
+    },
+    "/assignments/{assignmentId}": {
+      "get": { "tags": ["Assignments"], "summary": "Get assignment detail", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Assignment" } } },
+      "patch": { "tags": ["Assignments"], "summary": "Update assignment", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Assignment updated" } } },
+      "post": { "tags": ["Assignments"], "summary": "End assignment", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Assignment ended" } } }
+    },
+    "/reviews": {
+      "get": { "tags": ["Reviews"], "summary": "List reviews — HR only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Review list" } } },
+      "post": { "tags": ["Reviews"], "summary": "Create review — HR only", "security": [{ "bearerAuth": [] }], "responses": { "201": { "description": "Review created" } } }
+    },
+    "/reviews/{reviewId}": {
+      "get": { "tags": ["Reviews"], "summary": "Get review detail", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Review" } } },
+      "patch": { "tags": ["Reviews"], "summary": "Update review content", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Review updated" } } }
+    },
+    "/reviews/{reviewId}/{action}": {
+      "post": { "tags": ["Reviews"], "summary": "Submit or complete review", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Review action completed" } } }
+    },
+    "/dashboard": {
+      "get": { "tags": ["Dashboards"], "summary": "Role-determined dashboard", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Dashboard data" } } }
+    },
+    "/dashboard/admin": { "get": { "tags": ["Dashboards"], "summary": "Admin dashboard — ADMIN only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Admin dashboard" } } } },
+    "/dashboard/hr": { "get": { "tags": ["Dashboards"], "summary": "HR dashboard — HR only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "HR dashboard" } } } },
+    "/dashboard/manager": { "get": { "tags": ["Dashboards"], "summary": "Manager dashboard — MANAGER only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Manager dashboard" } } } },
+    "/dashboard/supervisor": { "get": { "tags": ["Dashboards"], "summary": "Supervisor dashboard — SUPERVISOR only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Supervisor dashboard" } } } },
+    "/dashboard/employee": { "get": { "tags": ["Dashboards"], "summary": "Employee dashboard — EMPLOYEE only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Employee dashboard" } } } },
+    "/reports": {
+      "get": { "tags": ["Reports"], "summary": "List report definitions — HR/Manager/Admin", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Report definitions" } } }
+    },
+    "/reports/{reportId}": {
+      "get": { "tags": ["Reports"], "summary": "Generate a report — HR/Manager/Admin", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Report result" } } }
+    },
+    "/notifications": {
+      "get": { "tags": ["Notifications"], "summary": "List notifications", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Notification list" } } }
+    },
+    "/notifications/{notificationId}/read": {
+      "post": { "tags": ["Notifications"], "summary": "Mark notification as read", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Notification marked read" } } }
+    },
+    "/notifications/read-all": {
+      "post": { "tags": ["Notifications"], "summary": "Mark all notifications as read", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "All notifications marked read" } } }
+    },
+    "/audit-log": {
+      "get": { "tags": ["Audit"], "summary": "List audit logs — Admin only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Audit log list" } } }
+    },
+    "/audit-log/{auditId}": {
+      "get": { "tags": ["Audit"], "summary": "Get audit log by ID — Admin only", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Audit log entry" } } }
+    },
+    "/settings": {
+      "get": { "tags": ["Settings"], "summary": "Get all settings — HR/Admin", "security": [{ "bearerAuth": [] }], "responses": { "200": { "description": "Settings grouped by category" } } },
+      "patch": { "tags": ["Settings"], "summary": "Update settings — Admin only", "security": [{ "bearerAuth": [] }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object" } } } }, "responses": { "200": { "description": "Settings updated" } } }
+    }
+  }
+}

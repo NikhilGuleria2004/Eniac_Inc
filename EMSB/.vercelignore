@@ -1,0 +1,12 @@
+tests/
+test/
+coverage/
+docs/
+dist/
+.git/
+.env
+*.log
+*.md
+Dockerfile
+docker-compose.yml
+mongo-init.js

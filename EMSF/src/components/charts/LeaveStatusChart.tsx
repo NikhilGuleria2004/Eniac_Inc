@@ -1,0 +1,142 @@
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/Tabs";
+
+interface LeaveStatusChartProps {
+  leaveTypeCounts: Record<string, number>;
+  leaveStatusCounts: Record<string, number>;
+}
+
+const LEAVE_TYPE_COLORS: Record<string, string> = {
+  PAID: "#1D4ED8",
+  SICK: "#C53030",
+  CASUAL: "#B7791F",
+  UNPAID: "#667085",
+};
+
+const LEAVE_STATUS_COLORS: Record<string, string> = {
+  PENDING: "#B7791F",
+  APPROVED: "#16803C",
+  REJECTED: "#C53030",
+  CANCELLED: "#667085",
+};
+
+const LEAVE_TYPE_LABELS: Record<string, string> = {
+  PAID: "Paid Leave",
+  SICK: "Sick Leave",
+  CASUAL: "Casual Leave",
+  UNPAID: "Unpaid Leave",
+};
+
+const LEAVE_STATUS_LABELS: Record<string, string> = {
+  PENDING: "Pending",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+  CANCELLED: "Cancelled",
+};
+
+export function LeaveStatusChart({ leaveTypeCounts, leaveStatusCounts }: LeaveStatusChartProps) {
+  return (
+    <Tabs defaultValue="type" className="w-full h-full">
+      <TabsList className="grid w-full grid-cols-2 mb-3 bg-transparent">
+        <TabsTrigger value="type" className="text-xs px-2 py-1">By Type</TabsTrigger>
+        <TabsTrigger value="status" className="text-xs px-2 py-1">By Status</TabsTrigger>
+      </TabsList>
+      <TabsContent value="type" className="h-[calc(100%-40px)]">
+        <LeaveBarChart
+          data={Object.entries(leaveTypeCounts).map(([name, value]) => ({
+            name: LEAVE_TYPE_LABELS[name] || name,
+            value,
+            fill: LEAVE_TYPE_COLORS[name] || "#667085",
+          }))}
+          labelKey="name"
+        />
+      </TabsContent>
+      <TabsContent value="status" className="h-[calc(100%-40px)]">
+        <LeaveBarChart
+          data={Object.entries(leaveStatusCounts).map(([name, value]) => ({
+            name: LEAVE_STATUS_LABELS[name] || name,
+            value,
+            fill: LEAVE_STATUS_COLORS[name] || "#667085",
+          }))}
+          labelKey="name"
+        />
+      </TabsContent>
+    </Tabs>
+  );
+}
+
+interface BarChartDataPoint {
+  name: string;
+  value: number;
+  fill: string;
+}
+
+interface LeaveBarChartProps {
+  data: BarChartDataPoint[];
+  labelKey: string;
+}
+
+function LeaveBarChart({ data }: LeaveBarChartProps) {
+  const filteredData = data.filter((d) => d.value > 0);
+
+  if (filteredData.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+        No data available
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-full">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart data={filteredData} layout="vertical" margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" horizontal={false} />
+          <XAxis
+            type="number"
+            tick={{ fontSize: 11, fill: "#667085" }}
+            axisLine={false}
+            tickLine={false}
+            domain={["auto", "auto"]}
+          />
+          <YAxis
+            type="category"
+            dataKey="name"
+            tick={{ fontSize: 11, fill: "#667085" }}
+            axisLine={{ stroke: "#D7DCE3" }}
+            tickLine={false}
+            width={80}
+          />
+          <Tooltip
+            contentStyle={{
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #D7DCE3",
+              borderRadius: "6px",
+              boxShadow: "0 2px 8px rgba(16, 24, 40, 0.08)",
+              fontSize: "12px",
+            }}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            formatter={(value: any) => [(value as number).toLocaleString(), ""]}
+            labelStyle={{ color: "#17202A", fontWeight: 600 }}
+          />
+          <Legend
+            wrapperStyle={{ paddingTop: 8 }}
+            iconSize={10}
+            iconType="circle"
+            layout="horizontal"
+            align="center"
+          />
+          <Bar
+            dataKey="value"
+            name="Count"
+            radius={[0, 4, 4, 0]}
+          >
+            {filteredData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.fill} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}

@@ -1,0 +1,42 @@
+So heres the thing.
+i have to create an Employee management system and a Timesheet Management System on two different domains.
+
+So lets focus on the EMS first.
+5 roles
+Admin
+HR
+Manager
+Supervisor - will be for the timesheet platfrom so add it, but it will only be used in the ts platfrom because i plan on using the same database for both
+Employee
+
+
+Admin - All Capabilities
+HR - Onboarding Employees, Employee Reviews and info Edit, Leave Approvals, Documents reviews and edits, Pay rates(Salary), bill rates(for invoicing), reports.
+Manager - Create clients, create projects, assign employees to projects, review project progress, review client info.
+Supervisor - They will just be able to review project progress and assign employees to projects, rest they will be the same as employee.
+Employee - Will have basic capabilities like marking attendance, requesting leave, uploading documents, and reviewing and editing their own profile only.
+
+Attendance will be marked for all roles except admin.
+here's the employee flow i want -> 
+Onboarding -> billable/non-billable -> India or US -> If billable then transferred to the Timesheet platform.
+
+so basically i want a proper Employee management system. if you feel like adding or retracting something that will make the platform better then go ahead and do it.
+
+tech:
+Frontend - Typescript, React, Tailwind CSS
+Backend - Typescript, Hono.
+Database - MongoDB Atlas Cluster through URI.
+
+Company name -> Eniac Inc.
+
+now based on this give me a proper project description.
+
+
+
+
+
+
+
+timesheet platform
+Here's the client flow i want:
+Client created -> Project created under client -> billable employees assigned to the Project -> Invoice creation for the 
