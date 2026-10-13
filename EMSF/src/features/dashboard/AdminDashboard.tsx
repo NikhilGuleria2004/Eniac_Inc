@@ -127,7 +127,7 @@ export function AdminDashboard() {
   return (
     <div className="page-container space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-gray-900">Administration Dashboard</h1>
+        <h1 className="text-xl font-semibold text-gray-900">Administrations Dashboard</h1>
         <p className="text-sm text-gray-500 mt-1">Enterprise workforce and system overview</p>
       </div>
 

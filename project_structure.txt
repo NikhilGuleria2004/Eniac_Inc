@@ -1,0 +1,1260 @@
+.
+├── CMSF
+│   ├── CMSF.md
+│   ├── dist
+│   │   ├── assets
+│   │   │   ├── index-CegRXg7z.css
+│   │   │   └── index-TI_SjM5u.js
+│   │   └── index.html
+│   ├── index.html
+│   ├── INV-000001.pdf
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── src
+│   │   ├── app
+│   │   │   ├── layouts
+│   │   │   │   └── AppShell.tsx
+│   │   │   └── router
+│   │   │       └── index.tsx
+│   │   ├── App.tsx
+│   │   ├── components
+│   │   │   ├── charts
+│   │   │   │   ├── ClientIndustryChart.tsx
+│   │   │   │   ├── ProjectHealthChart.tsx
+│   │   │   │   ├── ResourceUtilizationChart.tsx
+│   │   │   │   ├── RevenueTrendChart.tsx
+│   │   │   │   └── TimesheetSubmissionChart.tsx
+│   │   │   ├── data
+│   │   │   │   └── StatusBadge.tsx
+│   │   │   ├── layout
+│   │   │   │   ├── Footer.tsx
+│   │   │   │   ├── Header.tsx
+│   │   │   │   ├── PageHeader.tsx
+│   │   │   │   └── Sidebar.tsx
+│   │   │   ├── navigation
+│   │   │   │   ├── MobileSidebar.tsx
+│   │   │   │   └── UserMenu.tsx
+│   │   │   ├── pages
+│   │   │   │   ├── AccessDeniedPage.tsx
+│   │   │   │   └── PlaceholderPage.tsx
+│   │   │   ├── tables
+│   │   │   │   └── DataTable.tsx
+│   │   │   └── ui
+│   │   │       ├── Badge.tsx
+│   │   │       ├── Button.tsx
+│   │   │       ├── Input.tsx
+│   │   │       ├── Modal.tsx
+│   │   │       ├── Progress.tsx
+│   │   │       ├── SectionCard.tsx
+│   │   │       ├── Select.tsx
+│   │   │       ├── StatCard.tsx
+│   │   │       ├── Tabs.tsx
+│   │   │       ├── Textarea.tsx
+│   │   │       └── Toast.tsx
+│   │   ├── data
+│   │   │   ├── constants
+│   │   │   │   └── index.ts
+│   │   │   └── mock
+│   │   │       ├── generate.ts
+│   │   │       ├── index.ts
+│   │   │       └── repositories.ts
+│   │   ├── features
+│   │   │   ├── assignments
+│   │   │   │   └── AssignmentsDashboardPage.tsx
+│   │   │   ├── auth
+│   │   │   │   ├── AuthContext.tsx
+│   │   │   │   └── LoginPage.tsx
+│   │   │   ├── clients
+│   │   │   │   ├── ClientDashboardPage.tsx
+│   │   │   │   ├── ClientDetailPage.tsx
+│   │   │   │   ├── ClientFormModal.tsx
+│   │   │   │   └── clients.ts
+│   │   │   ├── dailylogs
+│   │   │   │   └── DailyLogFormModal.tsx
+│   │   │   ├── dashboard
+│   │   │   │   ├── AdminDashboard.tsx
+│   │   │   │   ├── DashboardRouter.tsx
+│   │   │   │   ├── dashboardStats.ts
+│   │   │   │   ├── EmployeeDashboard.tsx
+│   │   │   │   ├── ManagerDashboard.tsx
+│   │   │   │   └── SupervisorDashboard.tsx
+│   │   │   └── projects
+│   │   │       ├── AssignmentModal.tsx
+│   │   │       ├── ProjectDashboardPage.tsx
+│   │   │       ├── ProjectDetailPage.tsx
+│   │   │       ├── ProjectFormModal.tsx
+│   │   │       └── projects.ts
+│   │   ├── index.css
+│   │   ├── lib
+│   │   │   ├── charts.ts
+│   │   │   ├── permissions.ts
+│   │   │   └── utils.ts
+│   │   ├── main.tsx
+│   │   └── types
+│   │       └── index.ts
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+├── credentials.txt
+├── Decisions.md
+├── EMSB
+│   ├── api
+│   │   └── index.ts
+│   ├── coverage
+│   │   ├── base.css
+│   │   ├── block-navigation.js
+│   │   ├── clover.xml
+│   │   ├── coverage-final.json
+│   │   ├── favicon.png
+│   │   ├── index.html
+│   │   ├── prettify.css
+│   │   ├── prettify.js
+│   │   ├── sort-arrow-sprite.png
+│   │   ├── sorter.js
+│   │   └── src
+│   │       ├── app.ts.html
+│   │       ├── config
+│   │       │   ├── constants.ts.html
+│   │       │   ├── database.ts.html
+│   │       │   ├── env.ts.html
+│   │       │   ├── index.html
+│   │       │   └── init-db.ts.html
+│   │       ├── controllers
+│   │       │   ├── assignment.controller.ts.html
+│   │       │   ├── attendance.controller.ts.html
+│   │       │   ├── audit.controller.ts.html
+│   │       │   ├── auth.controller.ts.html
+│   │       │   ├── client.controller.ts.html
+│   │       │   ├── compensation.controller.ts.html
+│   │       │   ├── dashboard.controller.ts.html
+│   │       │   ├── document.controller.ts.html
+│   │       │   ├── employee.controller.ts.html
+│   │       │   ├── index.html
+│   │       │   ├── invitation.controller.ts.html
+│   │       │   ├── leave.controller.ts.html
+│   │       │   ├── notification.controller.ts.html
+│   │       │   ├── onboarding.controller.ts.html
+│   │       │   ├── project.controller.ts.html
+│   │       │   ├── report.controller.ts.html
+│   │       │   ├── review.controller.ts.html
+│   │       │   ├── settings.controller.ts.html
+│   │       │   └── timesheet.controller.ts.html
+│   │       ├── index.html
+│   │       ├── integrations
+│   │       │   ├── event-listeners.ts.html
+│   │       │   ├── events.ts.html
+│   │       │   ├── index.html
+│   │       │   ├── mail
+│   │       │   │   ├── index.html
+│   │       │   │   ├── index.ts.html
+│   │       │   │   ├── log.mail.adapter.ts.html
+│   │       │   │   ├── mail.adapter.ts.html
+│   │       │   │   └── smtp.mail.adapter.ts.html
+│   │       │   └── timesheet
+│   │       │       ├── index.html
+│   │       │       └── timesheet.adapter.ts.html
+│   │       ├── logger
+│   │       │   ├── http-logger.ts.html
+│   │       │   ├── index.html
+│   │       │   └── logger.ts.html
+│   │       ├── middleware
+│   │       │   ├── audit-context.middleware.ts.html
+│   │       │   ├── auth.middleware.ts.html
+│   │       │   ├── authorization.middleware.ts.html
+│   │       │   ├── cors.middleware.ts.html
+│   │       │   ├── error-handler.middleware.ts.html
+│   │       │   ├── index.html
+│   │       │   ├── not-found.middleware.ts.html
+│   │       │   ├── rate-limit.middleware.ts.html
+│   │       │   ├── rate-limit.store.ts.html
+│   │       │   ├── request-id.middleware.ts.html
+│   │       │   └── security.middleware.ts.html
+│   │       ├── permissions
+│   │       │   ├── index.html
+│   │       │   └── permissions.ts.html
+│   │       ├── repositories
+│   │       │   ├── assignment.repository.ts.html
+│   │       │   ├── attendance.repository.ts.html
+│   │       │   ├── audit.repository.ts.html
+│   │       │   ├── client.repository.ts.html
+│   │       │   ├── compensation.repository.ts.html
+│   │       │   ├── document.repository.ts.html
+│   │       │   ├── employee.repository.ts.html
+│   │       │   ├── index.html
+│   │       │   ├── invitation.repository.ts.html
+│   │       │   ├── leave.repository.ts.html
+│   │       │   ├── notification.repository.ts.html
+│   │       │   ├── onboarding.repository.ts.html
+│   │       │   ├── project.repository.ts.html
+│   │       │   ├── review.repository.ts.html
+│   │       │   ├── settings.repository.ts.html
+│   │       │   ├── timesheet.repository.ts.html
+│   │       │   └── user.repository.ts.html
+│   │       ├── routes
+│   │       │   ├── assignment.routes.ts.html
+│   │       │   ├── attendance.routes.ts.html
+│   │       │   ├── audit.routes.ts.html
+│   │       │   ├── auth.routes.ts.html
+│   │       │   ├── client.routes.ts.html
+│   │       │   ├── dashboard.routes.ts.html
+│   │       │   ├── document.routes.ts.html
+│   │       │   ├── employee.routes.ts.html
+│   │       │   ├── index.html
+│   │       │   ├── index.ts.html
+│   │       │   ├── invitation.routes.ts.html
+│   │       │   ├── leave.routes.ts.html
+│   │       │   ├── notification.routes.ts.html
+│   │       │   ├── onboarding.routes.ts.html
+│   │       │   ├── project.routes.ts.html
+│   │       │   ├── report.routes.ts.html
+│   │       │   ├── review.routes.ts.html
+│   │       │   └── settings.routes.ts.html
+│   │       ├── schemas
+│   │       │   ├── assignment.schemas.ts.html
+│   │       │   ├── attendance.schemas.ts.html
+│   │       │   ├── audit.schemas.ts.html
+│   │       │   ├── auth.schemas.ts.html
+│   │       │   ├── client.schemas.ts.html
+│   │       │   ├── compensation.schemas.ts.html
+│   │       │   ├── document.schemas.ts.html
+│   │       │   ├── employee.schemas.ts.html
+│   │       │   ├── index.html
+│   │       │   ├── invitation.schemas.ts.html
+│   │       │   ├── leave.schemas.ts.html
+│   │       │   ├── notification.schemas.ts.html
+│   │       │   ├── onboarding.schemas.ts.html
+│   │       │   ├── project.schemas.ts.html
+│   │       │   ├── review.schemas.ts.html
+│   │       │   └── settings.schemas.ts.html
+│   │       ├── scripts
+│   │       │   ├── index.html
+│   │       │   └── seed.ts.html
+│   │       ├── server.ts.html
+│   │       ├── services
+│   │       │   ├── assignment.service.ts.html
+│   │       │   ├── attendance.service.ts.html
+│   │       │   ├── audit.service.ts.html
+│   │       │   ├── auth.service.ts.html
+│   │       │   ├── client.service.ts.html
+│   │       │   ├── compensation.service.ts.html
+│   │       │   ├── dashboard.service.ts.html
+│   │       │   ├── document.service.ts.html
+│   │       │   ├── employee.service.ts.html
+│   │       │   ├── index.html
+│   │       │   ├── invitation.service.ts.html
+│   │       │   ├── leave.service.ts.html
+│   │       │   ├── notification.service.ts.html
+│   │       │   ├── onboarding.service.ts.html
+│   │       │   ├── project.service.ts.html
+│   │       │   ├── report.service.ts.html
+│   │       │   ├── review.service.ts.html
+│   │       │   ├── settings.service.ts.html
+│   │       │   └── timesheet.service.ts.html
+│   │       └── utils
+│   │           ├── audit.ts.html
+│   │           ├── auth
+│   │           │   ├── index.html
+│   │           │   └── jwt.ts.html
+│   │           ├── dates.ts.html
+│   │           ├── errors.ts.html
+│   │           ├── index.html
+│   │           ├── request-context.ts.html
+│   │           ├── response.ts.html
+│   │           ├── timesheet-eligibility.ts.html
+│   │           └── validation.ts.html
+│   ├── Decisions.md
+│   ├── dist
+│   │   ├── app.d.ts
+│   │   ├── app.d.ts.map
+│   │   ├── app.js
+│   │   ├── app.js.map
+│   │   ├── config
+│   │   │   ├── constants.d.ts
+│   │   │   ├── constants.d.ts.map
+│   │   │   ├── constants.js
+│   │   │   ├── constants.js.map
+│   │   │   ├── database.d.ts
+│   │   │   ├── database.d.ts.map
+│   │   │   ├── database.js
+│   │   │   ├── database.js.map
+│   │   │   ├── env.d.ts
+│   │   │   ├── env.d.ts.map
+│   │   │   ├── env.js
+│   │   │   ├── env.js.map
+│   │   │   ├── init-db.d.ts
+│   │   │   ├── init-db.d.ts.map
+│   │   │   ├── init-db.js
+│   │   │   └── init-db.js.map
+│   │   ├── controllers
+│   │   │   ├── assignment.controller.d.ts
+│   │   │   ├── assignment.controller.d.ts.map
+│   │   │   ├── assignment.controller.js
+│   │   │   ├── assignment.controller.js.map
+│   │   │   ├── attendance.controller.d.ts
+│   │   │   ├── attendance.controller.d.ts.map
+│   │   │   ├── attendance.controller.js
+│   │   │   ├── attendance.controller.js.map
+│   │   │   ├── audit.controller.d.ts
+│   │   │   ├── audit.controller.d.ts.map
+│   │   │   ├── audit.controller.js
+│   │   │   ├── audit.controller.js.map
+│   │   │   ├── auth.controller.d.ts
+│   │   │   ├── auth.controller.d.ts.map
+│   │   │   ├── auth.controller.js
+│   │   │   ├── auth.controller.js.map
+│   │   │   ├── client.controller.d.ts
+│   │   │   ├── client.controller.d.ts.map
+│   │   │   ├── client.controller.js
+│   │   │   ├── client.controller.js.map
+│   │   │   ├── compensation.controller.d.ts
+│   │   │   ├── compensation.controller.d.ts.map
+│   │   │   ├── compensation.controller.js
+│   │   │   ├── compensation.controller.js.map
+│   │   │   ├── dashboard.controller.d.ts
+│   │   │   ├── dashboard.controller.d.ts.map
+│   │   │   ├── dashboard.controller.js
+│   │   │   ├── dashboard.controller.js.map
+│   │   │   ├── document.controller.d.ts
+│   │   │   ├── document.controller.d.ts.map
+│   │   │   ├── document.controller.js
+│   │   │   ├── document.controller.js.map
+│   │   │   ├── employee.controller.d.ts
+│   │   │   ├── employee.controller.d.ts.map
+│   │   │   ├── employee.controller.js
+│   │   │   ├── employee.controller.js.map
+│   │   │   ├── invitation.controller.d.ts
+│   │   │   ├── invitation.controller.d.ts.map
+│   │   │   ├── invitation.controller.js
+│   │   │   ├── invitation.controller.js.map
+│   │   │   ├── leave.controller.d.ts
+│   │   │   ├── leave.controller.d.ts.map
+│   │   │   ├── leave.controller.js
+│   │   │   ├── leave.controller.js.map
+│   │   │   ├── notification.controller.d.ts
+│   │   │   ├── notification.controller.d.ts.map
+│   │   │   ├── notification.controller.js
+│   │   │   ├── notification.controller.js.map
+│   │   │   ├── onboarding.controller.d.ts
+│   │   │   ├── onboarding.controller.d.ts.map
+│   │   │   ├── onboarding.controller.js
+│   │   │   ├── onboarding.controller.js.map
+│   │   │   ├── project.controller.d.ts
+│   │   │   ├── project.controller.d.ts.map
+│   │   │   ├── project.controller.js
+│   │   │   ├── project.controller.js.map
+│   │   │   ├── report.controller.d.ts
+│   │   │   ├── report.controller.d.ts.map
+│   │   │   ├── report.controller.js
+│   │   │   ├── report.controller.js.map
+│   │   │   ├── review.controller.d.ts
+│   │   │   ├── review.controller.d.ts.map
+│   │   │   ├── review.controller.js
+│   │   │   ├── review.controller.js.map
+│   │   │   ├── settings.controller.d.ts
+│   │   │   ├── settings.controller.d.ts.map
+│   │   │   ├── settings.controller.js
+│   │   │   ├── settings.controller.js.map
+│   │   │   ├── timesheet.controller.d.ts
+│   │   │   ├── timesheet.controller.d.ts.map
+│   │   │   ├── timesheet.controller.js
+│   │   │   └── timesheet.controller.js.map
+│   │   ├── integrations
+│   │   │   ├── event-listeners.d.ts
+│   │   │   ├── event-listeners.d.ts.map
+│   │   │   ├── event-listeners.js
+│   │   │   ├── event-listeners.js.map
+│   │   │   ├── events.d.ts
+│   │   │   ├── events.d.ts.map
+│   │   │   ├── events.js
+│   │   │   ├── events.js.map
+│   │   │   ├── mail
+│   │   │   │   ├── index.d.ts
+│   │   │   │   ├── index.d.ts.map
+│   │   │   │   ├── index.js
+│   │   │   │   ├── index.js.map
+│   │   │   │   ├── log.mail.adapter.d.ts
+│   │   │   │   ├── log.mail.adapter.d.ts.map
+│   │   │   │   ├── log.mail.adapter.js
+│   │   │   │   ├── log.mail.adapter.js.map
+│   │   │   │   ├── mail.adapter.d.ts
+│   │   │   │   ├── mail.adapter.d.ts.map
+│   │   │   │   ├── mail.adapter.js
+│   │   │   │   ├── mail.adapter.js.map
+│   │   │   │   ├── smtp.mail.adapter.d.ts
+│   │   │   │   ├── smtp.mail.adapter.d.ts.map
+│   │   │   │   ├── smtp.mail.adapter.js
+│   │   │   │   └── smtp.mail.adapter.js.map
+│   │   │   └── timesheet
+│   │   │       ├── timesheet.adapter.d.ts
+│   │   │       ├── timesheet.adapter.d.ts.map
+│   │   │       ├── timesheet.adapter.js
+│   │   │       └── timesheet.adapter.js.map
+│   │   ├── logger
+│   │   │   ├── http-logger.d.ts
+│   │   │   ├── http-logger.d.ts.map
+│   │   │   ├── http-logger.js
+│   │   │   ├── http-logger.js.map
+│   │   │   ├── logger.d.ts
+│   │   │   ├── logger.d.ts.map
+│   │   │   ├── logger.js
+│   │   │   └── logger.js.map
+│   │   ├── middleware
+│   │   │   ├── audit-context.middleware.d.ts
+│   │   │   ├── audit-context.middleware.d.ts.map
+│   │   │   ├── audit-context.middleware.js
+│   │   │   ├── audit-context.middleware.js.map
+│   │   │   ├── auth.middleware.d.ts
+│   │   │   ├── auth.middleware.d.ts.map
+│   │   │   ├── auth.middleware.js
+│   │   │   ├── auth.middleware.js.map
+│   │   │   ├── authorization.middleware.d.ts
+│   │   │   ├── authorization.middleware.d.ts.map
+│   │   │   ├── authorization.middleware.js
+│   │   │   ├── authorization.middleware.js.map
+│   │   │   ├── cors.middleware.d.ts
+│   │   │   ├── cors.middleware.d.ts.map
+│   │   │   ├── cors.middleware.js
+│   │   │   ├── cors.middleware.js.map
+│   │   │   ├── error-handler.middleware.d.ts
+│   │   │   ├── error-handler.middleware.d.ts.map
+│   │   │   ├── error-handler.middleware.js
+│   │   │   ├── error-handler.middleware.js.map
+│   │   │   ├── not-found.middleware.d.ts
+│   │   │   ├── not-found.middleware.d.ts.map
+│   │   │   ├── not-found.middleware.js
+│   │   │   ├── not-found.middleware.js.map
+│   │   │   ├── rate-limit.middleware.d.ts
+│   │   │   ├── rate-limit.middleware.d.ts.map
+│   │   │   ├── rate-limit.middleware.js
+│   │   │   ├── rate-limit.middleware.js.map
+│   │   │   ├── rate-limit.store.d.ts
+│   │   │   ├── rate-limit.store.d.ts.map
+│   │   │   ├── rate-limit.store.js
+│   │   │   ├── rate-limit.store.js.map
+│   │   │   ├── request-id.middleware.d.ts
+│   │   │   ├── request-id.middleware.d.ts.map
+│   │   │   ├── request-id.middleware.js
+│   │   │   ├── request-id.middleware.js.map
+│   │   │   ├── security.middleware.d.ts
+│   │   │   ├── security.middleware.d.ts.map
+│   │   │   ├── security.middleware.js
+│   │   │   └── security.middleware.js.map
+│   │   ├── models
+│   │   │   ├── assignment.d.ts
+│   │   │   ├── assignment.d.ts.map
+│   │   │   ├── assignment.js
+│   │   │   ├── assignment.js.map
+│   │   │   ├── attendance.d.ts
+│   │   │   ├── attendance.d.ts.map
+│   │   │   ├── attendance.js
+│   │   │   ├── attendance.js.map
+│   │   │   ├── audit.d.ts
+│   │   │   ├── audit.d.ts.map
+│   │   │   ├── audit.js
+│   │   │   ├── audit.js.map
+│   │   │   ├── client.d.ts
+│   │   │   ├── client.d.ts.map
+│   │   │   ├── client.js
+│   │   │   ├── client.js.map
+│   │   │   ├── compensation.d.ts
+│   │   │   ├── compensation.d.ts.map
+│   │   │   ├── compensation.js
+│   │   │   ├── compensation.js.map
+│   │   │   ├── document.d.ts
+│   │   │   ├── document.d.ts.map
+│   │   │   ├── document.js
+│   │   │   ├── document.js.map
+│   │   │   ├── employee.d.ts
+│   │   │   ├── employee.d.ts.map
+│   │   │   ├── employee.js
+│   │   │   ├── employee.js.map
+│   │   │   ├── invitation.d.ts
+│   │   │   ├── invitation.d.ts.map
+│   │   │   ├── invitation.js
+│   │   │   ├── invitation.js.map
+│   │   │   ├── leave.d.ts
+│   │   │   ├── leave.d.ts.map
+│   │   │   ├── leave.js
+│   │   │   ├── leave.js.map
+│   │   │   ├── notification.d.ts
+│   │   │   ├── notification.d.ts.map
+│   │   │   ├── notification.js
+│   │   │   ├── notification.js.map
+│   │   │   ├── onboarding.d.ts
+│   │   │   ├── onboarding.d.ts.map
+│   │   │   ├── onboarding.js
+│   │   │   ├── onboarding.js.map
+│   │   │   ├── project.d.ts
+│   │   │   ├── project.d.ts.map
+│   │   │   ├── project.js
+│   │   │   ├── project.js.map
+│   │   │   ├── review.d.ts
+│   │   │   ├── review.d.ts.map
+│   │   │   ├── review.js
+│   │   │   ├── review.js.map
+│   │   │   ├── settings.d.ts
+│   │   │   ├── settings.d.ts.map
+│   │   │   ├── settings.js
+│   │   │   ├── settings.js.map
+│   │   │   ├── timesheet.d.ts
+│   │   │   ├── timesheet.d.ts.map
+│   │   │   ├── timesheet.js
+│   │   │   └── timesheet.js.map
+│   │   ├── permissions
+│   │   │   ├── permissions.d.ts
+│   │   │   ├── permissions.d.ts.map
+│   │   │   ├── permissions.js
+│   │   │   └── permissions.js.map
+│   │   ├── repositories
+│   │   │   ├── assignment.repository.d.ts
+│   │   │   ├── assignment.repository.d.ts.map
+│   │   │   ├── assignment.repository.js
+│   │   │   ├── assignment.repository.js.map
+│   │   │   ├── attendance.repository.d.ts
+│   │   │   ├── attendance.repository.d.ts.map
+│   │   │   ├── attendance.repository.js
+│   │   │   ├── attendance.repository.js.map
+│   │   │   ├── audit.repository.d.ts
+│   │   │   ├── audit.repository.d.ts.map
+│   │   │   ├── audit.repository.js
+│   │   │   ├── audit.repository.js.map
+│   │   │   ├── client.repository.d.ts
+│   │   │   ├── client.repository.d.ts.map
+│   │   │   ├── client.repository.js
+│   │   │   ├── client.repository.js.map
+│   │   │   ├── compensation.repository.d.ts
+│   │   │   ├── compensation.repository.d.ts.map
+│   │   │   ├── compensation.repository.js
+│   │   │   ├── compensation.repository.js.map
+│   │   │   ├── document.repository.d.ts
+│   │   │   ├── document.repository.d.ts.map
+│   │   │   ├── document.repository.js
+│   │   │   ├── document.repository.js.map
+│   │   │   ├── employee.repository.d.ts
+│   │   │   ├── employee.repository.d.ts.map
+│   │   │   ├── employee.repository.js
+│   │   │   ├── employee.repository.js.map
+│   │   │   ├── invitation.repository.d.ts
+│   │   │   ├── invitation.repository.d.ts.map
+│   │   │   ├── invitation.repository.js
+│   │   │   ├── invitation.repository.js.map
+│   │   │   ├── leave.repository.d.ts
+│   │   │   ├── leave.repository.d.ts.map
+│   │   │   ├── leave.repository.js
+│   │   │   ├── leave.repository.js.map
+│   │   │   ├── notification.repository.d.ts
+│   │   │   ├── notification.repository.d.ts.map
+│   │   │   ├── notification.repository.js
+│   │   │   ├── notification.repository.js.map
+│   │   │   ├── onboarding.repository.d.ts
+│   │   │   ├── onboarding.repository.d.ts.map
+│   │   │   ├── onboarding.repository.js
+│   │   │   ├── onboarding.repository.js.map
+│   │   │   ├── project.repository.d.ts
+│   │   │   ├── project.repository.d.ts.map
+│   │   │   ├── project.repository.js
+│   │   │   ├── project.repository.js.map
+│   │   │   ├── review.repository.d.ts
+│   │   │   ├── review.repository.d.ts.map
+│   │   │   ├── review.repository.js
+│   │   │   ├── review.repository.js.map
+│   │   │   ├── settings.repository.d.ts
+│   │   │   ├── settings.repository.d.ts.map
+│   │   │   ├── settings.repository.js
+│   │   │   ├── settings.repository.js.map
+│   │   │   ├── timesheet.repository.d.ts
+│   │   │   ├── timesheet.repository.d.ts.map
+│   │   │   ├── timesheet.repository.js
+│   │   │   ├── timesheet.repository.js.map
+│   │   │   ├── user.repository.d.ts
+│   │   │   ├── user.repository.d.ts.map
+│   │   │   ├── user.repository.js
+│   │   │   └── user.repository.js.map
+│   │   ├── routes
+│   │   │   ├── assignment.routes.d.ts
+│   │   │   ├── assignment.routes.d.ts.map
+│   │   │   ├── assignment.routes.js
+│   │   │   ├── assignment.routes.js.map
+│   │   │   ├── attendance.routes.d.ts
+│   │   │   ├── attendance.routes.d.ts.map
+│   │   │   ├── attendance.routes.js
+│   │   │   ├── attendance.routes.js.map
+│   │   │   ├── audit.routes.d.ts
+│   │   │   ├── audit.routes.d.ts.map
+│   │   │   ├── audit.routes.js
+│   │   │   ├── audit.routes.js.map
+│   │   │   ├── auth.routes.d.ts
+│   │   │   ├── auth.routes.d.ts.map
+│   │   │   ├── auth.routes.js
+│   │   │   ├── auth.routes.js.map
+│   │   │   ├── client.routes.d.ts
+│   │   │   ├── client.routes.d.ts.map
+│   │   │   ├── client.routes.js
+│   │   │   ├── client.routes.js.map
+│   │   │   ├── dashboard.routes.d.ts
+│   │   │   ├── dashboard.routes.d.ts.map
+│   │   │   ├── dashboard.routes.js
+│   │   │   ├── dashboard.routes.js.map
+│   │   │   ├── document.routes.d.ts
+│   │   │   ├── document.routes.d.ts.map
+│   │   │   ├── document.routes.js
+│   │   │   ├── document.routes.js.map
+│   │   │   ├── employee.routes.d.ts
+│   │   │   ├── employee.routes.d.ts.map
+│   │   │   ├── employee.routes.js
+│   │   │   ├── employee.routes.js.map
+│   │   │   ├── index.d.ts
+│   │   │   ├── index.d.ts.map
+│   │   │   ├── index.js
+│   │   │   ├── index.js.map
+│   │   │   ├── invitation.routes.d.ts
+│   │   │   ├── invitation.routes.d.ts.map
+│   │   │   ├── invitation.routes.js
+│   │   │   ├── invitation.routes.js.map
+│   │   │   ├── leave.routes.d.ts
+│   │   │   ├── leave.routes.d.ts.map
+│   │   │   ├── leave.routes.js
+│   │   │   ├── leave.routes.js.map
+│   │   │   ├── notification.routes.d.ts
+│   │   │   ├── notification.routes.d.ts.map
+│   │   │   ├── notification.routes.js
+│   │   │   ├── notification.routes.js.map
+│   │   │   ├── onboarding.routes.d.ts
+│   │   │   ├── onboarding.routes.d.ts.map
+│   │   │   ├── onboarding.routes.js
+│   │   │   ├── onboarding.routes.js.map
+│   │   │   ├── project.routes.d.ts
+│   │   │   ├── project.routes.d.ts.map
+│   │   │   ├── project.routes.js
+│   │   │   ├── project.routes.js.map
+│   │   │   ├── report.routes.d.ts
+│   │   │   ├── report.routes.d.ts.map
+│   │   │   ├── report.routes.js
+│   │   │   ├── report.routes.js.map
+│   │   │   ├── review.routes.d.ts
+│   │   │   ├── review.routes.d.ts.map
+│   │   │   ├── review.routes.js
+│   │   │   ├── review.routes.js.map
+│   │   │   ├── settings.routes.d.ts
+│   │   │   ├── settings.routes.d.ts.map
+│   │   │   ├── settings.routes.js
+│   │   │   └── settings.routes.js.map
+│   │   ├── schemas
+│   │   │   ├── assignment.schemas.d.ts
+│   │   │   ├── assignment.schemas.d.ts.map
+│   │   │   ├── assignment.schemas.js
+│   │   │   ├── assignment.schemas.js.map
+│   │   │   ├── attendance.schemas.d.ts
+│   │   │   ├── attendance.schemas.d.ts.map
+│   │   │   ├── attendance.schemas.js
+│   │   │   ├── attendance.schemas.js.map
+│   │   │   ├── audit.schemas.d.ts
+│   │   │   ├── audit.schemas.d.ts.map
+│   │   │   ├── audit.schemas.js
+│   │   │   ├── audit.schemas.js.map
+│   │   │   ├── auth.schemas.d.ts
+│   │   │   ├── auth.schemas.d.ts.map
+│   │   │   ├── auth.schemas.js
+│   │   │   ├── auth.schemas.js.map
+│   │   │   ├── client.schemas.d.ts
+│   │   │   ├── client.schemas.d.ts.map
+│   │   │   ├── client.schemas.js
+│   │   │   ├── client.schemas.js.map
+│   │   │   ├── compensation.schemas.d.ts
+│   │   │   ├── compensation.schemas.d.ts.map
+│   │   │   ├── compensation.schemas.js
+│   │   │   ├── compensation.schemas.js.map
+│   │   │   ├── document.schemas.d.ts
+│   │   │   ├── document.schemas.d.ts.map
+│   │   │   ├── document.schemas.js
+│   │   │   ├── document.schemas.js.map
+│   │   │   ├── employee.schemas.d.ts
+│   │   │   ├── employee.schemas.d.ts.map
+│   │   │   ├── employee.schemas.js
+│   │   │   ├── employee.schemas.js.map
+│   │   │   ├── invitation.schemas.d.ts
+│   │   │   ├── invitation.schemas.d.ts.map
+│   │   │   ├── invitation.schemas.js
+│   │   │   ├── invitation.schemas.js.map
+│   │   │   ├── leave.schemas.d.ts
+│   │   │   ├── leave.schemas.d.ts.map
+│   │   │   ├── leave.schemas.js
+│   │   │   ├── leave.schemas.js.map
+│   │   │   ├── notification.schemas.d.ts
+│   │   │   ├── notification.schemas.d.ts.map
+│   │   │   ├── notification.schemas.js
+│   │   │   ├── notification.schemas.js.map
+│   │   │   ├── onboarding.schemas.d.ts
+│   │   │   ├── onboarding.schemas.d.ts.map
+│   │   │   ├── onboarding.schemas.js
+│   │   │   ├── onboarding.schemas.js.map
+│   │   │   ├── project.schemas.d.ts
+│   │   │   ├── project.schemas.d.ts.map
+│   │   │   ├── project.schemas.js
+│   │   │   ├── project.schemas.js.map
+│   │   │   ├── review.schemas.d.ts
+│   │   │   ├── review.schemas.d.ts.map
+│   │   │   ├── review.schemas.js
+│   │   │   ├── review.schemas.js.map
+│   │   │   ├── settings.schemas.d.ts
+│   │   │   ├── settings.schemas.d.ts.map
+│   │   │   ├── settings.schemas.js
+│   │   │   └── settings.schemas.js.map
+│   │   ├── scripts
+│   │   │   ├── seed.d.ts
+│   │   │   ├── seed.d.ts.map
+│   │   │   ├── seed.js
+│   │   │   └── seed.js.map
+│   │   ├── server.d.ts
+│   │   ├── server.d.ts.map
+│   │   ├── server.js
+│   │   ├── server.js.map
+│   │   ├── services
+│   │   │   ├── assignment.service.d.ts
+│   │   │   ├── assignment.service.d.ts.map
+│   │   │   ├── assignment.service.js
+│   │   │   ├── assignment.service.js.map
+│   │   │   ├── attendance.service.d.ts
+│   │   │   ├── attendance.service.d.ts.map
+│   │   │   ├── attendance.service.js
+│   │   │   ├── attendance.service.js.map
+│   │   │   ├── audit.service.d.ts
+│   │   │   ├── audit.service.d.ts.map
+│   │   │   ├── audit.service.js
+│   │   │   ├── audit.service.js.map
+│   │   │   ├── auth.service.d.ts
+│   │   │   ├── auth.service.d.ts.map
+│   │   │   ├── auth.service.js
+│   │   │   ├── auth.service.js.map
+│   │   │   ├── client.service.d.ts
+│   │   │   ├── client.service.d.ts.map
+│   │   │   ├── client.service.js
+│   │   │   ├── client.service.js.map
+│   │   │   ├── compensation.service.d.ts
+│   │   │   ├── compensation.service.d.ts.map
+│   │   │   ├── compensation.service.js
+│   │   │   ├── compensation.service.js.map
+│   │   │   ├── dashboard.service.d.ts
+│   │   │   ├── dashboard.service.d.ts.map
+│   │   │   ├── dashboard.service.js
+│   │   │   ├── dashboard.service.js.map
+│   │   │   ├── document.service.d.ts
+│   │   │   ├── document.service.d.ts.map
+│   │   │   ├── document.service.js
+│   │   │   ├── document.service.js.map
+│   │   │   ├── employee.service.d.ts
+│   │   │   ├── employee.service.d.ts.map
+│   │   │   ├── employee.service.js
+│   │   │   ├── employee.service.js.map
+│   │   │   ├── invitation.service.d.ts
+│   │   │   ├── invitation.service.d.ts.map
+│   │   │   ├── invitation.service.js
+│   │   │   ├── invitation.service.js.map
+│   │   │   ├── leave.service.d.ts
+│   │   │   ├── leave.service.d.ts.map
+│   │   │   ├── leave.service.js
+│   │   │   ├── leave.service.js.map
+│   │   │   ├── notification.service.d.ts
+│   │   │   ├── notification.service.d.ts.map
+│   │   │   ├── notification.service.js
+│   │   │   ├── notification.service.js.map
+│   │   │   ├── onboarding.service.d.ts
+│   │   │   ├── onboarding.service.d.ts.map
+│   │   │   ├── onboarding.service.js
+│   │   │   ├── onboarding.service.js.map
+│   │   │   ├── project.service.d.ts
+│   │   │   ├── project.service.d.ts.map
+│   │   │   ├── project.service.js
+│   │   │   ├── project.service.js.map
+│   │   │   ├── report.service.d.ts
+│   │   │   ├── report.service.d.ts.map
+│   │   │   ├── report.service.js
+│   │   │   ├── report.service.js.map
+│   │   │   ├── review.service.d.ts
+│   │   │   ├── review.service.d.ts.map
+│   │   │   ├── review.service.js
+│   │   │   ├── review.service.js.map
+│   │   │   ├── settings.service.d.ts
+│   │   │   ├── settings.service.d.ts.map
+│   │   │   ├── settings.service.js
+│   │   │   ├── settings.service.js.map
+│   │   │   ├── timesheet.service.d.ts
+│   │   │   ├── timesheet.service.d.ts.map
+│   │   │   ├── timesheet.service.js
+│   │   │   └── timesheet.service.js.map
+│   │   └── utils
+│   │       ├── audit.d.ts
+│   │       ├── audit.d.ts.map
+│   │       ├── audit.js
+│   │       ├── audit.js.map
+│   │       ├── auth
+│   │       │   ├── jwt.d.ts
+│   │       │   ├── jwt.d.ts.map
+│   │       │   ├── jwt.js
+│   │       │   └── jwt.js.map
+│   │       ├── dates.d.ts
+│   │       ├── dates.d.ts.map
+│   │       ├── dates.js
+│   │       ├── dates.js.map
+│   │       ├── errors.d.ts
+│   │       ├── errors.d.ts.map
+│   │       ├── errors.js
+│   │       ├── errors.js.map
+│   │       ├── notification-emitter.d.ts
+│   │       ├── notification-emitter.d.ts.map
+│   │       ├── notification-emitter.js
+│   │       ├── notification-emitter.js.map
+│   │       ├── request-context.d.ts
+│   │       ├── request-context.d.ts.map
+│   │       ├── request-context.js
+│   │       ├── request-context.js.map
+│   │       ├── response.d.ts
+│   │       ├── response.d.ts.map
+│   │       ├── response.js
+│   │       ├── response.js.map
+│   │       ├── timesheet-eligibility.d.ts
+│   │       ├── timesheet-eligibility.d.ts.map
+│   │       ├── timesheet-eligibility.js
+│   │       ├── timesheet-eligibility.js.map
+│   │       ├── validation.d.ts
+│   │       ├── validation.d.ts.map
+│   │       ├── validation.js
+│   │       └── validation.js.map
+│   ├── docker-compose.yml
+│   ├── Dockerfile
+│   ├── docs
+│   │   └── OPERATIONS.md
+│   ├── EMSB-Checklist.md
+│   ├── EMSB.md
+│   ├── Errors.md
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── rules.md
+│   ├── src
+│   │   ├── app.ts
+│   │   ├── config
+│   │   │   ├── constants.ts
+│   │   │   ├── database.ts
+│   │   │   ├── env.ts
+│   │   │   └── init-db.ts
+│   │   ├── controllers
+│   │   │   ├── assignment.controller.ts
+│   │   │   ├── attendance.controller.ts
+│   │   │   ├── audit.controller.ts
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── client.controller.ts
+│   │   │   ├── compensation.controller.ts
+│   │   │   ├── dashboard.controller.ts
+│   │   │   ├── document.controller.ts
+│   │   │   ├── employee.controller.ts
+│   │   │   ├── invitation.controller.ts
+│   │   │   ├── leave.controller.ts
+│   │   │   ├── notification.controller.ts
+│   │   │   ├── onboarding.controller.ts
+│   │   │   ├── project.controller.ts
+│   │   │   ├── report.controller.ts
+│   │   │   ├── review.controller.ts
+│   │   │   ├── settings.controller.ts
+│   │   │   └── timesheet.controller.ts
+│   │   ├── integrations
+│   │   │   ├── event-listeners.ts
+│   │   │   ├── events.ts
+│   │   │   ├── mail
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── log.mail.adapter.ts
+│   │   │   │   ├── mail.adapter.ts
+│   │   │   │   └── smtp.mail.adapter.ts
+│   │   │   └── timesheet
+│   │   │       └── timesheet.adapter.ts
+│   │   ├── logger
+│   │   │   ├── http-logger.ts
+│   │   │   └── logger.ts
+│   │   ├── middleware
+│   │   │   ├── audit-context.middleware.ts
+│   │   │   ├── auth.middleware.ts
+│   │   │   ├── authorization.middleware.ts
+│   │   │   ├── cors.middleware.ts
+│   │   │   ├── error-handler.middleware.ts
+│   │   │   ├── not-found.middleware.ts
+│   │   │   ├── rate-limit.middleware.ts
+│   │   │   ├── rate-limit.store.ts
+│   │   │   ├── request-id.middleware.ts
+│   │   │   └── security.middleware.ts
+│   │   ├── models
+│   │   │   ├── assignment.ts
+│   │   │   ├── attendance.ts
+│   │   │   ├── audit.ts
+│   │   │   ├── client.ts
+│   │   │   ├── compensation.ts
+│   │   │   ├── document.ts
+│   │   │   ├── employee.ts
+│   │   │   ├── invitation.ts
+│   │   │   ├── leave.ts
+│   │   │   ├── notification.ts
+│   │   │   ├── onboarding.ts
+│   │   │   ├── project.ts
+│   │   │   ├── review.ts
+│   │   │   ├── settings.ts
+│   │   │   └── timesheet.ts
+│   │   ├── openapi.json
+│   │   ├── permissions
+│   │   │   └── permissions.ts
+│   │   ├── repositories
+│   │   │   ├── assignment.repository.ts
+│   │   │   ├── attendance.repository.ts
+│   │   │   ├── audit.repository.ts
+│   │   │   ├── client.repository.ts
+│   │   │   ├── compensation.repository.ts
+│   │   │   ├── document.repository.ts
+│   │   │   ├── employee.repository.ts
+│   │   │   ├── invitation.repository.ts
+│   │   │   ├── leave.repository.ts
+│   │   │   ├── notification.repository.ts
+│   │   │   ├── onboarding.repository.ts
+│   │   │   ├── project.repository.ts
+│   │   │   ├── review.repository.ts
+│   │   │   ├── settings.repository.ts
+│   │   │   ├── timesheet.repository.ts
+│   │   │   └── user.repository.ts
+│   │   ├── routes
+│   │   │   ├── assignment.routes.ts
+│   │   │   ├── attendance.routes.ts
+│   │   │   ├── audit.routes.ts
+│   │   │   ├── auth.routes.ts
+│   │   │   ├── client.routes.ts
+│   │   │   ├── dashboard.routes.ts
+│   │   │   ├── document.routes.ts
+│   │   │   ├── employee.routes.ts
+│   │   │   ├── index.ts
+│   │   │   ├── invitation.routes.ts
+│   │   │   ├── leave.routes.ts
+│   │   │   ├── notification.routes.ts
+│   │   │   ├── onboarding.routes.ts
+│   │   │   ├── project.routes.ts
+│   │   │   ├── report.routes.ts
+│   │   │   ├── review.routes.ts
+│   │   │   └── settings.routes.ts
+│   │   ├── schemas
+│   │   │   ├── assignment.schemas.ts
+│   │   │   ├── attendance.schemas.ts
+│   │   │   ├── audit.schemas.ts
+│   │   │   ├── auth.schemas.ts
+│   │   │   ├── client.schemas.ts
+│   │   │   ├── compensation.schemas.ts
+│   │   │   ├── document.schemas.ts
+│   │   │   ├── employee.schemas.ts
+│   │   │   ├── invitation.schemas.ts
+│   │   │   ├── leave.schemas.ts
+│   │   │   ├── notification.schemas.ts
+│   │   │   ├── onboarding.schemas.ts
+│   │   │   ├── project.schemas.ts
+│   │   │   ├── review.schemas.ts
+│   │   │   └── settings.schemas.ts
+│   │   ├── scripts
+│   │   │   ├── seed-dev.ts
+│   │   │   └── seed.ts
+│   │   ├── server.ts
+│   │   ├── services
+│   │   │   ├── assignment.service.ts
+│   │   │   ├── attendance.service.ts
+│   │   │   ├── audit.service.ts
+│   │   │   ├── auth.service.ts
+│   │   │   ├── client.service.ts
+│   │   │   ├── compensation.service.ts
+│   │   │   ├── dashboard.service.ts
+│   │   │   ├── document.service.ts
+│   │   │   ├── employee.service.ts
+│   │   │   ├── invitation.service.ts
+│   │   │   ├── leave.service.ts
+│   │   │   ├── notification.service.ts
+│   │   │   ├── onboarding.service.ts
+│   │   │   ├── project.service.ts
+│   │   │   ├── report.service.ts
+│   │   │   ├── review.service.ts
+│   │   │   ├── settings.service.ts
+│   │   │   └── timesheet.service.ts
+│   │   ├── types
+│   │   │   ├── bcrypt.d.ts
+│   │   │   └── express.d.ts
+│   │   └── utils
+│   │       ├── audit.ts
+│   │       ├── auth
+│   │       │   └── jwt.ts
+│   │       ├── dates.ts
+│   │       ├── errors.ts
+│   │       ├── notification-emitter.ts
+│   │       ├── request-context.ts
+│   │       ├── response.ts
+│   │       ├── timesheet-eligibility.ts
+│   │       └── validation.ts
+│   ├── tests
+│   │   ├── assignments.test.ts
+│   │   ├── attendance.test.ts
+│   │   ├── audit.test.ts
+│   │   ├── auth.test.ts
+│   │   ├── clients.test.ts
+│   │   ├── compensation.test.ts
+│   │   ├── dashboards.test.ts
+│   │   ├── database.test.ts
+│   │   ├── documents.test.ts
+│   │   ├── employees.test.ts
+│   │   ├── events.test.ts
+│   │   ├── health.test.ts
+│   │   ├── helpers
+│   │   │   └── test-users.ts
+│   │   ├── invitations.test.ts
+│   │   ├── leave.test.ts
+│   │   ├── notifications.test.ts
+│   │   ├── onboarding.test.ts
+│   │   ├── projects.test.ts
+│   │   ├── rate-limit.test.ts
+│   │   ├── reports.test.ts
+│   │   ├── reviews.test.ts
+│   │   ├── security.test.ts
+│   │   ├── settings.test.ts
+│   │   ├── setup.ts
+│   │   └── timesheet.test.ts
+│   ├── tsconfig.eslint.json
+│   ├── tsconfig.json
+│   ├── vercel.json
+│   └── vitest.config.ts
+├── EMSB.zip
+├── EMSF
+│   ├── dist
+│   │   ├── apple-touch-icon.png
+│   │   ├── assets
+│   │   │   ├── index-CcjO2pfI.css
+│   │   │   └── index-DstxIfhr.js
+│   │   ├── favicon-32.png
+│   │   ├── favicon.svg
+│   │   ├── icon-192.png
+│   │   ├── icon-512.png
+│   │   ├── icons.svg
+│   │   ├── index.html
+│   │   └── manifest.webmanifest
+│   ├── EMSF.md
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   ├── apple-touch-icon.png
+│   │   ├── favicon-32.png
+│   │   ├── favicon.svg
+│   │   ├── icon-192.png
+│   │   ├── icon-512.png
+│   │   ├── icons.svg
+│   │   └── manifest.webmanifest
+│   ├── README.md
+│   ├── src
+│   │   ├── app
+│   │   │   ├── layouts
+│   │   │   │   └── AppShell.tsx
+│   │   │   ├── providers
+│   │   │   ├── router
+│   │   │   │   └── index.tsx
+│   │   │   └── theme
+│   │   │       └── ThemeContext.tsx
+│   │   ├── App.tsx
+│   │   ├── components
+│   │   │   ├── brand
+│   │   │   │   └── BrandMark.tsx
+│   │   │   ├── charts
+│   │   │   │   ├── DocumentStatusChart.tsx
+│   │   │   │   ├── EmployeeDistributionChart.tsx
+│   │   │   │   ├── LeaveStatusChart.tsx
+│   │   │   │   ├── ProjectHealthChart.tsx
+│   │   │   │   ├── StatusDistributionChart.tsx
+│   │   │   │   └── WorkforceChart.tsx
+│   │   │   ├── dashboard
+│   │   │   │   └── AttendanceMarker.tsx
+│   │   │   ├── data
+│   │   │   │   ├── EmployeeAvatar.tsx
+│   │   │   │   ├── StatCard.tsx
+│   │   │   │   └── StatusBadge.tsx
+│   │   │   ├── feedback
+│   │   │   ├── forms
+│   │   │   ├── layout
+│   │   │   │   ├── Footer.tsx
+│   │   │   │   ├── Header.tsx
+│   │   │   │   ├── PageHeader.tsx
+│   │   │   │   ├── Section.tsx
+│   │   │   │   └── Sidebar.tsx
+│   │   │   ├── modals
+│   │   │   ├── navigation
+│   │   │   │   ├── CommandPalette.tsx
+│   │   │   │   ├── MobileSidebar.tsx
+│   │   │   │   ├── NotificationsDropdown.tsx
+│   │   │   │   ├── SearchBar.tsx
+│   │   │   │   ├── ThemeToggle.tsx
+│   │   │   │   └── UserMenu.tsx
+│   │   │   ├── tables
+│   │   │   │   └── DataTable.tsx
+│   │   │   └── ui
+│   │   │       ├── Alert.tsx
+│   │   │       ├── Avatar.tsx
+│   │   │       ├── Badge.tsx
+│   │   │       ├── Breadcrumb.tsx
+│   │   │       ├── Button.tsx
+│   │   │       ├── Card.tsx
+│   │   │       ├── Checkbox.tsx
+│   │   │       ├── DatePicker.tsx
+│   │   │       ├── Drawer.tsx
+│   │   │       ├── EmptyState.tsx
+│   │   │       ├── FileUpload.tsx
+│   │   │       ├── FilterBar.tsx
+│   │   │       ├── Input.tsx
+│   │   │       ├── Modal.tsx
+│   │   │       ├── Pagination.tsx
+│   │   │       ├── Progress.tsx
+│   │   │       ├── Radio.tsx
+│   │   │       ├── SearchInput.tsx
+│   │   │       ├── Select.tsx
+│   │   │       ├── Skeleton.tsx
+│   │   │       ├── Switch.tsx
+│   │   │       ├── Tabs.tsx
+│   │   │       ├── Textarea.tsx
+│   │   │       ├── Toast.tsx
+│   │   │       └── Tooltip.tsx
+│   │   ├── data
+│   │   │   ├── constants
+│   │   │   │   └── index.ts
+│   │   │   └── mock
+│   │   │       ├── index.ts
+│   │   │       └── repositories.ts
+│   │   ├── features
+│   │   │   ├── analytics
+│   │   │   │   ├── AnalyticsDashboardPage.tsx
+│   │   │   │   └── analytics.ts
+│   │   │   ├── assignments
+│   │   │   │   ├── AssignmentsDashboardPage.tsx
+│   │   │   │   └── assignments.ts
+│   │   │   ├── attendance
+│   │   │   │   ├── AttendanceCalendar.tsx
+│   │   │   │   ├── AttendanceDashboardPage.tsx
+│   │   │   │   ├── AttendanceDetailPage.tsx
+│   │   │   │   ├── attendance.ts
+│   │   │   │   ├── CorrectionBadge.tsx
+│   │   │   │   └── tabs
+│   │   │   │       ├── CalendarTab.tsx
+│   │   │   │       ├── EmployeesTab.tsx
+│   │   │   │       ├── ExceptionsTab.tsx
+│   │   │   │       ├── ReportsTab.tsx
+│   │   │   │       └── TodayTab.tsx
+│   │   │   ├── audit
+│   │   │   │   ├── AuditLogPage.tsx
+│   │   │   │   └── audit.ts
+│   │   │   ├── auth
+│   │   │   │   ├── AcceptInvitePage.tsx
+│   │   │   │   ├── AuthContext.tsx
+│   │   │   │   ├── LoginPage.tsx
+│   │   │   │   └── UserProfilePage.tsx
+│   │   │   ├── clients
+│   │   │   │   ├── ClientDashboardPage.tsx
+│   │   │   │   ├── ClientDetailPage.tsx
+│   │   │   │   └── clients.ts
+│   │   │   ├── dashboard
+│   │   │   │   ├── AdminDashboard.tsx
+│   │   │   │   ├── DashboardRouter.tsx
+│   │   │   │   ├── EmployeeDashboard.tsx
+│   │   │   │   ├── HRDashboard.tsx
+│   │   │   │   ├── ManagerDashboard.tsx
+│   │   │   │   └── SupervisorDashboard.tsx
+│   │   │   ├── documents
+│   │   │   │   ├── DocumentDetailPage.tsx
+│   │   │   │   ├── DocumentListPage.tsx
+│   │   │   │   └── documents.ts
+│   │   │   ├── employees
+│   │   │   │   ├── compensation.ts
+│   │   │   │   ├── EmployeeDirectoryPage.tsx
+│   │   │   │   ├── EmployeeFormPage.tsx
+│   │   │   │   ├── EmployeeProfilePage.tsx
+│   │   │   │   └── tabs
+│   │   │   │       ├── AttendanceTab.tsx
+│   │   │   │       ├── CompensationTab.tsx
+│   │   │   │       ├── DocumentsTab.tsx
+│   │   │   │       ├── EmploymentTab.tsx
+│   │   │   │       ├── GeographyTab.tsx
+│   │   │   │       ├── LeaveTab.tsx
+│   │   │   │       ├── OverviewTab.tsx
+│   │   │   │       ├── ProjectsTab.tsx
+│   │   │   │       ├── ReviewsTab.tsx
+│   │   │   │       └── TimesheetTab.tsx
+│   │   │   ├── leave
+│   │   │   │   ├── LeaveDashboardPage.tsx
+│   │   │   │   ├── LeaveDetailPage.tsx
+│   │   │   │   ├── LeaveRequestPage.tsx
+│   │   │   │   ├── leave.ts
+│   │   │   │   └── tabs
+│   │   │   │       ├── BalancesTab.tsx
+│   │   │   │       └── RequestsTab.tsx
+│   │   │   ├── notifications
+│   │   │   │   ├── NotificationCenterPage.tsx
+│   │   │   │   └── notifications.ts
+│   │   │   ├── onboarding
+│   │   │   │   ├── components
+│   │   │   │   │   ├── EmployeeCard.tsx
+│   │   │   │   │   ├── Step5Documents.tsx
+│   │   │   │   │   ├── Step6HRReview.tsx
+│   │   │   │   │   ├── Step7Activation.tsx
+│   │   │   │   │   ├── Step8TimesheetEligibility.tsx
+│   │   │   │   │   ├── StepEditors.tsx
+│   │   │   │   │   ├── Stepper.tsx
+│   │   │   │   │   └── StepSection.tsx
+│   │   │   │   ├── documents.ts
+│   │   │   │   ├── OnboardingDashboardPage.tsx
+│   │   │   │   ├── OnboardingDetailPage.tsx
+│   │   │   │   ├── onboarding.ts
+│   │   │   │   └── OnboardingWizardPage.tsx
+│   │   │   ├── projects
+│   │   │   │   ├── ProjectDashboardPage.tsx
+│   │   │   │   ├── ProjectDetailPage.tsx
+│   │   │   │   └── projects.ts
+│   │   │   ├── reports
+│   │   │   │   ├── ReportCenterPage.tsx
+│   │   │   │   └── reports.ts
+│   │   │   ├── reviews
+│   │   │   │   ├── ReviewDashboardPage.tsx
+│   │   │   │   ├── ReviewDetailPage.tsx
+│   │   │   │   └── reviews.ts
+│   │   │   └── settings
+│   │   │       └── SettingsPage.tsx
+│   │   ├── hooks
+│   │   ├── index.css
+│   │   ├── lib
+│   │   │   ├── api.ts
+│   │   │   └── permissions.ts
+│   │   ├── main.tsx
+│   │   ├── styles
+│   │   ├── types
+│   │   │   └── index.ts
+│   │   └── utils
+│   ├── tests
+│   │   ├── onboarding-wizard
+│   │   │   ├── documents.test.ts
+│   │   │   ├── onboarding-steps.test.ts
+│   │   │   ├── P8.5-documents.test.tsx
+│   │   │   ├── P8.6-7.test.tsx
+│   │   │   ├── P8.8-9.test.tsx
+│   │   │   ├── P8-ext.test.ts
+│   │   │   ├── Step6HRReview.test.tsx
+│   │   │   ├── Step7-8.test.tsx
+│   │   │   └── wizard-flow.test.ts
+│   │   ├── repositories.test.ts
+│   │   └── setup.ts
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   ├── vite.config.ts
+│   └── vitest.config.ts
+├── Errors.md
+├── fix-checklist.md
+├── Hono_Migration.md
+├── info.txt
+├── onboarding-flow.md
+├── onbuiflow.md
+├── problems.md
+├── project_structure.txt
+└── zoho-offer-letter.md
+
+138 directories, 1120 files

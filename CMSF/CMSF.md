@@ -3558,48 +3558,64 @@ All other values (neutrals, typography, borders, shadows, spacing) remain identi
 **Exit Criteria:** Project builds, lints clean, and typechecks with 0 errors. The non-UI foundation layers (design system, types, permissions, constants, deterministic utilities) are in place for the Phase 1 shell to consume.
 
 ## Phase 1: Project Foundation (Shell)
-- [ ] Vite project initialized with React + TypeScript + Tailwind CSS
-- [ ] `tsconfig` configured (strict, NodeNext-compatible)
-- [ ] Design system: color variables in `index.css`, typography, shadows, borders
-- [ ] Shared component primitives: Button, Input, Select, Badge, Modal, Tabs, DataTable, Toast
-- [ ] Auth context with mock authentication and role switcher (6 roles including blocked HR)
-- [ ] AppShell layout (Header, Sidebar, Main, Footer)
-- [ ] Router with ProtectedRoute + PermissionGuard
-- [ ] Type definitions (`src/types/index.ts`)
-- [ ] Constants (`src/data/constants/index.ts`: tech roles, industries, client tiers, payment terms, etc.)
-- [ ] Lint/typecheck/passing build
+- [x] Vite project initialized with React + TypeScript + Tailwind CSS
+- [x] `tsconfig` configured (strict, NodeNext-compatible)
+- [x] Design system: color variables in `index.css`, typography, shadows, borders
+- [x] Shared component primitives: Button, Input, Select, Badge, Modal, Tabs, DataTable, Toast
+- [x] Auth context with mock authentication and role switcher (6 roles including blocked HR)
+- [x] AppShell layout (Header, Sidebar, Main, Footer)
+- [x] Router with ProtectedRoute + PermissionGuard
+- [x] Type definitions (`src/types/index.ts`)
+- [x] Constants (`src/data/constants/index.ts`: tech roles, industries, client tiers, payment terms, etc.)
+- [x] Lint/typecheck/passing build
 
 **Exit Criteria:** App runs, can switch roles, navigation renders, routes are guarded.
 
+**Status:** ✅ Complete. AuthContext (`src/features/auth/AuthContext.tsx`) with localStorage-persisted user + `setRoleForDev` role switcher + `checkCmsAccess` (HR_ROLE / NON_BILLABLE). AppShell (`src/app/layouts/AppShell.tsx`: Header + Sidebar + MobileSidebar + Footer + ToastProvider + AccessDeniedPage gate). Router (`src/app/router/index.tsx`) with `ProtectedRoute` (auth) + `PermissionGuard` (any-of permissions) wrapping the full §12 route map, plus `/login`, `/403` and `NotFound`. Verified: `tsc --noEmit` ✓, `oxlint` ✓ (0 warnings), `npm run build` ✓ (1932 modules), and `npm run dev` boots clean (`/` + `/dashboard` → HTTP 200, no transform errors).
+
+**Implemented phase routes** (real pages arrive in later phases):
+- `dashboard` → `DashboardRouter` (role-routed placeholder; role-specific dashboards land in Phase 2)
+- All section routes from §12 render a guarded `PlaceholderPage` (clients, projects, assignments, daily-logs, timesheets, invoices, reports, analytics, notifications, audit-log, settings, profile)
+
+
 ## Phase 2: Shared Dashboards
-- [ ] DashboardRouter that returns role-specific dashboard
-- [ ] Admin Dashboard (6 KPI cards + 5 content rows)
-- [ ] Manager Dashboard (KPI + project portfolio + team timesheet status + resource allocation + health + client activity)
-- [ ] Supervisor Dashboard (KPI + projects + daily logs + team timesheets + activity + health)
-- [ ] Employee Dashboard (today widget + projects + quick log + timesheet status + recent logs + notifications)
-- [ ] Chart components: revenue trend (line), project health (donut), timesheet submission rate (bar), resource utilization (bar)
+- [x] DashboardRouter that returns role-specific dashboard
+- [x] Admin Dashboard (6 KPI cards + 5 content rows)
+- [x] Manager Dashboard (KPI + project portfolio + team timesheet status + resource allocation + health + client activity)
+- [x] Supervisor Dashboard (KPI + projects + daily logs + team timesheets + activity + health)
+- [x] Employee Dashboard (today widget + projects + quick log + timesheet status + recent logs + notifications)
+- [x] Chart components: revenue trend (line), project health (donut), timesheet submission rate (bar), resource utilization (bar)
+
+**Status:** ✅ Complete. Deterministic mock seed (`src/data/mock/generate.ts`, seeded LCG — no `Math.random`, §64) populates 40 employees / 20 clients / 30 projects / 50 assignments / daily logs + timesheets across the last 6 bi-monthly periods / 25 invoices / 5 templates / notifications / audit logs; `repositories.ts` exposes typed getters; `dashboardStats.ts` derives KPIs, industry/health distributions, unbilled hours, outstanding invoices, resource-allocation rows and period helpers. `DashboardRouter` routes ADMIN→`AdminDashboard`, MANAGER→`ManagerDashboard`, SUPERVISOR→`SupervisorDashboard`, EMPLOYEE→`EmployeeDashboard`. Reusable UI: `StatCard`, `SectionCard`, `Progress`, `StatusBadge`; charts: `ClientIndustryChart`, `ProjectHealthChart`, `RevenueTrendChart`, `TimesheetSubmissionChart`, `ResourceUtilizationChart` (`src/lib/charts.ts` tokens). Supervisor dashboard omits financial data per §18. Verified: `tsc --noEmit` ✓, `oxlint` ✓ (0 warnings), `npm run build` ✓, dev-server smoke test ✓ (dashboard + data modules transform clean). Vite reports a 783 kB bundle advisory (Recharts) — code-splitting route dashboards is a later polish item.
+
 
 ## Phase 3: Client & Project Management
-- [ ] Client Dashboard (KPIs + search + filters + table)
-- [ ] Client Detail (5 tabs: Overview, Contacts, Projects, Invoices, Activity)
-- [ ] Create/Edit Client modal with all fields
-- [ ] Project Dashboard (KPIs + search + filters + table with progress bars)
-- [ ] Project Detail (6 tabs: Overview, Team, Timesheets, Invoices, Activity)
-- [ ] Create/Edit Project modal
-- [ ] Assignment modal for adding team members
-- [ ] Tech role selection on assignments
+- [x] Client Dashboard (KPIs + search + filters + table)
+- [x] Client Detail (6 tabs: Overview, Contacts, Projects, Invoices, Timesheets, Activity)
+- [x] Create/Edit Client modal with all fields
+- [x] Project Dashboard (KPIs + search + filters + table with progress bars)
+- [x] Project Detail (6 tabs: Overview, Team, Assignments, Timesheets, Invoices, Activity)
+- [x] Create/Edit Project modal
+- [x] Assignment modal for adding team members
+- [x] Tech role selection on assignments
+
+**Status:** ✅ Complete. `features/clients/` (ClientDashboardPage + KPIs/search/status/country/industry/tier filters, ClientDetailPage 6-tab detail, ClientFormModal with all §20 fields incl. billing/shipping address) and `features/projects/` (ProjectDashboardPage with progress bars + filters, ProjectDetailPage 6-tab detail with Team/Assignments status management, ProjectFormModal, AssignmentModal with tech-role selection + 100% overallocation guard). Mutations added to `repositories.ts` (`createClient/updateClient/createProject/updateProject/createAssignment/updateAssignment/endAssignment`) that update the in-memory seed and keep `client.activeProjectCount` / `project.teamSize` consistent. Router wired to real pages (client.view / project.view guards preserved); `/projects/:projectId/edit` remains available. Added `PROJECT_STATUS_COLORS` + a `project` badge kind and a `Textarea` primitive. Verified: `tsc --noEmit` ✓, `oxlint` ✓ (0 warnings), `npm run build` ✓, dev-server smoke test ✓ (all client/project pages transform clean). Note: `Project.tier` field + `PROJECT_TIERS` added to back the Project Form's tier dropdown.
 
 ## Phase 4: Assignments Module
-- [ ] Assignments dashboard (table with employee, project, client, role, allocation, status)
-- [ ] Search + filters
-- [ ] Role-based visibility
+- [x] Assignments dashboard (table with employee, project, client, role, allocation, status)
+- [x] Search + filters
+- [x] Role-based visibility
+
+**Status:** ✅ Complete. `features/assignments/AssignmentsDashboardPage.tsx` — KPIs (Total/Active/Pending/Ended), search across employee/project/client/role, six filters (Employee, Project, Client, Role, Status, Billable) with a clear-all action, and a table (Employee, Project, Client, Role, Allocation %, Billable, Start Date, End Date, Status, Actions → jump to project / End). **Role-based visibility**: ADMIN/MANAGER see all assignments; SUPERVISOR sees only assignments on projects they supervise (`project.managerId`/`supervisorId`). Route `/assignments` wired (guard `assignment.view` preserved — employees get 403). Verified: `tsc --noEmit` ✓, `oxlint` ✓ (0 warnings), `npm run build` ✓, dev smoke test ✓ (`/assignments` → 200, page transforms clean).
 
 ## Phase 5: Daily Logs Module
-- [ ] Daily Logs dashboard (KPIs + search + filters + table)
-- [ ] Daily Log form page (with overtime gating, project filtering, duplicate prevention)
-- [ ] Daily Log detail view
-- [ ] Inline editing in table
-- [ ] "Log Hours" quick action from employee dashboard
+- [x] Daily Logs dashboard (KPIs + search + filters + table)
+- [x] Daily Log form page (with overtime gating, project filtering, duplicate prevention)
+- [x] Daily Log detail view
+- [x] Inline editing in table
+- [x] "Log Hours" quick action from employee dashboard
+
+**Status:** ✅ Complete. `features/dailylogs/`: `DailyLogsDashboardPage` (KPIs Today's Logs / Pending Review / Week-to-Date Hours / Overtime Today / Missing Logs; search + Employee/Project/Client/Status/Billable/date-range filters; table with auto-computed Day, regular/overtime cells, editable regular-hours & weekend-gated overtime **inline inputs**, Locked status when the log's timesheet is APPROVED/PAID, row→detail, Edit), `DailyLogFormModal` (all §24 fields + §40 rules: project filtered to the employee's ACTIVE assignments, **overtime gating** disabled unless Sat/Sun, **hours ≤ 24** validation, **duplicate prevention** with an edit-existing prompt, EMPLOYEE locked to self, inline + submit-button-disabled validation per §53 messages), `DailyLogDetailPage` (read-only when locked, Edit action, activity trail). Repositories gained `createDailyLog`/`updateDailyLog` (recompute total/day). Employee Dashboard's **Log Hours** button now opens the real form. Routes `/daily-logs`, `/daily-logs/new`, `/daily-logs/:logId` wired (guards preserved). Role scoping: EMPLOYEE = own logs; ADMIN/MANAGER/SUPERVISOR per project scope. Verified: `tsc --noEmit` ✓, `oxlint` ✓ (0 warnings), `npm run build` ✓, dev smoke test ✓ (`/daily-logs` + `/daily-logs/DL-1` → 200, modules transform clean).
 
 ## Phase 6: Timesheets Module
 - [ ] Timesheets dashboard (KPIs + search + filters + table)

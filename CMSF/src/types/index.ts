@@ -195,6 +195,7 @@ export interface Project {
   billable: boolean;
   tags?: string[];
   visibility: "INTERNAL" | "CLIENT_VISIBLE";
+  tier?: "SMALL" | "MEDIUM" | "LARGE" | "ENTERPRISE";
   createdAt: string;
   updatedAt: string;
 }

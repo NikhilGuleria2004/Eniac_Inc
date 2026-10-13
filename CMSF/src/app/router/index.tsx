@@ -4,6 +4,13 @@ import { AppShell } from "../layouts/AppShell";
 import { LoginPage } from "../../features/auth/LoginPage";
 import { DashboardRouter } from "../../features/dashboard/DashboardRouter";
 import { PlaceholderPage } from "../../components/pages/PlaceholderPage";
+import { ClientDashboardPage } from "../../features/clients/ClientDashboardPage";
+import { ClientDetailPage } from "../../features/clients/ClientDetailPage";
+import { ProjectDashboardPage } from "../../features/projects/ProjectDashboardPage";
+import { ProjectDetailPage } from "../../features/projects/ProjectDetailPage";
+import { AssignmentsDashboardPage } from "../../features/assignments/AssignmentsDashboardPage";
+import { DailyLogsDashboardPage } from "../../features/dailylogs/DailyLogsDashboardPage";
+import { DailyLogDetailPage } from "../../features/dailylogs/DailyLogDetailPage";
 import { useAuth } from "../../features/auth/AuthContext";
 import { hasAnyPermission } from "../../lib/permissions";
 import type { Permission, Role } from "../../types";
@@ -93,7 +100,7 @@ export const router = createBrowserRouter([
         path: "clients",
         element: (
           <PermissionGuard permission="client.view">
-            <PlaceholderPage title="Clients" />
+            <ClientDashboardPage />
           </PermissionGuard>
         ),
       },
@@ -101,7 +108,7 @@ export const router = createBrowserRouter([
         path: "clients/:clientId",
         element: (
           <PermissionGuard permission="client.view">
-            <PlaceholderPage title="Client" />
+            <ClientDetailPage />
           </PermissionGuard>
         ),
       },
@@ -109,7 +116,7 @@ export const router = createBrowserRouter([
         path: "projects",
         element: (
           <PermissionGuard permission="project.view">
-            <PlaceholderPage title="Projects" />
+            <ProjectDashboardPage />
           </PermissionGuard>
         ),
       },
@@ -117,7 +124,7 @@ export const router = createBrowserRouter([
         path: "projects/:projectId",
         element: (
           <PermissionGuard permission="project.view">
-            <PlaceholderPage title="Project" />
+            <ProjectDetailPage />
           </PermissionGuard>
         ),
       },
@@ -133,7 +140,7 @@ export const router = createBrowserRouter([
         path: "assignments",
         element: (
           <PermissionGuard permission="assignment.view">
-            <PlaceholderPage title="Assignments" />
+            <AssignmentsDashboardPage />
           </PermissionGuard>
         ),
       },
@@ -149,7 +156,7 @@ export const router = createBrowserRouter([
         path: "daily-logs",
         element: (
           <PermissionGuard permission={["daily_log.view", "daily_log.view_all"]}>
-            <PlaceholderPage title="Daily Logs" />
+            <DailyLogsDashboardPage />
           </PermissionGuard>
         ),
       },
@@ -157,7 +164,7 @@ export const router = createBrowserRouter([
         path: "daily-logs/new",
         element: (
           <PermissionGuard permission="daily_log.create">
-            <PlaceholderPage title="New Daily Log" />
+            <DailyLogsDashboardPage />
           </PermissionGuard>
         ),
       },
@@ -165,7 +172,7 @@ export const router = createBrowserRouter([
         path: "daily-logs/:logId",
         element: (
           <PermissionGuard permission={["daily_log.view", "daily_log.view_all"]}>
-            <PlaceholderPage title="Daily Log" />
+            <DailyLogDetailPage />
           </PermissionGuard>
         ),
       },

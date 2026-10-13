@@ -10,17 +10,20 @@ import type {
   Notification,
   AuditLog,
 } from "../../types";
+import { generateSeed } from "./generate";
 
-export const mockEmployees: Employee[] = [];
-export const mockClients: Client[] = [];
-export const mockProjects: Project[] = [];
-export const mockAssignments: ProjectAssignment[] = [];
-export const mockDailyLogs: DailyLog[] = [];
-export const mockTimesheets: Timesheet[] = [];
-export const mockInvoices: Invoice[] = [];
-export const mockInvoiceTemplates: InvoiceTemplate[] = [];
-export const mockNotifications: Notification[] = [];
-export const mockAuditLogs: AuditLog[] = [];
+const seed = generateSeed();
+
+export const mockEmployees: Employee[] = seed.employees;
+export const mockClients: Client[] = seed.clients;
+export const mockProjects: Project[] = seed.projects;
+export const mockAssignments: ProjectAssignment[] = seed.assignments;
+export const mockDailyLogs: DailyLog[] = seed.dailyLogs;
+export const mockTimesheets: Timesheet[] = seed.timesheets;
+export const mockInvoices: Invoice[] = seed.invoices;
+export const mockInvoiceTemplates: InvoiceTemplate[] = seed.invoiceTemplates;
+export const mockNotifications: Notification[] = seed.notifications;
+export const mockAuditLogs: AuditLog[] = seed.auditLogs;
 
 export async function loadBackendData(): Promise<void> {
   await Promise.resolve();

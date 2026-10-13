@@ -32,6 +32,8 @@ export const PROJECT_STATUSES = ["PLANNING", "ACTIVE", "ON_HOLD", "COMPLETED", "
 
 export const PROJECT_HEALTH = ["ON_TRACK", "AT_RISK", "DELAYED", "COMPLETED"] as const;
 
+export const PROJECT_TIERS = ["SMALL", "MEDIUM", "LARGE", "ENTERPRISE"] as const;
+
 export const ASSIGNMENT_STATUSES = ["ACTIVE", "PENDING", "ENDED"] as const;
 
 export const DAILY_LOG_STATUSES = ["DRAFT", "SUBMITTED", "LOCKED"] as const;
@@ -98,6 +100,14 @@ export const STATUS_COLORS = {
   INACTIVE: "badge-neutral",
   SUSPENDED: "badge-warning",
   CLOSED: "badge-danger",
+} as const;
+
+export const PROJECT_STATUS_COLORS: Record<string, string> = {
+  PLANNING: "badge-info",
+  ACTIVE: "badge-success",
+  ON_HOLD: "badge-warning",
+  COMPLETED: "badge-neutral",
+  CANCELLED: "badge-danger",
 } as const;
 
 export const TIMESHEET_STATUS_COLORS: Record<string, string> = {

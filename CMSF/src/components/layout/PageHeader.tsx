@@ -2,16 +2,16 @@ import type { ReactNode } from "react";
 
 interface PageHeaderProps {
   title: string;
-  description?: string;
+  subtitle?: string;
   actions?: ReactNode;
 }
 
-export function PageHeader({ title, description, actions }: PageHeaderProps) {
+export function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
   return (
     <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-        {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+        {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>

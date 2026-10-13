@@ -25,7 +25,14 @@ function buildUser(role: Role): User {
     firstName: firstName,
     lastName: lastName,
     role,
-    employeeId: role === "EMPLOYEE" ? "EMP-005" : undefined,
+    employeeId:
+      role === "EMPLOYEE"
+        ? "EMP-005"
+        : role === "SUPERVISOR"
+        ? "EMP-002"
+        : role === "HR"
+        ? undefined
+        : "EMP-001",
     billingStatus: role === "EMPLOYEE" ? "BILLABLE" : role === "HR" ? "NON_BILLABLE" : "BILLABLE",
     timesheetEligibility: "ELIGIBLE",
   };
