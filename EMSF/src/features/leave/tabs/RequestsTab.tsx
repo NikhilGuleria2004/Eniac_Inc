@@ -61,13 +61,13 @@ export function RequestsTab({ requests, canApprove, onDecide }: RequestsTabProps
 
   return (
     <>
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4">
         <label htmlFor="leave-status-filter" className="text-sm font-medium text-gray-700">
           Status
         </label>
         <Select
           id="leave-status-filter"
-          className="w-44"
+          className="w-full sm:w-44"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as "ALL" | LeaveStatus)}
         >
@@ -119,7 +119,7 @@ export function RequestsTab({ requests, canApprove, onDecide }: RequestsTabProps
             key: "action",
             header: "Action",
             cell: (r) => (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {canApprove && r.status === "PENDING" && (
                   <>
                     <Button

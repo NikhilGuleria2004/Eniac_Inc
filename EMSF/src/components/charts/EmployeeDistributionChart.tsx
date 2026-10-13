@@ -46,8 +46,8 @@ function DistributionDonutChart({ data }: { data: DistributionDataPoint[] }) {
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <ResponsiveContainer width="100%" height="85%">
+    <div className="w-full h-full flex flex-col min-w-0">
+      <ResponsiveContainer width="100%" height="85%" minWidth={0}>
         <PieChart>
           <Pie
             data={filteredData}
@@ -70,8 +70,8 @@ function DistributionDonutChart({ data }: { data: DistributionDataPoint[] }) {
           </Pie>
           <Tooltip
             contentStyle={{
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #D7DCE3",
+              backgroundColor: "var(--color-surface)",
+              border: "1px solid var(--color-border)",
               borderRadius: "6px",
               boxShadow: "0 2px 8px rgba(16, 24, 40, 0.08)",
               fontSize: "12px",

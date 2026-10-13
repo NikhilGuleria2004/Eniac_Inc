@@ -84,13 +84,13 @@ export function UserProfilePage() {
         }
       />
 
-      <div className="card mb-6">
+      <div className="card mb-6 min-w-0">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
-          <div className="flex items-center gap-5">
+          <div className="flex flex-col min-[420px]:flex-row min-[420px]:items-center gap-4 min-w-0">
             <EmployeeAvatar firstName={user.firstName} lastName={user.lastName} avatar={user.avatar} size="lg" />
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900">{fullName}</h2>
-              <p className="text-sm text-gray-500 mt-0.5">{user.email}</p>
+            <div className="min-w-0">
+              <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 break-words">{fullName}</h2>
+              <p className="text-sm text-gray-500 mt-0.5 break-all">{user.email}</p>
               <p className="text-sm text-gray-600 mt-1">{roleDescription}</p>
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-accent/10 text-accent">

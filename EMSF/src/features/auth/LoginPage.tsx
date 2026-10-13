@@ -3,6 +3,7 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "./AuthContext";
 import { DEMO_USERS } from "../../data/constants";
+import { BrandMark } from "../../components/brand/BrandMark";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -49,10 +50,13 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-8">
+      <div className="w-full max-w-md min-w-0">
         <div className="card">
           <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <BrandMark size={56} />
+            </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-1">ENIAC INC.</h1>
             <p className="text-sm text-gray-500">Employee Management System</p>
           </div>

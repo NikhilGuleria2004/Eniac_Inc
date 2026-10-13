@@ -32,11 +32,11 @@ export function EmployeeProfilePage() {
       <PageHeader title={name} description={employee.employeeCode + " | " + employee.designation + " | " + employee.department}
         breadcrumbs={[{ label: "Employees", href: ROUTES.EMPLOYEES }, { label: name }]}
         actions={canEdit ? (<NavLink to={ROUTES.EMPLOYEE_EDIT(employee.id)} className="btn btn-primary text-sm"><Pencil size={16} /> Edit Employee</NavLink>) : undefined} />
-      <div className="card"><div className="flex flex-col sm:flex-row sm:items-center gap-4">
+      <div className="card min-w-0"><div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <EmployeeAvatar firstName={employee.firstName} lastName={employee.lastName} avatar={employee.avatar} size="lg" />
-        <div className="flex-1">
-          <h2 className="text-lg font-semibold text-gray-900">{name}</h2>
-          <p className="text-sm text-gray-500">{employee.email} | {employee.phone}</p>
+        <div className="flex-1 min-w-0">
+          <h2 className="text-lg font-semibold text-gray-900 break-words">{name}</h2>
+          <p className="text-sm text-gray-500 break-words">{employee.email} | {employee.phone}</p>
           <div className="flex flex-wrap gap-2 mt-2"><StatusBadge status={employee.employmentStatus} /><StatusBadge status={employee.billingStatus} /><StatusBadge status={employee.timesheetEligibility} /></div>
         </div>
       </div></div>

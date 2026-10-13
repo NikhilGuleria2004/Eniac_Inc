@@ -1,0 +1,301 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0F2B1D;
+  --color-primary-light: #1A5F43;
+  --color-accent: #1A8A5A;
+  --color-accent-light: #4CAF50;
+  --color-institutional: #E3F2E8;
+  --color-background: #F7F8FA;
+  --color-surface: #FFFFFF;
+  --color-border: #D7DCE3;
+  --color-muted: #667085;
+  --color-text: #17202A;
+  --color-success: #16803C;
+  --color-warning: #B7791F;
+  --color-danger: #C53030;
+  --color-info: #2563EB;
+  --color-sidebar-text: #D9E2F0;
+  --color-sidebar-active: #FFFFFF;
+  --color-sidebar-active-bg: #1A5F43;
+
+  --font-family-sans: 'Inter', system-ui, sans-serif;
+
+  --spacing-page-top: 24px;
+  --spacing-section-gap: 24px;
+  --spacing-card-padding: 16px;
+}
+
+@layer base {
+  :root {
+    font-family: var(--font-family-sans);
+    color: var(--color-text);
+    background-color: var(--color-background);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+   .app-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+   .app-shell.sidebar-collapsed {
+  }
+
+  .app-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 64px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 16px;
+    z-index: 50;
+  }
+
+  .app-shell:not(.sidebar-collapsed) .app-header {
+    left: 248px;
+  }
+
+  .app-shell.sidebar-collapsed .app-header {
+    left: 68px;
+  }
+
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 248px;
+    height: 100vh;
+    box-sizing: border-box;
+    background: var(--color-primary);
+    color: var(--color-sidebar-text);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.2s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 10;
+  }
+
+  .app-sidebar.collapsed {
+    width: 68px;
+  }
+
+  .app-main {
+    flex: 1;
+    margin-left: 248px;
+    margin-top: 64px;
+    box-sizing: border-box;
+    background: var(--color-background);
+    overflow-y: auto;
+    padding-bottom: 32px;
+  }
+
+  .app-shell.sidebar-collapsed .app-main {
+    margin-left: 68px;
+  }
+
+  .app-footer {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    height: 32px;
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    font-size: 12px;
+    color: var(--color-muted);
+    z-index: 5;
+  }
+
+  .app-shell:not(.sidebar-collapsed) .app-footer {
+    left: 248px;
+  }
+
+  .app-shell.sidebar-collapsed .app-footer {
+    left: 68px;
+  }
+
+  .page-container {
+    padding: var(--spacing-page-top) 24px;
+    max-width: none;
+    box-sizing: border-box;
+  }
+
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+    padding: var(--spacing-card-padding);
+  }
+
+  .card-hover:hover {
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.08);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--color-primary);
+  }
+
+  .btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--color-background);
+  }
+
+  .btn-danger {
+    background: var(--color-danger);
+    color: white;
+    border-color: var(--color-danger);
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background: #9b2c2c;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 20px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(26, 138, 90, 0.1);
+  }
+
+  .form-input:disabled {
+    background: var(--color-background);
+    color: var(--color-muted);
+  }
+
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 4px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+  }
+
+  .badge-success {
+    background: #e6f4ea;
+    color: var(--color-success);
+  }
+
+  .badge-warning {
+    background: #fef3e2;
+    color: var(--color-warning);
+  }
+
+  .badge-danger {
+    background: #fee2e2;
+    color: var(--color-danger);
+  }
+
+  .badge-info {
+    background: #e8f0fa;
+    color: var(--color-info);
+  }
+
+  .badge-neutral {
+    background: #f3f5f8;
+    color: var(--color-muted);
+  }
+}
+
+@layer utilities {
+  .focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .btn:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .form-input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}

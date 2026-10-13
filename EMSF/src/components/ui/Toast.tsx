@@ -54,11 +54,11 @@ export function ToastContainer({ toasts, onClose }: { toasts: Toast[]; onClose: 
   };
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+    <div className="fixed top-4 right-4 left-4 sm:left-auto z-50 flex flex-col gap-2">
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`rounded-md border px-4 py-3 text-sm shadow-sm min-w-[300px] ${typeStyles[toast.type]}`}
+          className={`rounded-md border px-4 py-3 text-sm shadow-sm w-full sm:min-w-[300px] sm:max-w-sm break-words ${typeStyles[toast.type]}`}
         >
           <div className="flex items-start justify-between gap-3">
             <p>{toast.message}</p>

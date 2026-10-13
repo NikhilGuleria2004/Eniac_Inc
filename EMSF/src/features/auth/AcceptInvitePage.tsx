@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Eye, EyeOff, CheckCircle2, XCircle } from "lucide-react";
 import { apiFetch, ApiRequestError } from "../../lib/api";
+import { BrandMark } from "../../components/brand/BrandMark";
 
 interface InvitationPreview {
   employeeId: string;
@@ -108,6 +109,9 @@ export function AcceptInvitePage() {
       <div className="w-full max-w-md">
         <div className="card">
           <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <BrandMark size={56} />
+            </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-1">ENIAC INC.</h1>
             <p className="text-sm text-gray-500">Set up your account</p>
           </div>

@@ -29,7 +29,7 @@ export function Drawer({ open, onClose, title, children, footer, side = "right" 
     <div className="fixed inset-0 z-50">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} />
       <div
-        className={`fixed top-0 bottom-0 w-full max-w-md ${sideClasses} card shadow-xl flex flex-col`}
+        className={`fixed top-0 bottom-0 w-[calc(100vw-2rem)] max-w-md ${sideClasses} card shadow-xl flex flex-col min-w-0`}
         role="dialog"
         aria-modal="true"
       >
@@ -46,7 +46,7 @@ export function Drawer({ open, onClose, title, children, footer, side = "right" 
         )}
         <div className="flex-1 overflow-y-auto p-4">{children}</div>
         {footer && (
-          <div className="border-t border-gray-200 p-4 flex justify-end gap-2">
+          <div className="border-t border-gray-200 p-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
             {footer}
           </div>
         )}

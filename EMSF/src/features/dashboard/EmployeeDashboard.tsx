@@ -272,13 +272,13 @@ export function EmployeeDashboard() {
 
 function StatCard({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
   return (
-    <div className="card">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">{label}</p>
-          <p className="text-2xl font-semibold text-gray-900 mt-1">{value}</p>
+    <div className="card min-w-0">
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider break-words">{label}</p>
+          <p className="text-xl sm:text-2xl font-semibold text-gray-900 mt-1 break-words">{value}</p>
         </div>
-        {icon && <div className="text-gray-400">{icon}</div>}
+        {icon && <div className="text-gray-400 shrink-0">{icon}</div>}
       </div>
     </div>
   );

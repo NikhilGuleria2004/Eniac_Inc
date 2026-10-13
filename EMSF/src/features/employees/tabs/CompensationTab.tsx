@@ -123,8 +123,8 @@ export function CompensationTab({ employee }: { employee: Employee }) {
   const label = "form-label";
 
   return (
-    <div className="card">
-      <div className="flex items-center justify-between mb-4">
+    <div className="card min-w-0">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div>
           <h3 className="text-sm font-semibold text-gray-900">Compensation</h3>
           <p className="text-xs text-gray-500">Employee cost and client bill rate.</p>
@@ -188,7 +188,7 @@ export function CompensationTab({ employee }: { employee: Employee }) {
 
           {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">{error}</div>}
 
-          <div className="flex justify-end gap-2">
+          <div className="flex flex-col sm:flex-row sm:justify-end gap-2">
             <button type="button" className="btn btn-secondary text-sm" onClick={() => { setEditing(false); setError(""); }}>Cancel</button>
             <button type="submit" disabled={saving} className="btn btn-primary text-sm">{saving ? "Saving..." : "Save Compensation"}</button>
           </div>

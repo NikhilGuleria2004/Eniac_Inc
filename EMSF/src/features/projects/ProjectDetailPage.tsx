@@ -242,15 +242,14 @@ export function ProjectDetailPage() {
   ];
 
   return (
-     <div className="page-container space-y-6">
-      <div className="flex items-center gap-4">
-        <button onClick={handleBack} className="p-2 hover:bg-gray-100 rounded-md text-gray-500"><ArrowLeft size={20} /></button>
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">{project.name}</h1>
-          <p className="text-sm text-gray-500">{project.projectCode} • {client?.name || "Unknown Client"}</p>
+     <div className="page-container space-y-6 min-w-0">
+      <div className="flex flex-wrap items-center gap-3">
+        <button onClick={handleBack} className="p-2 hover:bg-gray-100 rounded-md text-gray-500 shrink-0"><ArrowLeft size={20} /></button>
+        <div className="min-w-0 flex-1 basis-48">
+          <h1 className="text-xl font-semibold text-gray-900 break-words">{project.name}</h1>
+          <p className="text-sm text-gray-500 break-words">{project.projectCode} • {client?.name || "Unknown Client"}</p>
         </div>
-        <div className="flex-1" />
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className={`badge ${statusInfo.variant}`}>{statusInfo.label}</span>
           <span className={`badge ${progressHealth.variant}`}>{progressHealth.label}</span>
           <span className="text-sm text-gray-500">{project.progress}% Complete</span>

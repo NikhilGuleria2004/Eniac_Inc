@@ -137,13 +137,13 @@ export function Step5Documents({ employee, onDocReviewed }: Step5DocumentsProps)
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium text-gray-700">
+    <div className="space-y-4 min-w-0">
+      <div className="flex flex-wrap items-center gap-2">
+        <h4 className="text-sm font-medium text-gray-700 mr-auto">
           Documents ({docs.length} uploaded)
         </h4>
         {canUpload && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => {
@@ -169,7 +169,7 @@ export function Step5Documents({ employee, onDocReviewed }: Step5DocumentsProps)
         Required: {REQUIRED_DOCUMENT_TYPES.map((t) => t.replace(/_/g, " ")).join(", ")} — all must be APPROVED before proceeding.
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="table-scroll">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200">

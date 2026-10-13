@@ -28,19 +28,19 @@ export function AttendanceCalendar({ year, month, records, onPrevMonth, onNextMo
   const weeks = buildMonthGrid(year, month, records);
 
   return (
-    <div className="card">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
+    <div className="card min-w-0">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
           {onPrevMonth && (
-            <button type="button" onClick={onPrevMonth} className="btn btn-secondary px-2 py-1 text-xs" aria-label="Previous month">
+            <button type="button" onClick={onPrevMonth} className="btn btn-secondary px-2 py-1 text-xs shrink-0" aria-label="Previous month">
               ←
             </button>
           )}
-          <h3 className="text-sm font-semibold text-gray-900">
+          <h3 className="text-sm font-semibold text-gray-900 whitespace-nowrap">
             {MONTH_NAMES[month]} {year}
           </h3>
           {onNextMonth && (
-            <button type="button" onClick={onNextMonth} className="btn btn-secondary px-2 py-1 text-xs" aria-label="Next month">
+            <button type="button" onClick={onNextMonth} className="btn btn-secondary px-2 py-1 text-xs shrink-0" aria-label="Next month">
               →
             </button>
           )}
@@ -65,31 +65,31 @@ export function AttendanceCalendar({ year, month, records, onPrevMonth, onNextMo
         ))}
       </div>
 
-      <div className="space-y-1">
+      <div className="space-y-1 min-w-0">
         {weeks.map((week, wi) => (
-          <div key={wi} className="grid grid-cols-7 gap-1">
+          <div key={wi} className="grid grid-cols-7 gap-0.5 sm:gap-1">
             {week.map((day: CalendarDay) => (
               <div
                 key={day.date || `pad-${wi}-${day.day}`}
-                className={`min-h-16 rounded-md border p-1 ${
+                className={`min-h-12 sm:min-h-16 rounded-md border p-0.5 sm:p-1 min-w-0 ${
                   day.inMonth ? "border-gray-200 bg-white" : "border-transparent bg-gray-50"
                 }`}
               >
                 {day.inMonth && (
                   <>
-                    <div className="text-xs font-medium text-gray-500">{day.day}</div>
-                    <div className="mt-1 flex flex-wrap gap-1">
+                    <div className="text-[11px] sm:text-xs font-medium text-gray-500">{day.day}</div>
+                    <div className="mt-0.5 sm:mt-1 flex flex-wrap gap-0.5 sm:gap-1">
                       {day.letters.slice(0, 3).map((code) => (
                         <span
                           key={code}
                           title={`${code} — ${ATTENDANCE_LEGEND.find((l) => l.code === code)?.label} (${day.records.filter((r) => statusLetter(r.status) === code).length})`}
-                          className={`inline-flex h-5 min-w-5 items-center justify-center rounded px-1 text-xs font-semibold ${LETTER_STYLES[code]}`}
+                          className={`inline-flex h-4 min-w-4 sm:h-5 sm:min-w-5 items-center justify-center rounded px-0.5 sm:px-1 text-[10px] sm:text-xs font-semibold ${LETTER_STYLES[code]}`}
                         >
                           {code}
                         </span>
                       ))}
                       {day.letters.length > 3 && (
-                        <span className="text-xs text-gray-400">+{day.letters.length - 3}</span>
+                        <span className="text-[10px] sm:text-xs text-gray-400">+{day.letters.length - 3}</span>
                       )}
                     </div>
                   </>

@@ -38,5 +38,34 @@ now based on this give me a proper project description.
 
 
 timesheet platform
+
+Now based on the EMS i now want the professional and industry grade Client Mangement System. It should act as both the Client Management and a timesheet platfrom for the billable employees
+
 Here's the client flow i want:
-Client created -> Project created under client -> billable employees assigned to the Project -> Invoice creation for the 
+Client created -> Project created under client -> billable employees assigned to the Project -> Invoice creation for the project between two specific dates.
+
+So i want the EMSB to also work as a backend for the CMS timesheet platform. so that i dont have to deploy two different backends. Also they will share the same database so billiable users are easily available in the CMS platform. 
+
+So rolewise, 
+Admin, Managers, Supervisors and billable employees can access the CMS platform. 
+
+Employee flow i want:
+Onboarded on the EMS platform as billable -> Same loggin works on the CMS platform -> assigned a tech role(for ex. Java Developer)-> Assigned to the project by Manager or Admin -> logs in progress daily, with number of hours, project name, work detail-> also have some overtime functionality for saturday or sunday -> Daily logs are compiled into a 15 day timesheet which is bi-monthly, so 1st timesheet compiled from 1-15 and second from 16-30/31. Daily logs are submitted for review and can be reviewed by both Admin and Manager and Supervisor.
+
+Manager flow i want:
+Onboarded on the EMS platform -> Same loggin works on the CMS platform -> Can onboard clients through a professional and industry grade portal -> create projects under the client -> Assign employees to the project -> Review Daily logs -> Review the timesheets.
+
+Admin Flow i want:
+Basically all capabilities of the Manager but also be able to create Invoices and send them on client's mail.
+
+Timesheet functionality:
+Daily logs -> Compiled to a bi monthly timesheet -> Review of the timesheet by Manager or Admin -> Timesheets will be used in to calculate the paybable amount by multiplying the bill rate with the total working hours by a employee.
+
+Invoice Functionality:
+Invoice will be completely editable. it should pick data automatically from the website. i will attach reference for the invoice and its format. 
+
+
+Now based on all this give me a detailed CMSF.md file that i will put inside a CMSF folder and it will help a coding agent build the frontend shell. backend for the CMS will be accomodated in the EMSB file but we can do that later. 
+
+make it detailed like TMSF.md that will help the coding agent build a professional and industry grade Client Management System + Timesheet Platform. Make it really detailed and put it inside the CMSF folder
+now give it to me in a copy pasteable format

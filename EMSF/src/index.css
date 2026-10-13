@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-primary: #0B1F3A;
   --color-primary-light: #163A63;
@@ -26,6 +28,29 @@
   --spacing-card-padding: 16px;
 }
 
+/* True-black dark mode: every semantic token flips to a black shade.
+   Hardcoded gray/white Tailwind utilities used across the app are
+   remapped in the override layer further below. */
+.dark {
+  --color-primary: #000000;
+  --color-primary-light: #111111;
+  --color-accent: #4C8DFF;
+  --color-accent-light: #82AEFF;
+  --color-institutional: #0A0A0A;
+  --color-background: #000000;
+  --color-surface: #0D0D0D;
+  --color-border: #262626;
+  --color-muted: #A3A3A3;
+  --color-text: #F5F5F5;
+  --color-success: #4ADE80;
+  --color-warning: #FBBF24;
+  --color-danger: #F87171;
+  --color-info: #60A5FA;
+  --color-sidebar-text: #D4D4D4;
+  --color-sidebar-active: #FFFFFF;
+  --color-sidebar-active-bg: #1C1C1C;
+}
+
 @layer base {
   :root {
     font-family: var(--font-family-sans);
@@ -40,6 +65,15 @@
   body {
     margin: 0;
     min-height: 100vh;
+    overflow-x: clip;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  img, svg, video, canvas {
+    max-width: 100%;
   }
 
   #root {
@@ -70,6 +104,8 @@
     padding: 0 24px;
     gap: 16px;
     z-index: 50;
+    max-width: 100vw;
+    min-width: 0;
   }
 
   .app-shell:not(.sidebar-collapsed) .app-header {
@@ -86,6 +122,7 @@
     left: 0;
     width: 248px;
     height: 100vh;
+    height: 100dvh;
     box-sizing: border-box;
     background: var(--color-primary);
     color: var(--color-sidebar-text);
@@ -95,6 +132,13 @@
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 10;
+  }
+
+  /* Desktop sidebar is hidden below lg — MobileSidebar drawer takes over */
+  @media (max-width: 1023.98px) {
+    .app-sidebar {
+      display: none;
+    }
   }
 
   .app-sidebar.collapsed {
@@ -108,11 +152,47 @@
     box-sizing: border-box;
     background: var(--color-background);
     overflow-y: auto;
+    overflow-x: clip;
     padding-bottom: 32px;
+    min-width: 0;
+    min-height: calc(100vh - 64px);
   }
 
   .app-shell.sidebar-collapsed .app-main {
     margin-left: 68px;
+  }
+
+  /* Below lg the desktop sidebar is hidden: content goes full-width */
+  @media (max-width: 1023.98px) {
+    .app-shell:not(.sidebar-collapsed) .app-header,
+    .app-shell.sidebar-collapsed .app-header {
+      left: 0;
+    }
+
+    .app-main,
+    .app-shell.sidebar-collapsed .app-main {
+      margin-left: 0;
+    }
+
+    .app-shell:not(.sidebar-collapsed) .app-footer,
+    .app-shell.sidebar-collapsed .app-footer {
+      left: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .app-header {
+      padding: 0 12px;
+      gap: 8px;
+    }
+
+    .app-footer {
+      padding: 0 12px;
+    }
+
+    .page-container {
+      padding: 16px 12px;
+    }
   }
 
   .app-footer {
@@ -124,10 +204,15 @@
     border-top: 1px solid var(--color-border);
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 8px;
     padding: 0 24px;
     font-size: 12px;
     color: var(--color-muted);
     z-index: 5;
+    max-width: 100vw;
+    overflow: hidden;
+    white-space: nowrap;
   }
 
   .app-shell:not(.sidebar-collapsed) .app-footer {
@@ -142,6 +227,61 @@
     padding: var(--spacing-page-top) 24px;
     max-width: none;
     box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+  }
+
+  /* Shared responsive helpers */
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 calc(var(--spacing-card-padding) * -1);
+    padding: 0 calc(var(--spacing-card-padding) * 1);
+  }
+
+  /* Keep data tables usable on phones: never squash below a readable width,
+     the .table-scroll wrapper scrolls instead of breaking the page. */
+  .table-scroll > table {
+    min-width: 640px;
+  }
+
+  .tabs-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    scrollbar-width: thin;
+  }
+
+  .tabs-scroll > * {
+    min-width: max-content;
+  }
+
+  /* Hand-rolled tables (outside DataTable) sit inside .card bodies.
+     Give them the same bleed + min-width treatment so they scroll
+     horizontally on phones instead of squeezing or breaking layout. */
+  .card > .overflow-x-auto,
+  .card .overflow-x-auto {
+    margin-left: calc(var(--spacing-card-padding) * -1);
+    margin-right: calc(var(--spacing-card-padding) * -1);
+    padding-left: var(--spacing-card-padding);
+    padding-right: var(--spacing-card-padding);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .card .overflow-x-auto > table {
+    min-width: 600px;
+  }
+
+  /* Long breadcrumb trails / titles should scroll, never push the page wide */
+  .breadcrumb-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    scrollbar-width: none;
+  }
+
+  .breadcrumb-scroll::-webkit-scrollbar {
+    display: none;
   }
 
   .card {
@@ -300,3 +440,97 @@
     outline-offset: 2px;
   }
 }
+
+/* ── Dark mode overrides for hardcoded light utilities ────────────────────
+   The app uses Tailwind's gray/white/pastel utilities inline everywhere.
+   Rather than editing hundreds of call sites, remap those exact classes
+   under `.dark`. These rules are intentionally unlayered so they win over
+   Tailwind's utility layer (same-origin cascade: unlayered > @layer). */
+.dark {
+  /* Neutral text ramp → light grays */
+  .text-gray-900 { color: #E5E5E5; }
+  .text-gray-800 { color: #E0E0E0; }
+  .text-gray-700 { color: #D4D4D4; }
+  .text-gray-600 { color: #A3A3A3; }
+  .text-gray-500 { color: #8F8F8F; }
+  .text-gray-400 { color: #7A7A7A; }
+  .text-gray-300 { color: #6B6B6B; }
+
+  /* Surfaces → near-black */
+  .bg-white { background-color: #0D0D0D; }
+  .bg-gray-50 { background-color: #0A0A0A; }
+  .bg-gray-50\/30 { background-color: rgba(255, 255, 255, 0.03); }
+  .bg-gray-100 { background-color: #141414; }
+  .bg-gray-200 { background-color: #1F1F1F; }
+  .bg-gray-300 { background-color: #2A2A2A; }
+
+  /* Borders → subtle dark lines */
+  .border-gray-100 { border-color: #1C1C1C; }
+  .border-gray-200 { border-color: #262626; }
+  .border-gray-300 { border-color: #333333; }
+  .divide-gray-100 > :not([hidden]) ~ :not([hidden]) { border-color: #1C1C1C; }
+
+  /* Status pastels → dark-tinted equivalents */
+  .bg-green-50  { background-color: #0B1B12; }
+  .bg-green-100 { background-color: #10291A; }
+  .bg-green-200 { background-color: #16432C; }
+  .bg-red-50    { background-color: #1E0F0F; }
+  .bg-red-100   { background-color: #2B1414; }
+  .bg-yellow-50 { background-color: #1E1A0B; }
+  .bg-amber-50  { background-color: #1E1A0B; }
+  .bg-amber-100 { background-color: #2A2310; }
+  .bg-blue-50   { background-color: #0C1729; }
+  .bg-blue-100  { background-color: #122340; }
+  .bg-rose-50   { background-color: #1E0F17; }
+  .bg-orange-50 { background-color: #211609; }
+
+  /* Status text → lighter readable shades */
+  .text-green-600  { color: #4ADE80; }
+  .text-green-700  { color: #6EE7A0; }
+  .text-green-800  { color: #86EFAC; }
+  .text-red-600    { color: #F87171; }
+  .text-red-700    { color: #FCA5A5; }
+  .text-red-800    { color: #FECACA; }
+  .text-yellow-600 { color: #FBBF24; }
+  .text-yellow-700 { color: #FCD34D; }
+  .text-yellow-800 { color: #FDE68A; }
+  .text-amber-600  { color: #FBBF24; }
+  .text-amber-700  { color: #FCD34D; }
+  .text-blue-600   { color: #60A5FA; }
+  .text-blue-700   { color: #93C5FD; }
+  .text-blue-800   { color: #BFDBFE; }
+
+  /* Status borders */
+  .border-green-200 { border-color: #14532D; }
+  .border-red-200   { border-color: #4A1A1A; }
+  .border-yellow-200 { border-color: #4A3D10; }
+  .border-blue-200  { border-color: #1B3350; }
+  .border-green-50  { border-color: #0B1B12; }
+}
+
+/* Badge chips carry baked-in light backgrounds in @layer components */
+.dark .badge-success { background: #0F2A1B; }
+.dark .badge-warning { background: #2C2209; }
+.dark .badge-danger  { background: #2E1212; }
+.dark .badge-info    { background: #0E1E33; }
+.dark .badge-neutral { background: #1A1A1A; }
+
+/* Buttons: brighten hover states that hardcoded light-theme blues/reds */
+.dark .btn-primary:hover:not(:disabled) { background: #2563EB; }
+.dark .btn-danger:hover:not(:disabled) { background: #DC2626; }
+
+/* Cards: lift shadows read on true black */
+.dark .card { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); }
+.dark .card-hover:hover { box-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); }
+
+/* Inputs: match dark surface (disabled state already token-driven) */
+.dark .form-input::placeholder,
+.dark .form-input:where(:placeholder-shown) { color: #7A7A7A; }
+
+/* Hover / group-hover variants use escaped class names of their own */
+.dark .hover\:bg-gray-50:hover { background-color: #141414; }
+.dark .hover\:bg-gray-100:hover { background-color: #1C1C1C; }
+.dark .hover\:text-gray-600:hover { color: #D4D4D4; }
+.dark .hover\:text-gray-700:hover { color: #E0E0E0; }
+.dark .hover\:text-gray-900:hover { color: #FFFFFF; }
+.dark .group:hover .group-hover\:text-gray-600 { color: #D4D4D4; }

@@ -39,12 +39,25 @@ export function Tabs({ defaultValue, value, onValueChange, children, className =
 interface TabsListProps extends ComponentPropsWithoutRef<"div"> {}
 
 export function TabsList({ className = "", ...props }: TabsListProps) {
+  // Grid tab bars (e.g. chart card switchers) already fill their container
+  // and must not be forced into a scroll wrapper — render them directly.
+  if (className.includes("flex-wrap") || className.includes("grid")) {
+    return (
+      <div
+        className={`flex flex-wrap items-center gap-1 rounded-md border border-gray-200 bg-gray-50 p-1 ${className}`}
+        role="tablist"
+        {...props}
+      />
+    );
+  }
   return (
-    <div
-      className={`inline-flex items-center rounded-md border border-gray-200 bg-gray-50 p-1 ${className}`}
-      role="tablist"
-      {...props}
-    />
+    <div className="tabs-scroll max-w-full">
+      <div
+        className={`inline-flex items-center rounded-md border border-gray-200 bg-gray-50 p-1 ${className}`}
+        role="tablist"
+        {...props}
+      />
+    </div>
   );
 }
 

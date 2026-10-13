@@ -111,7 +111,7 @@ export function EmployeeDirectoryPage() {
              )
            }] : []),
         ]} />
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-gray-500">Showing {(safePage - 1) * PAGE_SIZE + (paged.length > 0 ? 1 : 0)} to {(safePage - 1) * PAGE_SIZE + paged.length} of {filtered.length} employees</p>
         <Pagination currentPage={safePage} totalPages={totalPages} onPageChange={setPage} />
       </div>

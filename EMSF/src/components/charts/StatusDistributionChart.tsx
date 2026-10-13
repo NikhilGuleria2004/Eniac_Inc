@@ -32,8 +32,8 @@ export function StatusDistributionChart({ data }: StatusDistributionChartProps) 
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
-   <ResponsiveContainer width="100%" height="70%">
+    <div className="w-full h-full flex flex-col min-w-0">
+   <ResponsiveContainer width="100%" height="70%" minWidth={0}>
      <PieChart>
        <Pie
          data={filteredData}
@@ -57,8 +57,8 @@ export function StatusDistributionChart({ data }: StatusDistributionChartProps) 
        </Pie>
        <Tooltip
          contentStyle={{
-           backgroundColor: "#FFFFFF",
-           border: "1px solid #D7DCE3",
+           backgroundColor: "var(--color-surface)",
+           border: "1px solid var(--color-border)",
            borderRadius: "6px",
            boxShadow: "0 2px 8px rgba(16, 24, 40, 0.08)",
            fontSize: "12px",

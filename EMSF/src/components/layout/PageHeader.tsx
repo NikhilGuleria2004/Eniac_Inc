@@ -16,11 +16,11 @@ export function PageHeader({ title, description, breadcrumbs, actions, className
         <Breadcrumb items={breadcrumbs} className="mb-2" />
       )}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
-          {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold text-gray-900 break-words">{title}</h1>
+          {description && <p className="text-sm text-gray-500 mt-1 break-words">{description}</p>}
         </div>
-        {actions && <div className="flex items-center gap-2">{actions}</div>}
+        {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
       </div>
     </div>
   );

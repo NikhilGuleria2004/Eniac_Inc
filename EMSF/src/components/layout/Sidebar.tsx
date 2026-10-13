@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Users, UserPlus, FileText, ClipboardCheck, Calendar, Clock, UsersRound, Briefcase, ListTodo, BarChart3, BellRing, Shield, Settings, User } from "lucide-react";
 import { useAuth } from "../../features/auth/AuthContext";
 import { SIDEBAR_SECTIONS } from "../../data/constants";
+import { BrandMark } from "../brand/BrandMark";
 
 const iconMap: Record<string, React.ReactNode> = {
   Dashboard: <LayoutDashboard size={18} />,
@@ -36,7 +37,8 @@ export function Sidebar({ collapsed }: SidebarProps) {
   return (
     <aside className={`app-sidebar ${collapsed ? "collapsed" : ""}`}>
       <div className={`flex items-center gap-3 px-4 py-4 border-b border-white/10 ${collapsed ? "justify-center px-2" : ""}`}>
-        <div className="flex flex-col">
+        <BrandMark size={collapsed ? 32 : 36} variant="on-dark" />
+        <div className="flex flex-col min-w-0">
           {!collapsed && (
             <>
               <span className="text-sm font-bold text-white leading-tight">ENIAC INC.</span>

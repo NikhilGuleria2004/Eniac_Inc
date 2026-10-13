@@ -42,7 +42,7 @@ export function NotificationsDropdown() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-96 max-h-[480px] overflow-hidden bg-white rounded-md shadow-lg border border-gray-200 z-50 flex flex-col">
+        <div className="absolute right-0 top-full mt-1 w-[calc(100vw-2rem)] max-w-96 max-h-[480px] overflow-hidden bg-white rounded-md shadow-lg border border-gray-200 z-50 flex flex-col">
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
             <button className="text-xs text-accent hover:underline">Mark all as read</button>

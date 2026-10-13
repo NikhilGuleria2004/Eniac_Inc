@@ -40,14 +40,14 @@ export function SettingsPage() {
         </div>
       </div>
 
-      <div className="flex gap-6">
-        <nav className="w-64 flex-shrink-0">
-          <div className="card p-2">
+      <div className="flex flex-col lg:flex-row gap-6">
+        <nav className="w-full lg:w-64 shrink-0">
+          <div className="card p-2 flex lg:block gap-1 overflow-x-auto tabs-scroll">
             {SETTINGS_SECTIONS.map((section) => (
               <button
                 key={section.id}
                 onClick={() => setActiveSection(section.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors shrink-0 lg:w-full ${
                   activeSection === section.id
                     ? "bg-accent-light text-accent font-medium"
                     : "text-gray-700 hover:bg-gray-50"

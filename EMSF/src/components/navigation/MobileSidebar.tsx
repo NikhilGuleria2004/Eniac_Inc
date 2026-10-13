@@ -3,6 +3,7 @@ import { useAuth } from "../../features/auth/AuthContext";
 import { SIDEBAR_SECTIONS } from "../../data/constants";
 import { LayoutDashboard, Users, UserPlus, FileText, ClipboardCheck, Calendar, Clock, UsersRound, Briefcase, ListTodo, BarChart3, BellRing, Shield, Settings, User } from "lucide-react";
 import { Drawer } from "../ui/Drawer";
+import { BrandMark } from "../brand/BrandMark";
 
 const iconMap: Record<string, React.ReactNode> = {
   Dashboard: <LayoutDashboard size={18} />,
@@ -37,6 +38,13 @@ export function MobileSidebar({ open, onClose }: MobileSidebarProps) {
 
   return (
     <Drawer open={open} onClose={onClose} side="left" title="Menu">
+      <div className="flex items-center gap-2.5 px-1 pb-3 mb-1 border-b border-gray-100">
+        <BrandMark size={30} />
+        <div className="min-w-0">
+          <p className="text-sm font-bold text-gray-900 leading-tight">ENIAC INC.</p>
+          <p className="text-xs text-gray-500 leading-tight">Employee Management System</p>
+        </div>
+      </div>
       <nav className="space-y-4">
         {sections.map((section) => (
           <div key={section.label}>

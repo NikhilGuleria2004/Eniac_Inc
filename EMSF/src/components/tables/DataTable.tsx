@@ -123,14 +123,14 @@ export function DataTable<T>({
   return (
     <div className={`card ${className}`}>
       {bulkActions && selectedRows.length > 0 && (
-        <div className="mb-3 flex items-center gap-2 p-2 bg-blue-50 rounded-md">
+        <div className="mb-3 flex flex-wrap items-center gap-2 p-2 bg-blue-50 rounded-md">
           <span className="text-sm text-blue-800">
             {selectedRows.length} selected
           </span>
           {bulkActions}
         </div>
       )}
-      <div className="overflow-x-auto">
+      <div className="table-scroll">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200">

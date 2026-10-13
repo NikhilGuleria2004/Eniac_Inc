@@ -29,7 +29,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className = 
   }
 
   return (
-    <nav className={`flex items-center gap-1 ${className}`} aria-label="Pagination">
+    <nav className={`flex flex-wrap items-center gap-1 ${className}`} aria-label="Pagination">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}

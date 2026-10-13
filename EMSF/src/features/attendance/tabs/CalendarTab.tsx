@@ -39,15 +39,15 @@ export function CalendarTab({ records, role }: CalendarTabProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 min-w-0">
       {role !== "EMPLOYEE" && (
-        <div className="flex items-center gap-2">
-          <label htmlFor="calendar-employee" className="text-sm font-medium text-gray-700">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <label htmlFor="calendar-employee" className="text-sm font-medium text-gray-700 shrink-0">
             Employee
           </label>
           <Select
             id="calendar-employee"
-            className="w-64"
+            className="w-full sm:w-64"
             value={employeeId}
             onChange={(e) => setEmployeeId(e.target.value)}
           >

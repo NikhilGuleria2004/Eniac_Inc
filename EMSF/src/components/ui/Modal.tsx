@@ -47,11 +47,11 @@ export function Modal({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center" role="presentation">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4" role="presentation">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
       <div
         ref={modalRef}
-        className={`relative w-full ${sizeClasses[size]} mx-4 card shadow-xl`}
+        className={`relative w-full ${sizeClasses[size]} mx-auto card shadow-xl max-h-[calc(100dvh-2rem)] flex flex-col`}
         role="dialog"
         aria-modal="true"
         aria-label={title}
@@ -67,9 +67,9 @@ export function Modal({
             )}
           </div>
         )}
-        <div className="max-h-[calc(100vh-200px)] overflow-y-auto">{children}</div>
+        <div className="max-h-[calc(100dvh-220px)] overflow-y-auto min-w-0">{children}</div>
         {footer && (
-          <div className="border-t border-gray-200 pt-4 mt-4 flex justify-end gap-2">
+          <div className="border-t border-gray-200 pt-4 mt-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
             {footer}
           </div>
         )}

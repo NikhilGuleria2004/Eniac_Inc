@@ -93,7 +93,7 @@ export function OnboardingDashboardPage() {
             <p className="text-xs text-gray-500">{r.employee.designation}</p></div></div>) },
           { key: "country", header: "Country", cell: (r) => (<span className="text-gray-600">{r.employee.country}</span>) },
           { key: "billing", header: "Billing", cell: (r) => <StatusBadge status={r.employee.billingStatus} /> },
-          { key: "progress", header: "Progress", sortable: true, cell: (r) => (<div className="min-w-32"><Progress value={r.progress} showLabel /></div>) },
+          { key: "progress", header: "Progress", sortable: true, cell: (r) => (<div className="min-w-24 sm:min-w-32"><Progress value={r.progress} showLabel /></div>) },
           { key: "stage", header: "Current Stage", cell: (r) => (<span className="badge badge-info">{r.currentStage}</span>) },
           { key: "started", header: "Started", sortable: true, cell: (r) => (<span className="text-gray-600">{r.employee.joiningDate}</span>) },
           { key: "target", header: "Target Date", cell: (r) => (<span className="text-gray-600">{r.target}</span>) },
@@ -113,7 +113,7 @@ export function OnboardingDashboardPage() {
             )
           }] : []),
         ]} />
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs text-gray-500">Showing {(safePage - 1) * PAGE_SIZE + (paged.length > 0 ? 1 : 0)} to {(safePage - 1) * PAGE_SIZE + paged.length} of {filtered.length} onboarding</p>
         <Pagination currentPage={safePage} totalPages={totalPages} onPageChange={setPage} />
       </div>

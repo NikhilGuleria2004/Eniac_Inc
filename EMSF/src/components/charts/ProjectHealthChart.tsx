@@ -80,8 +80,8 @@ function HealthDonutChart({ data }: { data: HealthDataPoint[] }) {
           </Pie>
           <Tooltip
             contentStyle={{
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #D7DCE3",
+              backgroundColor: "var(--color-surface)",
+              border: "1px solid var(--color-border)",
               borderRadius: "6px",
               boxShadow: "0 2px 8px rgba(16, 24, 40, 0.08)",
               fontSize: "12px",
@@ -127,7 +127,7 @@ function renderSliceLabel({
       y={y}
       textAnchor="middle"
       dominantBaseline="central"
-      fill="#1F2937"
+      fill="var(--color-text)"
       style={{ fontSize: 10, fontWeight: 600 }}
     >
       {`${value ?? 0} (${((percent ?? 0) * 100).toFixed(0)}%)`}
@@ -150,10 +150,10 @@ function HealthBarChart({ data }: { data: HealthDataPoint[] }) {
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={filteredData} layout="vertical" margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" horizontal={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" horizontal={false} />
           <XAxis
             type="number"
-            tick={{ fontSize: 11, fill: "#667085" }}
+            tick={{ fontSize: 11, fill: "var(--color-muted)" }}
             axisLine={false}
             tickLine={false}
             domain={["auto", "auto"]}
@@ -161,8 +161,8 @@ function HealthBarChart({ data }: { data: HealthDataPoint[] }) {
           <YAxis
             type="category"
             dataKey="name"
-            tick={{ fontSize: 11, fill: "#667085" }}
-            axisLine={{ stroke: "#D7DCE3" }}
+            tick={{ fontSize: 11, fill: "var(--color-muted)" }}
+            axisLine={{ stroke: "var(--color-border)" }}
             tickLine={false}
             width={80}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -170,15 +170,15 @@ function HealthBarChart({ data }: { data: HealthDataPoint[] }) {
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: "#FFFFFF",
-              border: "1px solid #D7DCE3",
+              backgroundColor: "var(--color-surface)",
+              border: "1px solid var(--color-border)",
               borderRadius: "6px",
               boxShadow: "0 2px 8px rgba(16, 24, 40, 0.08)",
               fontSize: "12px",
             }}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             formatter={(value: any) => [(value as number).toLocaleString(), ""]}
-            labelStyle={{ color: "#17202A", fontWeight: 600 }}
+            labelStyle={{ color: "var(--color-text)", fontWeight: 600 }}
           />
           <Legend
             wrapperStyle={{ paddingTop: 8 }}

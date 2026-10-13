@@ -26,7 +26,7 @@ export function Stepper({ steps, onStepClick }: StepperProps) {
   const progress = getOnboardingProgress(steps);
 
   return (
-    <div className="mb-6 overflow-x-auto">
+    <div className="mb-6 overflow-x-auto tabs-scroll -mx-4 px-4 sm:mx-0 sm:px-0">
       <div className="flex items-center gap-2 min-w-[720px]">
         {steps.map((step, index) => {
           const isComplete = step.status === "complete";

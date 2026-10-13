@@ -267,8 +267,8 @@ export function OnboardingWizardPage() {
 
       <Stepper steps={steps} onStepClick={handleStepClick} />
 
-      <div ref={contentRef} className="lg:grid lg:grid-cols-3 lg:gap-6">
-        <div className="lg:col-span-2 space-y-4">
+      <div ref={contentRef} className="grid grid-cols-1 gap-4 xl:grid-cols-3 xl:gap-6">
+        <div className="xl:col-span-2 space-y-4 min-w-0">
           {steps.map((step, index) => (
             <StepSection
               key={step.key}
@@ -280,7 +280,7 @@ export function OnboardingWizardPage() {
             </StepSection>
           ))}
         </div>
-        <div className="lg:col-span-1">
+        <div className="xl:col-span-1 min-w-0">
           <ActionPanel
             steps={steps}
             currentStep={currentStep}
@@ -473,11 +473,11 @@ interface ReadOnlySummaryProps {
 
 function ReadOnlySummary({ fields, onEdit }: ReadOnlySummaryProps) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 min-w-0">
           {fields.map((f) => (
-            <div key={f.label} className="flex justify-between">
-              <span className="text-sm text-gray-500">{f.label}:</span>
-              <span className="text-sm text-gray-900">{f.value}</span>
+            <div key={f.label} className="flex flex-col min-[420px]:flex-row min-[420px]:justify-between gap-0.5 min-[420px]:gap-2">
+              <span className="text-sm text-gray-500 shrink-0">{f.label}:</span>
+              <span className="text-sm text-gray-900 break-words min-w-0 text-left min-[420px]:text-right">{f.value}</span>
             </div>
           ))}
       {onEdit && (
