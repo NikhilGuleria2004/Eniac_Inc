@@ -42,6 +42,7 @@ export interface EmployeeDTO {
   managerId?: string;
   timesheetEligibility: string;
   role: Role | undefined;
+  techRole?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -134,7 +135,7 @@ export class EmployeeService {
     };
   }
 
-  async createEmployee(input: CreateEmployeeInput): Promise<EmployeeDetailDTO> {
+  async createEmployee(input: CreateEmployeeInput, actorUserId: string): Promise<EmployeeDetailDTO> {
     const existing = await this.employeeRepository.findByEmployeeId(input.employeeId);
     if (existing) {
       throw new ConflictError("Employee ID already exists.");
@@ -171,15 +172,16 @@ export class EmployeeService {
       employmentType: input.employmentType,
       address: input.address,
       emergencyContact: input.emergencyContact,
-      compensation: input.compensation,
-      billRate: input.billRate,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+       compensation: input.compensation,
+       billRate: input.billRate,
+       techRole: input.techRole,
+       createdAt: new Date(),
+       updatedAt: new Date()
+     };
 
     const created = await this.employeeRepository.create(employee);
 
-    await this.createAuditLog("HR", "employee.created", "employee", created.employeeId);
+    await this.createAuditLog("HR", "employee.created", "employee", created.employeeId, actorUserId);
 
     const roleMap = await this.buildRoleMap([created.employeeId]);
     const onboardingCompleted = await this.onboardingCompletedFor(created.employeeId);
@@ -210,7 +212,8 @@ export class EmployeeService {
     employeeId: string,
     input: unknown,
     role: Role,
-    requestingEmployeeId?: string
+    requestingEmployeeId: string | undefined,
+    actorUserId: string
   ): Promise<EmployeeDetailDTO> {
     const employee = await this.employeeRepository.findByEmployeeId(employeeId);
     if (!employee) {
@@ -242,7 +245,7 @@ export class EmployeeService {
       throw new NotFoundError("Employee was not found.");
     }
 
-    await this.createAuditLog(role, "employee.updated", "employee", employeeId);
+    await this.createAuditLog(role, "employee.updated", "employee", employeeId, actorUserId);
 
     const roleMap = await this.buildRoleMap([updated.employeeId]);
     const onboardingCompleted = await this.onboardingCompletedFor(updated.employeeId);
@@ -251,7 +254,8 @@ export class EmployeeService {
 
   async updateBillingStatus(
     employeeId: string,
-    input: UpdateBillingStatusInput
+    input: UpdateBillingStatusInput,
+    actorUserId: string
   ): Promise<EmployeeDetailDTO> {
     const employee = await this.employeeRepository.findByEmployeeId(employeeId);
     if (!employee) {
@@ -266,7 +270,7 @@ export class EmployeeService {
       throw new NotFoundError("Employee was not found.");
     }
 
-    await this.createAuditLog("HR", "employee.updated", "employee", employeeId);
+    await this.createAuditLog("HR", "employee.updated", "employee", employeeId, actorUserId);
 
     const context = this.getViewContext("HR", employeeId, undefined);
     const roleMap = await this.buildRoleMap([updated.employeeId]);
@@ -277,7 +281,8 @@ export class EmployeeService {
   async changeEmploymentStatus(
     employeeId: string,
     targetStatus: EmploymentStatus,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<EmployeeDetailDTO> {
     const employee = await this.employeeRepository.findByEmployeeId(employeeId);
     if (!employee) {
@@ -314,7 +319,8 @@ export class EmployeeService {
       actorRole,
       actionMap[targetStatus] ?? "employee.updated",
       "employee",
-      employeeId
+      employeeId,
+      actorUserId
     );
 
     // Fire timesheet eligibility event on status change (activation, etc.)
@@ -339,7 +345,7 @@ export class EmployeeService {
     return this.toDetailDTO(updated, context, roleMap, onboardingCompleted);
   }
 
-  async deleteEmployee(employeeId: string, actorRole: Role): Promise<void> {
+  async deleteEmployee(employeeId: string, actorRole: Role, actorUserId: string): Promise<void> {
     const employee = await this.employeeRepository.findByEmployeeId(employeeId);
     if (!employee) {
       throw new NotFoundError("Employee was not found.");
@@ -352,7 +358,7 @@ export class EmployeeService {
     await db.collection("onboarding_records").deleteMany({ employeeId });
     await db.collection("invitations").deleteMany({ employeeId });
 
-    await this.createAuditLog(actorRole, "employee.deleted", "employee", employeeId);
+    await this.createAuditLog(actorRole, "employee.deleted", "employee", employeeId, actorUserId);
   }
 
   private getViewContext(
@@ -407,10 +413,11 @@ export class EmployeeService {
       workMail: employee.workMail,
       joiningDate: formatDateOnly(employee.joiningDate),
       managerId: employee.managerId,
-      timesheetEligibility: this.isTimesheetEligible(employee, onboardingCompleted) ? "ELIGIBLE" : "NOT_ELIGIBLE",
-      role: roleMap?.get(employee.employeeId),
-      createdAt: toISO(employee.createdAt) ?? "",
-      updatedAt: toISO(employee.updatedAt) ?? ""
+       timesheetEligibility: this.isTimesheetEligible(employee, onboardingCompleted) ? "ELIGIBLE" : "NOT_ELIGIBLE",
+       role: roleMap?.get(employee.employeeId),
+       techRole: employee.techRole,
+       createdAt: toISO(employee.createdAt) ?? "",
+       updatedAt: toISO(employee.updatedAt) ?? ""
     };
 
     if (context === "HR" && employee.billingStatus === "BILLABLE") {
@@ -480,6 +487,7 @@ export class EmployeeService {
     if (input.emergencyContact !== undefined) update.emergencyContact = input.emergencyContact;
     if (input.compensation !== undefined) update.compensation = input.compensation;
     if (input.billRate !== undefined) update.billRate = input.billRate;
+    if (input.techRole !== undefined) update.techRole = input.techRole;
     return update;
   }
 
@@ -550,8 +558,9 @@ export class EmployeeService {
     actorRole: Role,
     action: string,
     entityType: string,
-    entityId: string
+    entityId: string,
+    actorUserId: string
   ): Promise<void> {
-    await writeAuditLog(actorRole, action, entityType, entityId);
+    await writeAuditLog(actorRole, action, entityType, entityId, actorUserId);
   }
 }

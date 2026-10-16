@@ -12,11 +12,5 @@ export function auditContextMiddleware(
     userAgent: req.get("User-Agent") ?? undefined
   };
 
-  req.auditContext = {
-    ...context,
-    userId: req.user?.userId,
-    role: req.user?.role
-  };
-
   runRequestContext(context, () => next());
 }

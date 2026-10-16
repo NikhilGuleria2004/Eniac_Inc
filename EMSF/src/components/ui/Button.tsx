@@ -31,7 +31,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <button ref={ref} className={classes} disabled={disabled || loading} {...props}>
-        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+        {loading && <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />}
         {children}
       </button>
     );

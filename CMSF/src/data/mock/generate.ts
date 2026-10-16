@@ -197,7 +197,7 @@ export function generateSeed(): SeedData {
 
   for (let i = 1; i <= 50; i++) {
     const project = projects[(i * 5) % projects.length];
-    const employee = employees[((i * 7) % 40) + 1];
+    const employee = employees[(i * 7) % employees.length];
     const statusIndex = i % 9;
     const assignmentStatus: ProjectAssignment["status"] =
       statusIndex === 0 ? "PENDING" : statusIndex === 3 ? "ENDED" : "ACTIVE";

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useNavigate, useParams, Navigate } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { StatCard } from "../../components/data/StatCard";
 import { DataTable } from "../../components/tables/DataTable";
@@ -31,7 +31,6 @@ export function AttendanceDetailPage() {
   const { user } = useAuth();
   const role = user?.role ?? "EMPLOYEE";
   const userId = user?.id ?? "";
-  const navigate = useNavigate();
   const [version, setVersion] = useState(0);
   const [flash, setFlash] = useState<Flash>(null);
   const today = useMemo(() => getToday(), []);
@@ -56,7 +55,7 @@ export function AttendanceDetailPage() {
         <EmptyState
           title="Employee not found"
           description="This employee does not exist."
-          action={<Button variant="secondary" onClick={() => navigate(ROUTES.ATTENDANCE)}>Back to Attendance</Button>}
+          action={<Link to={ROUTES.ATTENDANCE} className="btn btn-secondary">Back to Attendance</Link>}
         />
       </div>
     );
@@ -89,7 +88,7 @@ export function AttendanceDetailPage() {
         title={`Attendance — ${employee.firstName} ${employee.lastName}`}
         description={`${employee.employeeCode} · My Attendance (${today})`}
         breadcrumbs={[{ label: "Attendance", href: ROUTES.ATTENDANCE }, { label: `${employee.firstName} ${employee.lastName}` }]}
-        actions={<Button variant="secondary" onClick={() => navigate(ROUTES.ATTENDANCE)}>Back to Dashboard</Button>}
+        actions={<Link to={ROUTES.ATTENDANCE} className="btn btn-secondary">Back to Dashboard</Link>}
       />
 
       {flash && (

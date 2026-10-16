@@ -26,6 +26,13 @@ export interface ClientDTO {
   };
   activeProjectCount: number;
   createdAt: string;
+  updatedAt: string;
+  clientTier?: string;
+  paymentTerms?: string;
+  taxId?: string;
+  contacts?: Array<{ id?: string; name?: string; email?: string; phone?: string; role?: string; isPrimary?: boolean }>;
+  billingAddress?: { line1?: string; line2?: string; city?: string; state?: string; postalCode?: string; country?: string };
+  shippingAddress?: { line1?: string; line2?: string; city?: string; state?: string; postalCode?: string; country?: string };
 }
 
 export class ClientService {
@@ -52,7 +59,7 @@ export class ClientService {
     return { clients: clientDTOs, total, page: filters.page, pageSize: filters.pageSize };
   }
 
-  async createClient(input: CreateClientInput, actorRole: Role): Promise<ClientDTO> {
+  async createClient(input: CreateClientInput, actorRole: Role, actorUserId: string): Promise<ClientDTO> {
     if (input.code) {
       const existing = await this.clientRepository.findByCode(input.code);
       if (existing) {
@@ -71,13 +78,19 @@ export class ClientService {
       industry: input.industry,
       contact: input.contact,
       address: input.address,
+      clientTier: input.clientTier,
+      paymentTerms: input.paymentTerms,
+      taxId: input.taxId,
+      contacts: input.contacts,
+      billingAddress: input.billingAddress,
+      shippingAddress: input.shippingAddress,
       createdBy: actorRole,
       createdAt: new Date(),
       updatedAt: new Date()
     };
 
     const created = await this.clientRepository.create(client);
-    await writeAuditLog(actorRole, "client.created", "client", created.clientId);
+    await writeAuditLog(actorRole, "client.created", "client", created.clientId, actorUserId);
 
     return this.toDTO(created);
   }
@@ -93,7 +106,8 @@ export class ClientService {
   async updateClient(
     clientId: string,
     input: UpdateClientInput,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<ClientDTO> {
     const client = await this.clientRepository.findById(clientId);
     if (!client) {
@@ -106,18 +120,24 @@ export class ClientService {
     if (input.industry !== undefined) update.industry = input.industry;
     if (input.contact !== undefined) update.contact = input.contact;
     if (input.address !== undefined) update.address = input.address;
+    if (input.clientTier !== undefined) update.clientTier = input.clientTier;
+    if (input.paymentTerms !== undefined) update.paymentTerms = input.paymentTerms;
+    if (input.taxId !== undefined) update.taxId = input.taxId;
+    if (input.contacts !== undefined) update.contacts = input.contacts;
+    if (input.billingAddress !== undefined) update.billingAddress = input.billingAddress;
+    if (input.shippingAddress !== undefined) update.shippingAddress = input.shippingAddress;
 
     const updated = await this.clientRepository.update(clientId, update);
     if (!updated) {
       throw new NotFoundError("Client was not found.");
     }
 
-    await writeAuditLog(actorRole, "client.updated", "client", clientId);
+    await writeAuditLog(actorRole, "client.updated", "client", clientId, actorUserId);
 
     return this.toDTO(updated);
   }
 
-  async deactivateClient(clientId: string, actorRole: Role): Promise<ClientDTO> {
+  async deactivateClient(clientId: string, actorRole: Role, actorUserId: string): Promise<ClientDTO> {
     const client = await this.clientRepository.findById(clientId);
     if (!client) {
       throw new NotFoundError("Client was not found.");
@@ -128,7 +148,7 @@ export class ClientService {
       throw new NotFoundError("Client was not found.");
     }
 
-    await writeAuditLog(actorRole, "client.deactivated", "client", clientId);
+    await writeAuditLog(actorRole, "client.deactivated", "client", clientId, actorUserId);
 
     return this.toDTO(updated);
   }
@@ -159,7 +179,14 @@ export class ClientService {
         phone: client.contact?.phone ?? ""
       },
       activeProjectCount,
-      createdAt: toISO(client.createdAt) ?? ""
+      clientTier: client.clientTier,
+      paymentTerms: client.paymentTerms,
+      taxId: client.taxId,
+      contacts: client.contacts,
+      billingAddress: client.billingAddress,
+      shippingAddress: client.shippingAddress,
+      createdAt: toISO(client.createdAt) ?? "",
+      updatedAt: toISO(client.updatedAt) ?? ""
     };
   }
 

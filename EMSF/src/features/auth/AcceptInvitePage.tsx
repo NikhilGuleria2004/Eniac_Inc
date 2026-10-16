@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { Eye, EyeOff, CheckCircle2, XCircle } from "lucide-react";
 import { apiFetch, ApiRequestError } from "../../lib/api";
 import { BrandMark } from "../../components/brand/BrandMark";
+import { usePageTitle } from "../../app/router/usePageTitle";
+import { useFocusError } from "../../lib/useFocusError";
 
 interface InvitationPreview {
   employeeId: string;
@@ -31,11 +33,14 @@ export function AcceptInvitePage() {
   const navigate = useNavigate();
   const token = searchParams.get("token") ?? "";
 
+  usePageTitle("Accept Invitation");
+
   const [pageState, setPageState] = useState<PageState>({ status: "loading" });
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const errorRef = useFocusError<HTMLDivElement>(error);
 
   useEffect(() => {
     let cancelled = false;
@@ -112,18 +117,18 @@ export function AcceptInvitePage() {
             <div className="flex justify-center mb-4">
               <BrandMark size={56} />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">ENIAC INC.</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1" translate="no">ENIAC INC.</h1>
             <p className="text-sm text-gray-500">Set up your account</p>
           </div>
 
           {pageState.status === "loading" && (
-            <p className="text-sm text-gray-500 text-center">Validating your invitation...</p>
+            <p className="text-sm text-gray-500 text-center">Validating your invitation…</p>
           )}
 
           {pageState.status === "invalid" && (
             <div className="space-y-4">
               <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                <XCircle size={16} className="mt-0.5 flex-shrink-0" />
+                <XCircle aria-hidden="true" size={16} className="mt-0.5 flex-shrink-0" />
                 <span>{pageState.message}</span>
               </div>
               <Link to="/login" className="btn btn-secondary w-full">Back to Sign In</Link>
@@ -133,8 +138,8 @@ export function AcceptInvitePage() {
           {pageState.status === "done" && (
             <div className="space-y-4">
               <div className="flex items-start gap-2 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">
-                <CheckCircle2 size={16} className="mt-0.5 flex-shrink-0" />
-                <span>Password set successfully. Redirecting you to sign in...</span>
+                <CheckCircle2 aria-hidden="true" size={16} className="mt-0.5 flex-shrink-0" />
+                <span>Password set successfully. Redirecting you to sign in…</span>
               </div>
               <Link to="/login" className="btn btn-primary w-full">Continue to Sign In</Link>
             </div>
@@ -152,46 +157,55 @@ export function AcceptInvitePage() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="form-label">New Password</label>
+                  <label htmlFor="invite-password" className="form-label">New Password</label>
                   <div className="relative">
                     <input
+                      id="invite-password"
                       type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="form-input pr-10"
-                      placeholder="At least 8 characters, with a letter and a number"
+                      placeholder="At least 8 characters, with a letter and a number…"
                       required
                       autoComplete="new-password"
+                      spellCheck={false}
                       disabled={pageState.status === "submitting"}
                     />
                     <button
                       type="button"
-                      tabIndex={-1}
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-2 bottom-0 pb-2.5 text-gray-500 hover:text-gray-700"
                       aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-pressed={showPassword}
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {showPassword ? <EyeOff aria-hidden="true" size={18} /> : <Eye aria-hidden="true" size={18} />}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <label className="form-label">Confirm Password</label>
+                  <label htmlFor="invite-confirm-password" className="form-label">Confirm Password</label>
                   <input
+                    id="invite-confirm-password"
                     type={showPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="form-input"
-                    placeholder="Re-enter your password"
+                    placeholder="Re-enter your password…"
                     required
                     autoComplete="new-password"
+                    spellCheck={false}
                     disabled={pageState.status === "submitting"}
                   />
                 </div>
 
                 {error && (
-                  <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+                  <div
+                    role="alert"
+                    tabIndex={-1}
+                    ref={errorRef}
+                    className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2 focus:outline-none"
+                  >
                     {error}
                   </div>
                 )}
@@ -201,7 +215,7 @@ export function AcceptInvitePage() {
                   disabled={pageState.status === "submitting"}
                   className="btn btn-primary w-full"
                 >
-                  {pageState.status === "submitting" ? "Setting password..." : "Set Password & Activate"}
+                  {pageState.status === "submitting" ? "Setting password…" : "Set Password & Activate"}
                 </button>
               </form>
             </>

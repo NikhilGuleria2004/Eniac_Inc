@@ -75,7 +75,7 @@ export function Stepper({ steps, onStepClick }: StepperProps) {
               </Tooltip>
 
               {index < steps.length - 1 && (
-                <ChevronRight
+                <ChevronRight aria-hidden="true"
                   className={
                     "w-4 h-4 " +
                     (isComplete ? "text-green-600" : "text-gray-300")
@@ -93,7 +93,7 @@ export function Stepper({ steps, onStepClick }: StepperProps) {
         </div>
         <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
           <div
-            className="h-full bg-accent transition-all duration-300"
+            className="h-full bg-accent transition-[width] duration-300 motion-reduce:transition-none"
             style={{ width: `${progress}%` }}
           />
         </div>

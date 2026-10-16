@@ -1,7 +1,7 @@
 import type { ObjectId } from "mongodb";
 
 export type ProjectStatus = "PLANNING" | "ACTIVE" | "ON_HOLD" | "COMPLETED" | "CANCELLED";
-export type ProjectHealth = "ON_TRACK" | "AT_RISK" | "OFF_TRACK";
+export type ProjectHealth = "ON_TRACK" | "AT_RISK" | "OFF_TRACK" | "DELAYED";
 
 export interface Project {
   _id: ObjectId;
@@ -19,4 +19,10 @@ export interface Project {
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
+  clientName?: string;
+  supervisorId?: string;
+  budget?: number;
+  budgetCurrency?: string;
+  tags?: string[];
+  visibility?: "INTERNAL" | "CLIENT_VISIBLE";
 }

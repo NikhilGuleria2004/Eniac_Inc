@@ -6,10 +6,11 @@ import { MobileSidebar } from "../../components/navigation/MobileSidebar";
 import { Footer } from "../../components/layout/Footer";
 import { AccessDeniedPage } from "../../components/pages/AccessDeniedPage";
 import { useAuth } from "../../features/auth/AuthContext";
-import { ToastProvider } from "../../components/ui/Toast";
+import { useDocumentTitle } from "../../lib/documentTitle";
 
 export function AppShell() {
   const { user, cmsAccess } = useAuth();
+  useDocumentTitle();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
@@ -22,19 +23,17 @@ export function AppShell() {
   }
 
   return (
-    <ToastProvider>
-      <div className={`app-shell ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
-        <Header
-          onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
-          onToggleMobileSidebar={() => setMobileSidebarOpen(true)}
-        />
-        <Sidebar collapsed={sidebarCollapsed} />
-        <MobileSidebar open={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
-        <main className="app-main">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-    </ToastProvider>
+    <div className={`app-shell ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+      <Header
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        onToggleMobileSidebar={() => setMobileSidebarOpen(true)}
+      />
+      <Sidebar collapsed={sidebarCollapsed} />
+      <MobileSidebar open={mobileSidebarOpen} onClose={() => setMobileSidebarOpen(false)} />
+      <main className="app-main">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
   );
 }

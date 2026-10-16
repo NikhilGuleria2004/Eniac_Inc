@@ -117,7 +117,7 @@ export function Step5Documents({ employee, onDocReviewed }: Step5DocumentsProps)
   };
 
   const handleDelete = (doc: Document) => {
-    if (!confirm(`Delete "${doc.name}"? This cannot be undone.`)) return;
+    if (!confirm(`Delete “${doc.name}”? This cannot be undone.`)) return;
     deleteDocument(doc.id);
     setDocs(getDocumentsByEmployee(employee.id));
     onDocReviewed?.();
@@ -152,14 +152,14 @@ export function Step5Documents({ employee, onDocReviewed }: Step5DocumentsProps)
               }}
               className="btn btn-secondary text-sm"
             >
-              <Upload size={14} /> Upload Document
+              <Upload aria-hidden="true" size={14} /> Upload Document
             </button>
             <button
               type="button"
               onClick={() => setBulkOpen(true)}
               className="btn btn-secondary text-sm"
             >
-              <FileText size={14} /> Bulk Upload
+              <FileText aria-hidden="true" size={14} /> Bulk Upload
             </button>
           </div>
         )}
@@ -173,13 +173,13 @@ export function Step5Documents({ employee, onDocReviewed }: Step5DocumentsProps)
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-200">
-              <th className="text-left py-2 px-3 font-medium text-gray-600">Document</th>
-              <th className="text-left py-2 px-3 font-medium text-gray-600">Type</th>
-              <th className="text-left py-2 px-3 font-medium text-gray-600">Uploaded</th>
-              <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
-              <th className="text-left py-2 px-3 font-medium text-gray-600">Expiry</th>
+              <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Document</th>
+              <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Type</th>
+              <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Uploaded</th>
+              <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+              <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Expiry</th>
               {(canUpload || canReview) && (
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Actions</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Actions</th>
               )}
             </tr>
           </thead>
@@ -247,7 +247,7 @@ export function Step5Documents({ employee, onDocReviewed }: Step5DocumentsProps)
                           className="text-green-700 hover:text-green-900 mr-2"
                           title="Approve"
                         >
-                          <Check size={14} />
+                          <Check aria-hidden="true" size={14} />
                         </button>
                         <button
                           type="button"
@@ -255,7 +255,7 @@ export function Step5Documents({ employee, onDocReviewed }: Step5DocumentsProps)
                           className="text-red-700 hover:text-red-900 mr-2"
                           title="Reject"
                         >
-                          <X size={14} />
+                          <X aria-hidden="true" size={14} />
                         </button>
                       </>
                     )}
@@ -266,7 +266,7 @@ export function Step5Documents({ employee, onDocReviewed }: Step5DocumentsProps)
                         className="text-gray-400 hover:text-gray-700"
                         title="Delete"
                       >
-                        <Trash2 size={12} />
+                        <Trash2 aria-hidden="true" size={12} />
                       </button>
                     )}
                   </td>
@@ -365,7 +365,7 @@ function UploadDocumentModal({
             className="btn btn-primary text-sm"
             disabled={loading}
           >
-            {loading ? "Uploading..." : "Upload"}
+            {loading ? "Uploading…" : "Upload"}
           </button>
         </>
       }
@@ -377,8 +377,8 @@ function UploadDocumentModal({
           </div>
         )}
         <div>
-          <label className="form-label">Document Name *</label>
-          <input
+          <label className="form-label" htmlFor="document-name">Document Name *</label>
+          <input id="document-name"
             className="form-input"
             value={name}
             onChange={(e) => onNameChange(e.target.value)}
@@ -387,8 +387,8 @@ function UploadDocumentModal({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="form-label">Document Type *</label>
-            <select
+            <label className="form-label" htmlFor="document-type">Document Type *</label>
+            <select id="document-type"
               className="form-input"
               value={initialType}
               onChange={(e) => onTypeChange(e.target.value as Document["type"])}
@@ -401,8 +401,8 @@ function UploadDocumentModal({
             </select>
           </div>
           <div>
-            <label className="form-label">Expiry Date</label>
-            <input
+            <label className="form-label" htmlFor="expiry-date">Expiry Date</label>
+            <input id="expiry-date"
               type="date"
               className="form-input"
               value={expiry}
@@ -411,8 +411,8 @@ function UploadDocumentModal({
           </div>
         </div>
         <div>
-          <label className="form-label">File *</label>
-          <input
+          <label className="form-label" htmlFor="file">File *</label>
+          <input id="file"
             type="file"
             className="form-input"
             onChange={(e) => onFileChange(e.target.files?.[0])}
@@ -452,7 +452,7 @@ function BulkUploadModal({ open, onClose, onSubmit, loading, error }: BulkUpload
             className="btn btn-primary text-sm"
             disabled={loading}
           >
-            {loading ? "Uploading..." : "Upload All"}
+            {loading ? "Uploading…" : "Upload All"}
           </button>
         </>
       }
@@ -464,8 +464,8 @@ function BulkUploadModal({ open, onClose, onSubmit, loading, error }: BulkUpload
           </div>
         )}
         <div>
-          <label className="form-label">Files *</label>
-          <input type="file" name="bulkFiles" className="form-input" multiple />
+          <label className="form-label" htmlFor="files">Files *</label>
+          <input id="files" type="file" name="bulkFiles" className="form-input" multiple />
           <p className="text-xs text-gray-500 mt-1">
             Filenames are scanned for keywords like "offer", "employment", "id", "address", "resume", "nda", etc.
           </p>

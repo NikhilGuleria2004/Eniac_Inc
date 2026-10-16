@@ -119,7 +119,8 @@ export class AttendanceService {  constructor(
   async checkIn(
     input: CheckInInput,
     actorRole: Role,
-    requestingEmployeeId?: string
+    requestingEmployeeId: string | undefined,
+    actorUserId: string
   ): Promise<AttendanceDTO> {
     if (actorRole === "ADMIN") {
       throw new AuthorizationError("Admin cannot mark attendance.");
@@ -161,7 +162,7 @@ export class AttendanceService {  constructor(
     };
 
     const created = await this.attendanceRepository.create(record);
-    await writeAuditLog(actorRole, "attendance.checked_in", "attendance", created.attendanceId);
+    await writeAuditLog(actorRole, "attendance.checked_in", "attendance", created.attendanceId, actorUserId);
 
     return this.toDTO(created);
   }
@@ -169,7 +170,8 @@ export class AttendanceService {  constructor(
   async checkOut(
     input: CheckOutInput,
     actorRole: Role,
-    requestingEmployeeId?: string
+    requestingEmployeeId: string | undefined,
+    actorUserId: string
   ): Promise<AttendanceDTO> {
     if (actorRole === "ADMIN") {
       throw new AuthorizationError("Admin cannot mark attendance.");
@@ -218,7 +220,7 @@ export class AttendanceService {  constructor(
       throw new NotFoundError("Attendance record was not found.");
     }
 
-    await writeAuditLog(actorRole, "attendance.checked_out", "attendance", existing.attendanceId);
+    await writeAuditLog(actorRole, "attendance.checked_out", "attendance", existing.attendanceId, actorUserId);
 
     return this.toDTO(updated);
   }
@@ -226,7 +228,8 @@ export class AttendanceService {  constructor(
   async updateAttendance(
     attendanceId: string,
     input: UpdateAttendanceInput,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<AttendanceDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN") {
       throw new AuthorizationError("Only HR or Admin can manage attendance records.");
@@ -263,7 +266,7 @@ export class AttendanceService {  constructor(
       throw new NotFoundError("Attendance record was not found.");
     }
 
-    await writeAuditLog(actorRole, "attendance.updated", "attendance", attendanceId);
+    await writeAuditLog(actorRole, "attendance.updated", "attendance", attendanceId, actorUserId);
 
     return this.toDTO(updated);
   }
@@ -272,7 +275,8 @@ export class AttendanceService {  constructor(
     attendanceId: string,
     input: RequestCorrectionInput,
     actorRole: Role,
-    requestingEmployeeId?: string
+    requestingEmployeeId: string | undefined,
+    actorUserId: string
   ): Promise<AttendanceCorrectionDTO> {
     const record = await this.attendanceRepository.findById(attendanceId);
     if (!record) {
@@ -305,7 +309,7 @@ export class AttendanceService {  constructor(
 
     await this.attendanceRepository.update(attendanceId, { correctionRequested: true });
 
-    await writeAuditLog(actorRole, "attendance.correction_requested", "attendance", attendanceId);
+    await writeAuditLog(actorRole, "attendance.correction_requested", "attendance", attendanceId, actorUserId);
 
     return this.toCorrectionDTO(correction);
   }
@@ -326,7 +330,8 @@ export class AttendanceService {  constructor(
     correctionId: string,
     decision: "APPROVED" | "REJECTED",
     comments: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<AttendanceCorrectionDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN") {
       throw new AuthorizationError("Only HR or Admin can review corrections.");
@@ -365,7 +370,8 @@ export class AttendanceService {  constructor(
       actorRole,
       `attendance.correction_${decision.toLowerCase()}`,
       "attendance",
-      correction.attendanceId
+      correction.attendanceId,
+      actorUserId
     );
 
     return this.toCorrectionDTO(updated);

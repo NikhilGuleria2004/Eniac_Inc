@@ -13,8 +13,12 @@ const variantStyles = {
 };
 
 export function Alert({ variant = "info", title, children, className = "" }: AlertProps) {
+  const isUrgent = variant === "error" || variant === "warning";
   return (
-    <div className={`rounded-md border px-4 py-3 ${variantStyles[variant]} ${className}`}>
+    <div
+      className={`rounded-md border px-4 py-3 ${variantStyles[variant]} ${className}`}
+      role={isUrgent ? "alert" : "status"}
+    >
       {title && <p className="font-medium mb-1">{title}</p>}
       <p className="text-sm">{children}</p>
     </div>

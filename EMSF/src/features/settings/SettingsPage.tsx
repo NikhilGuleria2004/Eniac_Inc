@@ -11,15 +11,15 @@ interface SettingsSection {
 }
 
 const SETTINGS_SECTIONS: SettingsSection[] = [
-  { id: "users", label: "Users", icon: <Shield size={18} />, title: "Role & Permissions", description: "Configure role-based access control" },
-  { id: "leave-types", label: "Leave Types", icon: <Calendar size={18} />, title: "Leave Types", description: "Configure available leave types" },
-  { id: "document-types", label: "Document Types", icon: <FileText size={18} />, title: "Document Types", description: "Configure document type classifications" },
-  { id: "employment-types", label: "Employment Types", icon: <Briefcase size={18} />, title: "Employment Types", description: "Configure employment type options" },
-  { id: "countries", label: "Countries", icon: <MapPin size={18} />, title: "Countries", description: "Configure supported countries and regions" },
-  { id: "departments", label: "Departments", icon: <Building2 size={18} />, title: "Departments", description: "Configure organizational departments" },
-  { id: "designations", label: "Designations", icon: <Tag size={18} />, title: "Designations", description: "Configure job designations" },
-  { id: "notifications", label: "Notifications", icon: <Bell size={18} />, title: "Notification Settings", description: "Configure notification preferences" },
-  { id: "system", label: "System Preferences", icon: <Settings size={18} />, title: "System Preferences", description: "Global system configuration" },
+  { id: "users", label: "Users", icon: <Shield aria-hidden="true" size={18} />, title: "Role & Permissions", description: "Configure role-based access control" },
+  { id: "leave-types", label: "Leave Types", icon: <Calendar aria-hidden="true" size={18} />, title: "Leave Types", description: "Configure available leave types" },
+  { id: "document-types", label: "Document Types", icon: <FileText aria-hidden="true" size={18} />, title: "Document Types", description: "Configure document type classifications" },
+  { id: "employment-types", label: "Employment Types", icon: <Briefcase aria-hidden="true" size={18} />, title: "Employment Types", description: "Configure employment type options" },
+  { id: "countries", label: "Countries", icon: <MapPin aria-hidden="true" size={18} />, title: "Countries", description: "Configure supported countries and regions" },
+  { id: "departments", label: "Departments", icon: <Building2 aria-hidden="true" size={18} />, title: "Departments", description: "Configure organizational departments" },
+  { id: "designations", label: "Designations", icon: <Tag aria-hidden="true" size={18} />, title: "Designations", description: "Configure job designations" },
+  { id: "notifications", label: "Notifications", icon: <Bell aria-hidden="true" size={18} />, title: "Notification Settings", description: "Configure notification preferences" },
+  { id: "system", label: "System Preferences", icon: <Settings aria-hidden="true" size={18} />, title: "System Preferences", description: "Global system configuration" },
 ];
 
 export function SettingsPage() {
@@ -35,7 +35,7 @@ export function SettingsPage() {
           <p className="text-sm text-gray-500 mt-1">Admin-only configuration panel</p>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md">
-          <Shield size={16} className="text-gray-500" />
+          <Shield aria-hidden="true" size={16} className="text-gray-500" />
           <span className="text-sm text-gray-600">Admin Only</span>
         </div>
       </div>
@@ -130,7 +130,7 @@ function DocumentTypesSection() {
       <div className="flex justify-between items-center">
         <h3 className="text-sm font-medium text-gray-700">Document Types</h3>
         <button className="btn btn-primary btn-sm">
-          <Plus size={14} className="mr-1" />
+          <Plus aria-hidden="true" size={14} className="mr-1" />
           Add Type
         </button>
       </div>
@@ -139,8 +139,8 @@ function DocumentTypesSection() {
           <div key={t} className="flex items-center justify-between p-3 border border-gray-200 rounded-md">
             <span className="text-sm font-medium text-gray-900">{t.replace(/_/g, " ")}</span>
             <div className="flex gap-1">
-              <button className="text-gray-400 hover:text-gray-600"><Edit2 size={14} /></button>
-              <button className="text-gray-400 hover:text-red-500"><Trash2 size={14} /></button>
+              <button className="text-gray-400 hover:text-gray-600" aria-label={`Edit ${t.replace(/_/g, " ")}`}><Edit2 aria-hidden="true" size={14} /></button>
+              <button className="text-gray-400 hover:text-red-500" aria-label={`Delete ${t.replace(/_/g, " ")}`}><Trash2 aria-hidden="true" size={14} /></button>
             </div>
           </div>
         ))}
@@ -155,7 +155,7 @@ function CountriesSection() {
       <div className="flex justify-between items-center">
         <h3 className="text-sm font-medium text-gray-700">Supported Countries</h3>
         <button className="btn btn-primary btn-sm">
-          <Plus size={14} className="mr-1" />
+          <Plus aria-hidden="true" size={14} className="mr-1" />
           Add Country
         </button>
       </div>
@@ -164,7 +164,7 @@ function CountriesSection() {
           <div key={c} className="flex items-center justify-between p-3 border border-gray-200 rounded-md">
             <span className="text-sm font-medium text-gray-900">{c}</span>
             <div className="flex gap-1">
-              <button className="text-gray-400 hover:text-gray-600"><Edit2 size={14} /></button>
+              <button className="text-gray-400 hover:text-gray-600" aria-label={`Edit ${c}`}><Edit2 aria-hidden="true" size={14} /></button>
             </div>
           </div>
         ))}
@@ -261,7 +261,7 @@ function SystemPreferencesSection() {
       </div>
       <div className="pt-4 border-t border-gray-200">
         <button className="btn btn-primary">
-          <Save size={16} className="mr-2" />
+          <Save aria-hidden="true" size={16} className="mr-2" />
           Save Preferences
         </button>
       </div>
@@ -275,7 +275,7 @@ function ListSection({ title, items, addLabel }: { title: string; items: readonl
       <div className="flex justify-between items-center">
         <h3 className="text-sm font-medium text-gray-700">{title}</h3>
         <button className="btn btn-primary btn-sm">
-          <Plus size={14} className="mr-1" />
+          <Plus aria-hidden="true" size={14} className="mr-1" />
           {addLabel}
         </button>
       </div>
@@ -284,8 +284,8 @@ function ListSection({ title, items, addLabel }: { title: string; items: readonl
           <div key={item} className="flex items-center justify-between p-3 border border-gray-200 rounded-md">
             <span className="text-sm font-medium text-gray-900">{item}</span>
             <div className="flex gap-1">
-              <button className="text-gray-400 hover:text-gray-600"><Edit2 size={14} /></button>
-              <button className="text-gray-400 hover:text-red-500"><Trash2 size={14} /></button>
+              <button className="text-gray-400 hover:text-gray-600" aria-label={`Edit ${item}`}><Edit2 aria-hidden="true" size={14} /></button>
+              <button className="text-gray-400 hover:text-red-500" aria-label={`Delete ${item}`}><Trash2 aria-hidden="true" size={14} /></button>
             </div>
           </div>
         ))}

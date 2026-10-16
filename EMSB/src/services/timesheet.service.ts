@@ -81,7 +81,7 @@ export class TimesheetService {
   /**
    * Manual provisioning retry. Only allowed when the current status is FAILED.
    */
-  async provision(employeeId: string, actorRole: Role): Promise<TimesheetStatusDTO> {
+  async provision(employeeId: string, actorRole: Role, actorUserId: string): Promise<TimesheetStatusDTO> {
     const employee = await this.employeeRepository.findByEmployeeId(employeeId);
     if (!employee) {
       throw new NotFoundError("Employee was not found.");
@@ -125,7 +125,7 @@ export class TimesheetService {
       await this.employeeRepository.update(employeeId, {
         timesheetEligibility: { eligible: true, eligibleAt: new Date() }
       });
-      await writeAuditLog(actorRole, "timesheet.provisioned", "timesheet", employeeId);
+      await writeAuditLog(actorRole, "timesheet.provisioned", "timesheet", employeeId, actorUserId);
       return this.toDTO(updated);
     }
 
@@ -136,13 +136,13 @@ export class TimesheetService {
     await this.employeeRepository.update(employeeId, {
       timesheetEligibility: { eligible: false, eligibleAt: new Date(), reason: "FAILED" }
     });
-    await writeAuditLog(actorRole, "timesheet.provision_failed", "timesheet", employeeId);
+    await writeAuditLog(actorRole, "timesheet.provision_failed", "timesheet", employeeId, actorUserId);
     await this.emitOnTimesheetProvisioningFailed(employee, result.error);
 
     return this.toDTO(updated);
   }
 
-  async disable(employeeId: string, actorRole: Role): Promise<TimesheetStatusDTO> {
+  async disable(employeeId: string, actorRole: Role, actorUserId: string): Promise<TimesheetStatusDTO> {
     const employee = await this.employeeRepository.findByEmployeeId(employeeId);
     if (!employee) {
       throw new NotFoundError("Employee was not found.");
@@ -155,7 +155,7 @@ export class TimesheetService {
       eligible: false
     });
 
-    await writeAuditLog(actorRole, "timesheet.disabled", "timesheet", employeeId);
+    await writeAuditLog(actorRole, "timesheet.disabled", "timesheet", employeeId, actorUserId);
 
     if (!result.success) {
       throw new BusinessRuleError(

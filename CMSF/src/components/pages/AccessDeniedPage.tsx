@@ -1,11 +1,16 @@
-import { ShieldAlert } from "lucide-react";
+import { ShieldAlert, ArrowLeftRight } from "lucide-react";
 import { useAuth } from "../../features/auth/AuthContext";
-import type { AccessDeniedReason } from "../../types";
+import { CMS_ROLES } from "../../data/constants";
+import type { AccessDeniedReason, Role } from "../../types";
 
 const REASONS: Record<NonNullable<AccessDeniedReason>, { title: string; message: string }> = {
+  UNAUTHENTICATED: {
+    title: "Not Authenticated",
+    message: "Please sign in to access the Client Management System.",
+  },
   HR_ROLE: {
     title: "Access Restricted — HR Role",
-    message: "The HR role does not have access to the Client Management System. Use the role switcher or log in as ADMIN, MANAGER, SUPERVISOR, or EMPLOYEE.",
+    message: "The HR role does not have access to the Client Management System. Switch to another role below or log in as ADMIN, MANAGER, SUPERVISOR, or EMPLOYEE.",
   },
   NON_BILLABLE: {
     title: "Access Restricted — Non-Billable",
@@ -17,8 +22,12 @@ const REASONS: Record<NonNullable<AccessDeniedReason>, { title: string; message:
   },
 };
 
+function roleLabel(r: Role): string {
+  return r.charAt(0) + r.slice(1).toLowerCase();
+}
+
 export function AccessDeniedPage() {
-  const { user, cmsAccess, logout } = useAuth();
+  const { user, cmsAccess, logout, setRoleForDev } = useAuth();
   const reason = cmsAccess.reason ?? "NOT_ELIGIBLE";
   const info = REASONS[reason as NonNullable<AccessDeniedReason>] ?? REASONS.NOT_ELIGIBLE;
 
@@ -33,6 +42,27 @@ export function AccessDeniedPage() {
             Signed in as {user.firstName} {user.lastName} ({user.role})
           </p>
         )}
+
+        {user && (
+          <div className="mb-6">
+            <p className="mb-2 flex items-center justify-center gap-1 text-xs font-medium text-gray-500">
+              <ArrowLeftRight size={14} /> Switch role (dev)
+            </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {CMS_ROLES.map((r) => (
+                <button
+                  key={r}
+                  className={`btn ${r === user.role ? "btn-primary btn-sm opacity-60 cursor-not-allowed" : "btn-secondary btn-sm"}`}
+                  disabled={r === user.role}
+                  onClick={() => setRoleForDev(r)}
+                >
+                  {roleLabel(r)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <button className="btn btn-primary" onClick={logout}>
           Logout
         </button>

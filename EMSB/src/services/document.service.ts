@@ -81,7 +81,7 @@ export class DocumentService {
     };
   }
 
-  async createDocument(input: CreateDocumentInput, actorRole: Role, requestingEmployeeId?: string): Promise<DocumentDTO> {
+  async createDocument(input: CreateDocumentInput, actorRole: Role, requestingEmployeeId: string | undefined, actorUserId: string): Promise<DocumentDTO> {
     const employee = await this.employeeRepository.findByEmployeeId(input.employeeId);
     if (!employee) {
       throw new NotFoundError("Employee was not found.");
@@ -108,7 +108,7 @@ export class DocumentService {
     };
 
     const created = await this.documentRepository.create(doc);
-    await this.createAuditLog(actorRole, "document.uploaded", "document", created.documentId);
+    await this.createAuditLog(actorRole, "document.uploaded", "document", created.documentId, actorUserId);
 
     return this.toDTO(created);
   }
@@ -133,7 +133,8 @@ export class DocumentService {
   async updateDocument(
     documentId: string,
     input: UpdateDocumentInput,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<DocumentDTO> {
     const doc = await this.documentRepository.findById(documentId);
     if (!doc) {
@@ -156,39 +157,43 @@ export class DocumentService {
       throw new NotFoundError("Document was not found.");
     }
 
-    await this.createAuditLog(actorRole, "document.updated", "document", documentId);
+    await this.createAuditLog(actorRole, "document.updated", "document", documentId, actorUserId);
     return this.toDTO(updated);
   }
 
   async approveDocument(
     documentId: string,
     comments: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<DocumentDTO> {
-    return this.reviewDocument(documentId, "APPROVED", comments, actorRole);
+    return this.reviewDocument(documentId, "APPROVED", comments, actorRole, actorUserId);
   }
 
   async rejectDocument(
     documentId: string,
     comments: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<DocumentDTO> {
-    return this.reviewDocument(documentId, "REJECTED", comments, actorRole);
+    return this.reviewDocument(documentId, "REJECTED", comments, actorRole, actorUserId);
   }
 
   async requestChanges(
     documentId: string,
     comments: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<DocumentDTO> {
-    return this.reviewDocument(documentId, "CHANGES_REQUESTED", comments, actorRole);
+    return this.reviewDocument(documentId, "CHANGES_REQUESTED", comments, actorRole, actorUserId);
   }
 
   private async reviewDocument(
     documentId: string,
     status: DocumentStatus,
     comments: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<DocumentDTO> {
     const doc = await this.documentRepository.findById(documentId);
     if (!doc) {
@@ -234,7 +239,7 @@ export class DocumentService {
       CHANGES_REQUESTED: "document.changes_requested"
     };
 
-    await this.createAuditLog(actorRole, actionMap[status], "document", documentId);
+    await this.createAuditLog(actorRole, actionMap[status], "document", documentId, actorUserId);
     await this.emitOnDocumentReviewed(updated, status as Exclude<DocumentStatus, "PENDING">);
     return this.toDTO(updated);
   }
@@ -305,9 +310,10 @@ export class DocumentService {
     actorRole: Role,
     action: string,
     entityType: string,
-    entityId: string
+    entityId: string,
+    actorUserId: string
   ): Promise<void> {
-    await writeAuditLog(actorRole, action, entityType, entityId);
+    await writeAuditLog(actorRole, action, entityType, entityId, actorUserId);
   }
 
    private async emitOnDocumentReviewed(

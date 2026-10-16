@@ -54,7 +54,8 @@ export const assignmentController = {
       const service = getAssignmentService();
       const { assignment, overallocationWarning } = await service.createAssignment(
         result.data,
-        req.user?.role ?? "MANAGER"
+        req.user!.role,
+        req.user!.userId
       );
 
       const response = overallocationWarning
@@ -93,7 +94,8 @@ export const assignmentController = {
       const assignment = await service.updateAssignment(
         req.params.assignmentId,
         result.data,
-        req.user?.role ?? "MANAGER"
+        req.user!.role,
+        req.user!.userId
       );
 
       res.json(successResponse(assignment));
@@ -107,7 +109,8 @@ export const assignmentController = {
       const service = getAssignmentService();
       const assignment = await service.endAssignment(
         req.params.assignmentId,
-        req.user?.role ?? "MANAGER"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(assignment));
     } catch (error) {

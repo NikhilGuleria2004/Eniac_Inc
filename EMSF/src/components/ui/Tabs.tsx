@@ -1,7 +1,7 @@
 import { useState, createContext, useContext, type ComponentPropsWithoutRef } from "react";
 
 interface TabsContextValue {
-  activeTab: string;
+  activeTab: string | undefined;
   setActiveTab: (value: string) => void;
 }
 
@@ -14,7 +14,8 @@ function useTabs() {
 }
 
 interface TabsProps {
-  defaultValue: string;
+  /** Initial tab for uncontrolled usage; omit when providing `value`. */
+  defaultValue?: string;
   value?: string;
   onValueChange?: (value: string) => void;
   children: React.ReactNode;
@@ -22,7 +23,7 @@ interface TabsProps {
 }
 
 export function Tabs({ defaultValue, value, onValueChange, children, className = "" }: TabsProps) {
-  const [internal, setInternal] = useState(defaultValue);
+  const [internal, setInternal] = useState<string | undefined>(defaultValue);
   const active = value ?? internal;
   const setActive = (v: string) => {
     setInternal(v);
@@ -77,13 +78,37 @@ export function TabsTrigger({ value, className = "", ...props }: TabsTriggerProp
     " " +
     className;
 
+  // WAI-ARIA tabs pattern: arrow keys move (and activate) between tabs,
+  // Home/End jump to first/last. Triggers live in the same tablist, so we
+  // traverse siblings in the DOM.
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    const list = e.currentTarget.parentElement;
+    if (!list) return;
+    const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const index = tabs.indexOf(e.currentTarget);
+    if (index === -1) return;
+
+    let next: HTMLButtonElement | undefined;
+    if (e.key === "ArrowRight") next = tabs[(index + 1) % tabs.length];
+    else if (e.key === "ArrowLeft") next = tabs[(index - 1 + tabs.length) % tabs.length];
+    else if (e.key === "Home") next = tabs[0];
+    else if (e.key === "End") next = tabs[tabs.length - 1];
+    else return;
+
+    e.preventDefault();
+    next.focus();
+    next.click();
+  };
+
   return (
     <button
       role="tab"
       aria-selected={isActive}
+      tabIndex={isActive ? 0 : -1}
       data-state={isActive ? "active" : "inactive"}
       className={classes}
       onClick={() => setActiveTab(value)}
+      onKeyDown={handleKeyDown}
       {...props}
     />
   );

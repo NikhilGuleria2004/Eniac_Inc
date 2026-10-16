@@ -131,12 +131,12 @@ export function CompensationTab({ employee }: { employee: Employee }) {
         </div>
         {canManage && !editing && !loading && (
           <button type="button" onClick={() => setEditing(true)} className="btn btn-secondary text-sm">
-            <Pencil size={14} /> {compensation?.salary || compensation?.billRate ? "Edit" : "Set rates"}
+            <Pencil aria-hidden="true" size={14} /> {compensation?.salary || compensation?.billRate ? "Edit" : "Set rates"}
           </button>
         )}
       </div>
 
-      {loading && <p className="text-sm text-gray-500">Loading compensation...</p>}
+      {loading && <p className="text-sm text-gray-500">Loading compensation…</p>}
       {error && !editing && (
         <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">{error}</div>
       )}
@@ -174,23 +174,23 @@ export function CompensationTab({ employee }: { employee: Employee }) {
         <form onSubmit={handleSave} className="space-y-4">
           <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Pay Rate (employee cost)</h4>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div><label className={label}>Currency</label><select className={input} value={currency} onChange={(e) => setCurrency(e.target.value)}>{CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
-            <div><label className={label}>Amount</label><input type="number" min="0" step="0.01" className={input} value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="e.g. 85000" /></div>
-            <div><label className={label}>Frequency</label><select className={input} value={payFrequency} onChange={(e) => setPayFrequency(e.target.value as PayFrequency)}>{PAY_FREQUENCIES.map((f) => <option key={f} value={f}>{f.replace(/_/g, " ")}</option>)}</select></div>
+            <div><label className={label} htmlFor="currency-1">Currency</label><select id="currency-1" className={input} value={currency} onChange={(e) => setCurrency(e.target.value)}>{CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
+            <div><label className={label} htmlFor="amount-1">Amount</label><input id="amount-1" type="number" min="0" step="0.01" className={input} value={salary} onChange={(e) => setSalary(e.target.value)} placeholder="e.g. 85000" /></div>
+            <div><label className={label} htmlFor="frequency">Frequency</label><select id="frequency" className={input} value={payFrequency} onChange={(e) => setPayFrequency(e.target.value as PayFrequency)}>{PAY_FREQUENCIES.map((f) => <option key={f} value={f}>{f.replace(/_/g, " ")}</option>)}</select></div>
           </div>
 
           <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wider pt-2">Bill Rate (client)</h4>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div><label className={label}>Currency</label><select className={input} value={billCurrency} onChange={(e) => setBillCurrency(e.target.value)}>{CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
-            <div><label className={label}>Amount</label><input type="number" min="0" step="0.01" className={input} value={billAmount} onChange={(e) => setBillAmount(e.target.value)} placeholder="e.g. 120000" /></div>
-            <div><label className={label}>Unit</label><select className={input} value={billUnit} onChange={(e) => setBillUnit(e.target.value as BillUnit)}>{BILL_UNITS.map((u) => <option key={u} value={u}>{u.replace(/_/g, " ")}</option>)}</select></div>
+            <div><label className={label} htmlFor="currency">Currency</label><select id="currency" className={input} value={billCurrency} onChange={(e) => setBillCurrency(e.target.value)}>{CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}</select></div>
+            <div><label className={label} htmlFor="amount">Amount</label><input id="amount" type="number" min="0" step="0.01" className={input} value={billAmount} onChange={(e) => setBillAmount(e.target.value)} placeholder="e.g. 120000" /></div>
+            <div><label className={label} htmlFor="unit">Unit</label><select id="unit" className={input} value={billUnit} onChange={(e) => setBillUnit(e.target.value as BillUnit)}>{BILL_UNITS.map((u) => <option key={u} value={u}>{u.replace(/_/g, " ")}</option>)}</select></div>
           </div>
 
           {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">{error}</div>}
 
           <div className="flex flex-col sm:flex-row sm:justify-end gap-2">
             <button type="button" className="btn btn-secondary text-sm" onClick={() => { setEditing(false); setError(""); }}>Cancel</button>
-            <button type="submit" disabled={saving} className="btn btn-primary text-sm">{saving ? "Saving..." : "Save Compensation"}</button>
+            <button type="submit" disabled={saving} className="btn btn-primary text-sm">{saving ? "Saving…" : "Save Compensation"}</button>
           </div>
         </form>
       )}

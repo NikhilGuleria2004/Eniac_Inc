@@ -112,7 +112,7 @@ export function RequestsTab({ requests, canApprove, onDecide }: RequestsTabProps
             key: "submitted",
             header: "Submitted",
             sortable: true,
-            cell: (r) => r.createdAt.slice(0, 10),
+            cell: (r) => new Date(r.createdAt).toLocaleDateString(),
           },
           { key: "status", header: "Status", cell: (r) => <StatusBadge status={r.status} /> },
           {

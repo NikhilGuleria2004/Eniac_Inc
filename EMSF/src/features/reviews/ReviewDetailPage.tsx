@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useParams, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import { ArrowLeft, User, Calendar, CheckCircle, UserCheck, Save } from "lucide-react";
@@ -10,6 +11,8 @@ import { hasPermission } from "../../lib/permissions";
 import { useToast } from "../../components/ui/Toast";
 
 export function ReviewDetailPage() {
+  const [tab, setTab] = useUrlState("tab", "overview");
+
   const { reviewId } = useParams<{ reviewId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -42,8 +45,8 @@ export function ReviewDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <button onClick={handleBack} className="p-2 hover:bg-gray-100 rounded-md text-gray-500">
-          <ArrowLeft size={20} />
+        <button onClick={handleBack} aria-label="Go back" className="p-2 hover:bg-gray-100 rounded-md text-gray-500">
+          <ArrowLeft aria-hidden="true" size={20} />
         </button>
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Review #{review.id}</h1>
@@ -53,19 +56,19 @@ export function ReviewDetailPage() {
 
       <div className="flex flex-wrap gap-4">
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md">
-          <User size={14} className="text-gray-500" />
+          <User aria-hidden="true" size={14} className="text-gray-500" />
           <span className="text-sm text-gray-600">
             {employee ? `${employee.firstName} ${employee.lastName}` : review.employeeId}
           </span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md">
-          <UserCheck size={14} className="text-gray-500" />
+          <UserCheck aria-hidden="true" size={14} className="text-gray-500" />
           <span className="text-sm text-gray-600">
             Review by {reviewer ? `${reviewer.firstName} ${reviewer.lastName}` : review.reviewerId}
           </span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md">
-          <Calendar size={14} className="text-gray-500" />
+          <Calendar aria-hidden="true" size={14} className="text-gray-500" />
           <span className="text-sm text-gray-600">
             {new Date(review.reviewDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
           </span>
@@ -73,7 +76,7 @@ export function ReviewDetailPage() {
         <StatusBadge status={review.status} />
       </div>
 
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="feedback">Feedback</TabsTrigger>
@@ -160,7 +163,7 @@ export function ReviewDetailPage() {
                   onClick={handleAcknowledge}
                   className="btn btn-primary w-full"
                 >
-                  <Save size={16} className="mr-2" />
+                  <Save aria-hidden="true" size={16} className="mr-2" />
                   Acknowledge Review
                 </button>
               )}
@@ -217,7 +220,7 @@ export function ReviewDetailPage() {
 
       <div className="flex justify-end gap-2">
         <button onClick={handleBack} className="btn btn-secondary">
-          <ArrowLeft size={16} className="mr-2" />
+          <ArrowLeft aria-hidden="true" size={16} className="mr-2" />
           Back to Reviews
         </button>
       </div>

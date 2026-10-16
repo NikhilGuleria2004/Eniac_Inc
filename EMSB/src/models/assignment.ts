@@ -1,6 +1,6 @@
 import type { ObjectId } from "mongodb";
 
-export type AssignmentStatus = "ACTIVE" | "ENDED" | "CANCELLED";
+export type AssignmentStatus = "ACTIVE" | "PENDING" | "ENDED" | "CANCELLED";
 
 export interface ProjectAssignment {
   _id: ObjectId;

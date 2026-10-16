@@ -23,7 +23,7 @@ export function Header({ onToggleMobileSidebar }: HeaderProps) {
         className="p-2 hover:bg-gray-100 rounded-md lg:hidden shrink-0"
         aria-label="Toggle sidebar"
       >
-        <Menu size={20} />
+        <Menu aria-hidden="true" size={20} />
       </button>
 
       <div className="hidden md:block w-full max-w-xl min-w-0">
@@ -38,7 +38,7 @@ export function Header({ onToggleMobileSidebar }: HeaderProps) {
         <NotificationsDropdown />
 
         <button className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-md hidden sm:flex shrink-0" aria-label="Help">
-          <HelpCircle size={20} className="text-gray-600 dark:text-gray-300" />
+          <HelpCircle aria-hidden="true" size={20} className="text-gray-600 dark:text-gray-300" />
         </button>
 
         <UserMenu />

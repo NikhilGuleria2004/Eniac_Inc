@@ -95,7 +95,8 @@ export class AssignmentService {
 
   async createAssignment(
     input: CreateAssignmentInput,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<CreateAssignmentResult> {
     const employee = await this.employeeRepository.findByEmployeeId(input.employeeId);
     if (!employee) {
@@ -125,7 +126,7 @@ export class AssignmentService {
     };
 
     const created = await this.assignmentRepository.create(assignment);
-    await writeAuditLog(actorRole, "assignment.created", "assignment", created.assignmentId);
+    await writeAuditLog(actorRole, "assignment.created", "assignment", created.assignmentId, actorUserId);
     await this.emitOnAssignmentCreated(created, employee.firstName, employee.lastName, project.name);
 
     let overallocationWarning: string | undefined;
@@ -143,7 +144,8 @@ export class AssignmentService {
   async updateAssignment(
     assignmentId: string,
     input: UpdateAssignmentInput,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<AssignmentDTO> {
     const assignment = await this.assignmentRepository.findById(assignmentId);
     if (!assignment) {
@@ -161,12 +163,12 @@ export class AssignmentService {
       throw new NotFoundError("Assignment was not found.");
     }
 
-    await writeAuditLog(actorRole, "assignment.updated", "assignment", assignmentId);
+    await writeAuditLog(actorRole, "assignment.updated", "assignment", assignmentId, actorUserId);
 
     return this.toDTO(updated);
   }
 
-  async endAssignment(assignmentId: string, actorRole: Role): Promise<AssignmentDTO> {
+  async endAssignment(assignmentId: string, actorRole: Role, actorUserId: string): Promise<AssignmentDTO> {
     const assignment = await this.assignmentRepository.findById(assignmentId);
     if (!assignment) {
       throw new NotFoundError("Assignment was not found.");
@@ -184,7 +186,7 @@ export class AssignmentService {
       throw new NotFoundError("Assignment was not found.");
     }
 
-    await writeAuditLog(actorRole, "assignment.ended", "assignment", assignmentId);
+    await writeAuditLog(actorRole, "assignment.ended", "assignment", assignmentId, actorUserId);
 
     return this.toDTO(updated);
   }

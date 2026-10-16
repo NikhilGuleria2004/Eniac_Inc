@@ -13,8 +13,8 @@ const DEV_DEFAULT_SEED_PASSWORDS: Record<string, string> = {
   SEED_ADMIN_PASSWORD: "Eniacinc1",
   SEED_HR_PASSWORD: "Eniacinc2",
   SEED_MANAGER_PASSWORD: "Eniacinc3",
-  SEED_SUPERVISOR_PASSWORD: "Eniacinc5",
-  SEED_EMPLOYEE_PASSWORD: "Eniacinc4"
+  SEED_SUPERVISOR_PASSWORD: "Eniacinc4",
+  SEED_EMPLOYEE_PASSWORD: "Eniacinc5"
 };
 
 const SEEDED_USERS = [

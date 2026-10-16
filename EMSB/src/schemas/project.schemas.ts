@@ -8,7 +8,8 @@ const projectStatusEnum = z.enum([
   "CANCELLED"
 ] as const);
 
-const projectHealthEnum = z.enum(["ON_TRACK", "AT_RISK", "OFF_TRACK"] as const);
+const projectHealthEnum = z.enum(["ON_TRACK", "AT_RISK", "OFF_TRACK", "DELAYED"] as const);
+const projectVisibilityEnum = z.enum(["INTERNAL", "CLIENT_VISIBLE"] as const);
 
 export const projectListQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -32,7 +33,12 @@ export const createProjectSchema = z.object({
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
   managerId: z.string().optional(),
-  progressPercent: z.coerce.number().int().min(0).max(100).optional()
+  supervisorId: z.string().optional(),
+  progressPercent: z.coerce.number().int().min(0).max(100).optional(),
+  budget: z.coerce.number().min(0).optional(),
+  budgetCurrency: z.string().max(3).optional(),
+  tags: z.array(z.string().max(30)).optional(),
+  visibility: projectVisibilityEnum.optional()
 }).refine((data) => {
   if (data.startDate && data.endDate) {
     return data.startDate <= data.endDate;
@@ -54,7 +60,12 @@ export const updateProjectSchema = z.object({
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
   managerId: z.string().optional(),
-  progressPercent: z.coerce.number().int().min(0).max(100).optional()
+  supervisorId: z.string().optional(),
+  progressPercent: z.coerce.number().int().min(0).max(100).optional(),
+  budget: z.coerce.number().min(0).optional(),
+  budgetCurrency: z.string().max(3).optional(),
+  tags: z.array(z.string().max(30)).optional(),
+  visibility: projectVisibilityEnum.optional()
 }).refine((data) => {
   if (data.startDate && data.endDate) {
     return data.startDate <= data.endDate;

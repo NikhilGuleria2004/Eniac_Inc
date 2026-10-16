@@ -1,15 +1,18 @@
 import { useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { FolderKanban, Pencil, UserPlus, UserMinus } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../components/ui/Tabs";
 import { Progress } from "../../components/ui/Progress";
 import { DataTable } from "../../components/tables/DataTable";
 import { StatusBadge } from "../../components/data/StatusBadge";
 import { useToast } from "../../components/ui/Toast";
+import { hasPermission } from "../../lib/permissions";
+import { useAuth } from "../../features/auth/AuthContext";
 import {
   getProjectById,
   getEmployees,
   getAssignmentsByProject,
+  getActiveAssignmentsByEmployee,
   getTimesheets,
   getInvoices,
   getAuditLogs,
@@ -35,6 +38,7 @@ function HealthBadge({ health }: { health: Project["health"] }) {
 export function ProjectDetailPage() {
   const { projectId = "" } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { addToast } = useToast();
   const [editOpen, setEditOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
@@ -61,6 +65,12 @@ export function ProjectDetailPage() {
     );
   }
 
+  if (user?.role === "EMPLOYEE" && !getActiveAssignmentsByEmployee(user.employeeId ?? "").some((a) => a.projectId === project.id)) {
+    return <Navigate to="/403" replace />;
+  }
+
+  const canEditProject = hasPermission(user?.role ?? "EMPLOYEE", "project.edit");
+  const canAssign = hasPermission(user?.role ?? "EMPLOYEE", "assignment.create");
   const manager = employees.find((e) => e.id === project.managerId);
   const supervisor = employees.find((e) => e.id === project.supervisorId);
   const nameOf = (id: string) => {
@@ -88,10 +98,12 @@ export function ProjectDetailPage() {
             <p className="text-sm text-gray-500">{project.projectCode} · {project.clientName}</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="btn btn-secondary" onClick={() => setEditOpen(true)}><Pencil size={16} className="mr-2" />Edit</button>
-          <button className="btn btn-primary" onClick={() => setAssignOpen(true)}><UserPlus size={16} className="mr-2" />New Assignment</button>
-        </div>
+        {(canEditProject || canAssign) && (
+          <div className="flex items-center gap-2">
+            {canEditProject && <button className="btn btn-secondary" onClick={() => setEditOpen(true)}><Pencil size={16} className="mr-2" />Edit</button>}
+            {canAssign && <button className="btn btn-primary" onClick={() => setAssignOpen(true)}><UserPlus size={16} className="mr-2" />New Assignment</button>}
+          </div>
+        )}
       </div>
 
       <div className="card">
@@ -123,7 +135,11 @@ export function ProjectDetailPage() {
                 <dt className="text-gray-500">Manager</dt><dd className="text-gray-900">{manager ? `${manager.firstName} ${manager.lastName}` : "—"}</dd>
                 <dt className="text-gray-500">Supervisor</dt><dd className="text-gray-900">{supervisor ? `${supervisor.firstName} ${supervisor.lastName}` : "—"}</dd>
                 <dt className="text-gray-500">Tier</dt><dd className="text-gray-900">{project.tier ?? "—"}</dd>
-                <dt className="text-gray-500">Budget</dt><dd className="text-gray-900">{project.budget ? formatCurrency(project.budget, project.budgetCurrency ?? "USD") : "—"}</dd>
+                {(user?.role === "ADMIN" || user?.role === "MANAGER") && (
+                  <>
+                    <dt className="text-gray-500">Budget</dt><dd className="text-gray-900">{project.budget ? formatCurrency(project.budget, project.budgetCurrency ?? "USD") : "—"}</dd>
+                  </>
+                )}
                 <dt className="text-gray-500">Visibility</dt><dd className="text-gray-900">{project.visibility.replace("_", " ")}</dd>
               </dl>
               <p className="mt-3 text-sm text-gray-600">{project.description || "No description."}</p>
@@ -146,9 +162,11 @@ export function ProjectDetailPage() {
         </TabsContent>
 
         <TabsContent value="team" className="space-y-4 pt-6">
-          <div className="flex justify-end">
-            <button className="btn btn-secondary" onClick={() => setAssignOpen(true)}><UserPlus size={16} className="mr-2" />Add Team Member</button>
-          </div>
+          {canAssign && (
+            <div className="flex justify-end">
+              <button className="btn btn-secondary" onClick={() => setAssignOpen(true)}><UserPlus size={16} className="mr-2" />Add Team Member</button>
+            </div>
+          )}
           <DataTable
             data={activeAssignments}
             keyExtractor={(a) => a.id}

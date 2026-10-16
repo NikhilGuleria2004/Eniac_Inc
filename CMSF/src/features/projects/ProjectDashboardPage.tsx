@@ -7,9 +7,11 @@ import { Select } from "../../components/ui/Select";
 import { Progress } from "../../components/ui/Progress";
 import { DataTable } from "../../components/tables/DataTable";
 import { StatusBadge } from "../../components/data/StatusBadge";
-import { getProjects, getEmployees } from "../../data/mock/repositories";
+import { getProjects, getEmployees, getActiveAssignmentsByEmployee } from "../../data/mock/repositories";
+import { useAuth } from "../../features/auth/AuthContext";
 import { PROJECT_STATUSES, PROJECT_HEALTH, ROUTES } from "../../data/constants";
 import { computeProjectKPIs, filterProjects, uniqueClients, uniqueManagers } from "./projects";
+import { hasPermission } from "../../lib/permissions";
 import { ProjectFormModal } from "./ProjectFormModal";
 import type { Project } from "../../types";
 
@@ -26,6 +28,8 @@ function HealthBadge({ health }: { health: Project["health"] }) {
 
 export function ProjectDashboardPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const canCreateProject = hasPermission(user?.role ?? "EMPLOYEE", "project.create");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
   const [client, setClient] = useState("all");
@@ -35,12 +39,19 @@ export function ProjectDashboardPage() {
 
   const allProjects = useMemo(() => getProjects(), []);
   const employees = useMemo(() => getEmployees(), []);
-  const kpis = useMemo(() => computeProjectKPIs(allProjects), [allProjects]);
-  const filtered = useMemo(() => filterProjects(allProjects, { search, status, client, health, manager }), [allProjects, search, status, client, health, manager]);
+  const visibleProjects = useMemo(() => {
+    if (user?.role === "EMPLOYEE") {
+      const assigned = new Set(getActiveAssignmentsByEmployee(user.employeeId ?? "").map((a) => a.projectId));
+      return allProjects.filter((p) => assigned.has(p.id));
+    }
+    return allProjects;
+  }, [allProjects, user?.role, user?.employeeId]);
+  const kpis = useMemo(() => computeProjectKPIs(visibleProjects), [visibleProjects]);
+  const filtered = useMemo(() => filterProjects(visibleProjects, { search, status, client, health, manager }), [visibleProjects, search, status, client, health, manager]);
   const hasFilters = status !== "all" || client !== "all" || health !== "all" || manager !== "all" || search !== "";
 
-  const clientOptions = [{ label: "All Clients", value: "all" }, ...uniqueClients(allProjects).map((c) => ({ label: c.name, value: c.id }))];
-  const managerOptions = [{ label: "All Managers", value: "all" }, ...uniqueManagers(allProjects).map((id) => {
+  const clientOptions = [{ label: "All Clients", value: "all" }, ...uniqueClients(visibleProjects).map((c) => ({ label: c.name, value: c.id }))];
+  const managerOptions = [{ label: "All Managers", value: "all" }, ...uniqueManagers(visibleProjects).map((id) => {
     const emp = employees.find((e) => e.id === id);
     return { label: emp ? `${emp.firstName} ${emp.lastName}` : id, value: id };
   })];
@@ -53,10 +64,12 @@ export function ProjectDashboardPage() {
         title="Project Management"
         subtitle="Track engagement progress, teams and client alignment"
         actions={
-          <button className="btn btn-primary" onClick={() => setFormOpen(true)}>
-            <Plus size={16} className="mr-2" />
-            New Project
-          </button>
+          canCreateProject ? (
+            <button className="btn btn-primary" onClick={() => setFormOpen(true)}>
+              <Plus size={16} className="mr-2" />
+              New Project
+            </button>
+          ) : undefined
         }
       />
 

@@ -4,6 +4,10 @@ import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "./AuthContext";
 import { DEMO_USERS } from "../../data/constants";
 import { BrandMark } from "../../components/brand/BrandMark";
+import { usePageTitle } from "../../app/router/usePageTitle";
+
+const DESKTOP_POINTER =
+  typeof window !== "undefined" && !!window.matchMedia?.("(pointer: fine)").matches;
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -13,6 +17,8 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { login, isAuthenticated, isLoading: isRestoringSession } = useAuth();
   const navigate = useNavigate();
+
+  usePageTitle("Sign In");
 
   if (isRestoringSession) {
     return null;
@@ -31,7 +37,7 @@ export function LoginPage() {
     if (success) {
       navigate("/dashboard");
     } else {
-      setError("Invalid email or password");
+      setError("Email or password is incorrect. Try again, or use a demo account below.");
     }
     setIsLoading(false);
   };
@@ -57,52 +63,60 @@ export function LoginPage() {
             <div className="flex justify-center mb-4">
               <BrandMark size={56} />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-1">ENIAC INC.</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-1" translate="no">ENIAC INC.</h1>
             <p className="text-sm text-gray-500">Employee Management System</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="form-label">Email</label>
+              <label htmlFor="login-email" className="form-label">Email</label>
               <input
+                id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="form-input"
-                 placeholder="Enter your email or work email"
-                 required
-                autoComplete="off"
+                placeholder="Enter your email or work email…"
+                required
+                autoFocus={DESKTOP_POINTER}
+                autoComplete="email"
+                inputMode="email"
                 autoCorrect="off"
+                spellCheck={false}
               />
             </div>
 
             <div className="relative">
-              <label className="form-label">Password</label>
+              <label htmlFor="login-password" className="form-label">Password</label>
               <input
+                id="login-password"
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="form-input pr-10"
-                placeholder="Enter your password"
+                placeholder="Enter your password…"
                 required
-                autoComplete="new-password"
+                autoComplete="current-password"
                 autoCorrect="off"
                 autoCapitalize="off"
                 spellCheck={false}
               />
               <button
                 type="button"
-                tabIndex={-1}
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-2 bottom-0 pb-2.5 text-gray-500 hover:text-gray-700"
                 aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff aria-hidden="true" size={18} /> : <Eye aria-hidden="true" size={18} />}
               </button>
             </div>
 
             {error && (
-              <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+              <div
+                role="alert"
+                className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2"
+              >
                 {error}
               </div>
             )}
@@ -112,7 +126,7 @@ export function LoginPage() {
               disabled={isLoading}
               className="btn btn-primary w-full"
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? "Signing in…" : "Sign In"}
             </button>
           </form>
 

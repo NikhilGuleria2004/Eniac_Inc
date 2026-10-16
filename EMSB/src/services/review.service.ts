@@ -72,7 +72,7 @@ export class ReviewService {
     };
   }
 
-  async createReview(input: CreateReviewInput, actorRole: Role): Promise<ReviewDTO> {
+  async createReview(input: CreateReviewInput, actorRole: Role, actorUserId: string): Promise<ReviewDTO> {
     const employee = await this.employeeRepository.findByEmployeeId(input.employeeId);
     if (!employee) {
       throw new NotFoundError("Employee was not found.");
@@ -102,7 +102,7 @@ export class ReviewService {
     };
 
     const created = await this.reviewRepository.create(review);
-    await writeAuditLog(actorRole, "review.created", "review", created.reviewId);
+    await writeAuditLog(actorRole, "review.created", "review", created.reviewId, actorUserId);
 
     return this.toDTO(created);
   }
@@ -127,7 +127,8 @@ export class ReviewService {
   async updateReview(
     reviewId: string,
     input: UpdateReviewInput,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<ReviewDTO> {
     const review = await this.reviewRepository.findById(reviewId);
     if (!review) {
@@ -157,23 +158,24 @@ export class ReviewService {
       throw new NotFoundError("Review was not found.");
     }
 
-    await writeAuditLog(actorRole, "review.updated", "review", reviewId);
+    await writeAuditLog(actorRole, "review.updated", "review", reviewId, actorUserId);
 
     return this.toDTO(updated);
   }
 
-  async submitReview(reviewId: string, actorRole: Role): Promise<ReviewDTO> {
-    return this.transition(reviewId, "IN_PROGRESS", actorRole);
+  async submitReview(reviewId: string, actorRole: Role, actorUserId: string): Promise<ReviewDTO> {
+    return this.transition(reviewId, "IN_PROGRESS", actorRole, actorUserId);
   }
 
-  async completeReview(reviewId: string, actorRole: Role): Promise<ReviewDTO> {
-    return this.transition(reviewId, "COMPLETED", actorRole);
+  async completeReview(reviewId: string, actorRole: Role, actorUserId: string): Promise<ReviewDTO> {
+    return this.transition(reviewId, "COMPLETED", actorRole, actorUserId);
   }
 
   private async transition(
     reviewId: string,
     targetStatus: ReviewStatus,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<ReviewDTO> {
     const review = await this.reviewRepository.findById(reviewId);
     if (!review) {
@@ -194,7 +196,7 @@ export class ReviewService {
       ACKNOWLEDGED: "review.acknowledged"
     };
 
-    await writeAuditLog(actorRole, actionMap[targetStatus], "review", reviewId);
+    await writeAuditLog(actorRole, actionMap[targetStatus], "review", reviewId, actorUserId);
 
     return this.toDTO(updated);
   }

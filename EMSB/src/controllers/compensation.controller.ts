@@ -35,7 +35,8 @@ export const compensationController = {
       const compensation = await service.updateCompensation(
         req.params.employeeId,
         result.data,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
 
       res.status(HTTP_STATUS.OK).json(successResponse(compensation));

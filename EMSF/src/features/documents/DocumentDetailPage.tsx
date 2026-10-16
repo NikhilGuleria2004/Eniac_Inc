@@ -86,7 +86,7 @@ export function DocumentDetailPage() {
         breadcrumbs={[{ label: "Documents", href: ROUTES.DOCUMENTS }, { label: doc.name }]}
         actions={
           <div className="flex items-center gap-2">
-            <button className="btn btn-secondary text-sm" title="Download (mock)"><Download size={15} /> Download</button>
+            <button className="btn btn-secondary text-sm" title="Download (mock)"><Download aria-hidden="true" size={15} /> Download</button>
             {employee && (
               <NavLink className="btn btn-secondary text-sm" to={ROUTES.EMPLOYEE_DETAIL(employee.id)}>
                 View Employee
@@ -98,7 +98,7 @@ export function DocumentDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card">
           <div className="flex items-center gap-2 mb-4">
-            <Eye size={16} className="text-gray-400" />
+            <Eye aria-hidden="true" size={16} className="text-gray-400" />
             <h3 className="text-sm font-semibold text-gray-900">Document Preview</h3>
           </div>
           <div className="border border-gray-200 rounded-md bg-gray-50 p-8 text-center flex flex-col items-center justify-center min-h-80">
@@ -149,7 +149,7 @@ export function DocumentDetailPage() {
           <Textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Review comment (required for Reject / Request Changes)..."
+            placeholder="Review comment (required for Reject / Request Changes)…"
             rows={3}
             className="w-full"
           />

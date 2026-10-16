@@ -100,7 +100,7 @@ export function EmployeeDashboard() {
               <div className="flex gap-2">
                 {!checkedIn ? (
                   <button onClick={async () => { setActionLoading(true); await checkIn({ employeeId, checkIn: new Date().toISOString() }); setActionLoading(false); setRefreshKey((n) => n + 1); }} disabled={actionLoading} className="btn btn-primary">
-                    {actionLoading ? <><Loader2 size={16} className="animate-spin" /> Checking in...</> : "Mark Attendance"}
+                    {actionLoading ? <><Loader2 aria-hidden="true" size={16} className="animate-spin" /> Checking in…</> : "Mark Attendance"}
                   </button>
                 ) : (
                   <button disabled className="btn btn-secondary">
@@ -112,10 +112,10 @@ export function EmployeeDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Leave Balance" value={`${leaveBalance.PAID.remaining + leaveBalance.SICK.remaining + leaveBalance.CASUAL.remaining} days`} icon={<Clock size={20} />} />
-        <StatCard label="Pending Requests" value={pendingLeaves.toString()} icon={<Calendar size={20} />} />
-        <StatCard label="Assigned Projects" value={assignments.length.toString()} icon={<FolderOpen size={20} />} />
-        <StatCard label="Documents" value={documents.length.toString()} icon={<FileText size={20} />} />
+        <StatCard label="Leave Balance" value={`${leaveBalance.PAID.remaining + leaveBalance.SICK.remaining + leaveBalance.CASUAL.remaining} days`} icon={<Clock aria-hidden="true" size={20} />} />
+        <StatCard label="Pending Requests" value={pendingLeaves.toString()} icon={<Calendar aria-hidden="true" size={20} />} />
+        <StatCard label="Assigned Projects" value={assignments.length.toString()} icon={<FolderOpen aria-hidden="true" size={20} />} />
+        <StatCard label="Documents" value={documents.length.toString()} icon={<FileText aria-hidden="true" size={20} />} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -137,9 +137,9 @@ export function EmployeeDashboard() {
           <h3 className="text-sm font-semibold text-gray-900 mb-4">Leave Balance</h3>
           <div className="space-y-3">
             {[
-              { type: "Paid Leave", key: "PAID", icon: <Calendar size={16} /> },
-              { type: "Sick Leave", key: "SICK", icon: <Clock size={16} /> },
-              { type: "Casual Leave", key: "CASUAL", icon: <FileText size={16} /> },
+              { type: "Paid Leave", key: "PAID", icon: <Calendar aria-hidden="true" size={16} /> },
+              { type: "Sick Leave", key: "SICK", icon: <Clock aria-hidden="true" size={16} /> },
+              { type: "Casual Leave", key: "CASUAL", icon: <FileText aria-hidden="true" size={16} /> },
             ].map(({ type, key, icon }) => (
               <div key={key} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -168,11 +168,11 @@ export function EmployeeDashboard() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Project</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Client</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Role</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Allocation</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Project</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Client</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Role</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Allocation</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -206,11 +206,11 @@ export function EmployeeDashboard() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Document</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Type</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Uploaded</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Expiry</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Document</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Type</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Uploaded</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Expiry</th>
                 </tr>
               </thead>
               <tbody>

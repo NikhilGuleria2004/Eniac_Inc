@@ -12,11 +12,12 @@ interface ProjectFormModalProps {
   open: boolean;
   initialData?: Project | null;
   onClose: () => void;
+  defaultClientId?: string;
 }
 
 type ProjectPayload = Omit<Project, "id" | "projectCode" | "teamSize" | "createdAt" | "updatedAt">;
 
-export function ProjectFormModal({ open, initialData, onClose }: ProjectFormModalProps) {
+export function ProjectFormModal({ open, initialData, onClose, defaultClientId }: ProjectFormModalProps) {
   const { addToast } = useToast();
   const clients = useMemo(() => getClients(), [open]);
   const managers = useMemo(() => getEmployees().filter((e) => e.role === "MANAGER"), [open]);
@@ -50,11 +51,11 @@ export function ProjectFormModal({ open, initialData, onClose }: ProjectFormModa
       setTier(initialData.tier ?? "MEDIUM");
       setVisibility(initialData.visibility);
     } else if (open && !initialData) {
-      setName(""); setClientId(clients[0]?.id ?? ""); setManagerId(managers[0]?.id ?? "");
+      setName(""); setClientId(defaultClientId ?? clients[0]?.id ?? ""); setManagerId(managers[0]?.id ?? "");
       setSupervisorId(""); setDescription(""); setStartDate(""); setEndDate("");
       setStatus("PLANNING"); setHealth("ON_TRACK"); setBudget(""); setTier("MEDIUM"); setVisibility("CLIENT_VISIBLE");
     }
-  }, [open, initialData, clients, managers]);
+  }, [open, initialData, clients, managers, defaultClientId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

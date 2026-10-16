@@ -1,4 +1,5 @@
 import type { ObjectId, Decimal128 } from "mongodb";
+import type { TechRole } from "../config/constants.js";
 import type {
   EmploymentStatus,
   BillingStatus
@@ -63,6 +64,7 @@ export interface Employee {
   compensation?: EmployeeCompensation;
   billRate?: EmployeeBillRate;
   timesheetEligibility?: TimesheetEligibility;
+  techRole?: TechRole;
   createdAt: Date;
   updatedAt: Date;
 }

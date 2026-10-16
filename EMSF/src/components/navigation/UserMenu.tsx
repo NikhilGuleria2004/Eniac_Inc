@@ -8,6 +8,7 @@ export function UserMenu() {
   const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -15,9 +16,19 @@ export function UserMenu() {
         setOpen(false);
       }
     }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && open) {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
     if (open) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener("keydown", handleKeyDown);
+      };
     }
   }, [open]);
 
@@ -26,8 +37,11 @@ export function UserMenu() {
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={triggerRef}
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 p-1.5 rounded-md hover:bg-gray-100 transition-colors"
+        aria-expanded={open}
+        aria-label={`Account menu for ${user.firstName} ${user.lastName}`}
       >
         <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-sm font-medium">
           {user.firstName[0]}{user.lastName[0]}
@@ -38,7 +52,7 @@ export function UserMenu() {
           </div>
           <div className="text-xs text-gray-500">{user.role}</div>
         </div>
-        <ChevronRight size={14} className={`text-gray-400 hidden sm:block transition-transform ${open ? "rotate-90" : ""}`} />
+        <ChevronRight aria-hidden="true" size={14} className={`text-gray-400 hidden sm:block transition-transform ${open ? "rotate-90" : ""}`} />
       </button>
 
       {open && (
@@ -54,7 +68,7 @@ export function UserMenu() {
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
           >
-            <User size={16} />
+            <User aria-hidden="true" size={16} />
             <span>Profile</span>
           </NavLink>
           <NavLink
@@ -62,7 +76,7 @@ export function UserMenu() {
             onClick={() => setOpen(false)}
             className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
           >
-            <Settings size={16} />
+            <Settings aria-hidden="true" size={16} />
             <span>Settings</span>
           </NavLink>
           <div className="border-t border-gray-100 mt-1 pt-1">
@@ -73,7 +87,7 @@ export function UserMenu() {
               }}
               className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 w-full"
             >
-              <LogOut size={16} />
+              <LogOut aria-hidden="true" size={16} />
               <span>Sign Out</span>
             </button>
           </div>

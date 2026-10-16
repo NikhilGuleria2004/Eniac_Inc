@@ -4,6 +4,7 @@ import { TimesheetRepository } from "../repositories/timesheet.repository.js";
 import { EmployeeRepository } from "../repositories/employee.repository.js";
 import { TimesheetAdapter } from "../integrations/timesheet/timesheet.adapter.js";
 import { successResponse } from "../utils/response.js";
+import { AuthorizationError } from "../utils/errors.js";
 
 function getTimesheetService(): TimesheetService {
   return new TimesheetService(
@@ -16,6 +17,10 @@ function getTimesheetService(): TimesheetService {
 export const timesheetController = {
   getStatus: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
+      const actor = req.user;
+      if (actor?.role === "EMPLOYEE" && req.params.employeeId !== actor.employeeId) {
+        throw new AuthorizationError("You can only view your own timesheet status.");
+      }
       const service = getTimesheetService();
       const status = await service.getStatus(req.params.employeeId);
       res.json(successResponse(status));
@@ -29,7 +34,8 @@ export const timesheetController = {
       const service = getTimesheetService();
       const status = await service.provision(
         req.params.employeeId,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(status));
     } catch (error) {
@@ -42,7 +48,8 @@ export const timesheetController = {
       const service = getTimesheetService();
       const status = await service.disable(
         req.params.employeeId,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(status));
     } catch (error) {

@@ -1,24 +1,11 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from "recharts";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/Tabs";
+import { LEAVE_TYPE_COLORS, LEAVE_STATUS_COLORS, CHART_FALLBACK_COLOR } from "./palette";
 
 interface LeaveStatusChartProps {
   leaveTypeCounts: Record<string, number>;
   leaveStatusCounts: Record<string, number>;
 }
-
-const LEAVE_TYPE_COLORS: Record<string, string> = {
-  PAID: "#1D4ED8",
-  SICK: "#C53030",
-  CASUAL: "#B7791F",
-  UNPAID: "#667085",
-};
-
-const LEAVE_STATUS_COLORS: Record<string, string> = {
-  PENDING: "#B7791F",
-  APPROVED: "#16803C",
-  REJECTED: "#C53030",
-  CANCELLED: "#667085",
-};
 
 const LEAVE_TYPE_LABELS: Record<string, string> = {
   PAID: "Paid Leave",
@@ -46,7 +33,7 @@ export function LeaveStatusChart({ leaveTypeCounts, leaveStatusCounts }: LeaveSt
           data={Object.entries(leaveTypeCounts).map(([name, value]) => ({
             name: LEAVE_TYPE_LABELS[name] || name,
             value,
-            fill: LEAVE_TYPE_COLORS[name] || "#667085",
+            fill: LEAVE_TYPE_COLORS[name] || CHART_FALLBACK_COLOR,
           }))}
           labelKey="name"
         />
@@ -56,7 +43,7 @@ export function LeaveStatusChart({ leaveTypeCounts, leaveStatusCounts }: LeaveSt
           data={Object.entries(leaveStatusCounts).map(([name, value]) => ({
             name: LEAVE_STATUS_LABELS[name] || name,
             value,
-            fill: LEAVE_STATUS_COLORS[name] || "#667085",
+            fill: LEAVE_STATUS_COLORS[name] || CHART_FALLBACK_COLOR,
           }))}
           labelKey="name"
         />

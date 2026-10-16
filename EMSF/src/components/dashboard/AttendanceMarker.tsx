@@ -55,7 +55,7 @@ export function AttendanceMarker() {
               disabled={actionLoading}
               className="btn btn-primary"
             >
-              {actionLoading ? <><Loader2 size={16} className="animate-spin" /> Checking in...</> : "Mark Attendance"}
+              {actionLoading ? <><Loader2 aria-hidden="true" size={16} className="animate-spin" /> Checking in…</> : "Mark Attendance"}
             </button>
           ) : (
             <button disabled className="btn btn-secondary">

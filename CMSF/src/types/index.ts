@@ -44,6 +44,7 @@ export type AuditAction =
   | "client.created"
   | "client.updated"
   | "project.created"
+  | "project.updated"
   | "project.activated"
   | "project.completed"
   | "invoice.created"
@@ -321,6 +322,8 @@ export interface Invoice {
   timesheetIds?: string[];
   notes?: string;
   termsAndConditions?: string;
+  /** Invoice template driving the PDF branding (default template when omitted). */
+  templateId?: string;
   createdBy: string;
   createdAt: string;
   updatedAt: string;
@@ -390,7 +393,7 @@ export interface User {
   avatar?: string;
 }
 
-export type AccessDeniedReason = "HR_ROLE" | "NON_BILLABLE" | "NOT_ELIGIBLE";
+export type AccessDeniedReason = "UNAUTHENTICATED" | "HR_ROLE" | "NON_BILLABLE" | "NOT_ELIGIBLE";
 
 export interface CmsAccess {
   granted: boolean;

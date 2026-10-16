@@ -3,6 +3,13 @@ import { EmployeeDistributionChart } from "../../components/charts/EmployeeDistr
 import { LeaveStatusChart } from "../../components/charts/LeaveStatusChart";
 import { DocumentStatusChart } from "../../components/charts/DocumentStatusChart";
 import { AttendanceMarker } from "../../components/dashboard/AttendanceMarker";
+import {
+  CHART_HUE,
+  EMPLOYEE_STATUS_COLORS,
+  DOCUMENT_STATUS_COLORS,
+  CHART_SERIES_COLORS,
+  CHART_FALLBACK_COLOR,
+} from "../../components/charts/palette";
 
 export function HRDashboard() {
   const employees = getEmployees();
@@ -25,30 +32,21 @@ export function HRDashboard() {
   // --- Chart Data Computation ---
   // Employee Distribution: Country, Billing Status, Employment Status
   const countryData = [
-    { name: "India", value: indiaCount, fill: "#1D4ED8" },
-    { name: "United States", value: usCount, fill: "#16803C" },
+    { name: "India", value: indiaCount, fill: CHART_HUE.blue },
+    { name: "United States", value: usCount, fill: CHART_HUE.bluishGreen },
   ];
   const billingData = [
-    { name: "Billable", value: billableCount, fill: "#1D4ED8" },
-    { name: "Non-Billable", value: nonBillableCount, fill: "#667085" },
+    { name: "Billable", value: billableCount, fill: CHART_HUE.blue },
+    { name: "Non-Billable", value: nonBillableCount, fill: CHART_HUE.gray },
   ];
   const statusData = employees.reduce((acc, e) => {
     acc[e.employmentStatus] = (acc[e.employmentStatus] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
-  const statusColors: Record<string, string> = {
-    ACTIVE: "#16803C",
-    ON_LEAVE: "#B7791F",
-    ONBOARDING: "#2563EB",
-    INACTIVE: "#667085",
-    SUSPENDED: "#C53030",
-    RESIGNED: "#9CA3AF",
-    TERMINATED: "#7F1D1D",
-  };
   const employmentStatusData = Object.entries(statusData).map(([name, value]) => ({
     name,
     value,
-    fill: statusColors[name] || "#667085",
+    fill: EMPLOYEE_STATUS_COLORS[name] || CHART_FALLBACK_COLOR,
   }));
 
   // Leave Status Distribution
@@ -66,27 +64,20 @@ export function HRDashboard() {
     acc[d.status] = (acc[d.status] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
-  const documentStatusColors: Record<string, string> = {
-    PENDING: "#B7791F",
-    UNDER_REVIEW: "#2563EB",
-    APPROVED: "#16803C",
-    REJECTED: "#C53030",
-    EXPIRED: "#667085",
-  };
   const documentStatusData = Object.entries(documentStatusCounts).map(([status, count]) => ({
     status,
     count,
-    fill: documentStatusColors[status] || "#667085",
+    fill: DOCUMENT_STATUS_COLORS[status] || CHART_FALLBACK_COLOR,
   }));
 
   // Onboarding Pipeline Stages
   const onboardingStages = [
-    { stage: "New", count: employees.filter((e) => e.employmentStatus === "ONBOARDING").length, color: "#2563EB" },
-    { stage: "Onboarding", count: pendingOnboarding, color: "#1D4ED8" },
-    { stage: "Documents Pending", count: pendingDocuments, color: "#B7791F" },
-    { stage: "HR Review", count: documents.filter((d) => d.status === "UNDER_REVIEW").length, color: "#16803C" },
-    { stage: "Ready", count: employees.filter((e) => e.timesheetEligibility === "ELIGIBLE").length, color: "#16803C" },
-    { stage: "Completed", count: employees.filter((e) => e.timesheetEligibility === "PROVISIONED").length, color: "#667085" },
+    { stage: "New", count: employees.filter((e) => e.employmentStatus === "ONBOARDING").length, color: CHART_SERIES_COLORS[0] },
+    { stage: "Onboarding", count: pendingOnboarding, color: CHART_SERIES_COLORS[1] },
+    { stage: "Documents Pending", count: pendingDocuments, color: CHART_SERIES_COLORS[2] },
+    { stage: "HR Review", count: documents.filter((d) => d.status === "UNDER_REVIEW").length, color: CHART_SERIES_COLORS[3] },
+    { stage: "Ready", count: employees.filter((e) => e.timesheetEligibility === "ELIGIBLE").length, color: CHART_SERIES_COLORS[4] },
+    { stage: "Completed", count: employees.filter((e) => e.timesheetEligibility === "PROVISIONED").length, color: CHART_SERIES_COLORS[5] },
   ];
 
   // Upcoming Reviews - real data
@@ -166,11 +157,11 @@ export function HRDashboard() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Employee</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Action</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Priority</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Due Date</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Employee</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Action</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Priority</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Due Date</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -198,11 +189,11 @@ export function HRDashboard() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Employee</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Reviewer</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Review Period</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Due Date</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Employee</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Reviewer</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Review Period</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Due Date</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
                 </tr>
               </thead>
               <tbody>

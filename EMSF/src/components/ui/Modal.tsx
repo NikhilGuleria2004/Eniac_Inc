@@ -1,4 +1,5 @@
-import { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode, useEffect, useId, useRef } from "react";
+import { useFocusTrap } from "../../lib/useFocusTrap";
 
 interface ModalProps {
   open: boolean;
@@ -27,6 +28,10 @@ export function Modal({
   size = "md",
 }: ModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  const descriptionId = useId();
+
+  useFocusTrap(open, modalRef);
 
   useEffect(() => {
     if (!open) return;
@@ -51,23 +56,29 @@ export function Modal({
       <div className="fixed inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
       <div
         ref={modalRef}
-        className={`relative w-full ${sizeClasses[size]} mx-auto card shadow-xl max-h-[calc(100dvh-2rem)] flex flex-col`}
+        className={`relative w-full ${sizeClasses[size]} mx-auto card shadow-xl max-h-[calc(100dvh-2rem)] flex flex-col overscroll-contain`}
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-labelledby={title ? titleId : undefined}
+        aria-label={title ? undefined : "Dialog"}
+        aria-describedby={description ? descriptionId : undefined}
         onClick={(e) => e.stopPropagation()}
       >
         {(title || description) && (
           <div className="border-b border-gray-200 pb-4 mb-4">
             {title && (
-              <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+              <h3 id={titleId} className="text-lg font-semibold text-gray-900">
+                {title}
+              </h3>
             )}
             {description && (
-              <p className="text-sm text-gray-500 mt-1">{description}</p>
+              <p id={descriptionId} className="text-sm text-gray-500 mt-1">
+                {description}
+              </p>
             )}
           </div>
         )}
-        <div className="max-h-[calc(100dvh-220px)] overflow-y-auto min-w-0">{children}</div>
+        <div className="max-h-[calc(100dvh-220px)] overflow-y-auto overscroll-contain min-w-0">{children}</div>
         {footer && (
           <div className="border-t border-gray-200 pt-4 mt-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
             {footer}

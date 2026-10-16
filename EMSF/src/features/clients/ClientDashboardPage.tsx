@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Building2, Users, Plus, Search, TrendingUp, AlertCircle, Archive } from "lucide-react";
@@ -14,7 +15,7 @@ import type { Client } from "../../types";
 export function ClientDashboardPage() {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useUrlState("q");
   const [statusFilter, setStatusFilter] = useState("all");
   const [countryFilter, setCountryFilter] = useState("all");
   const [industryFilter, setIndustryFilter] = useState("all");
@@ -106,28 +107,28 @@ export function ClientDashboardPage() {
           <p className="text-sm text-gray-500 mt-1">Manage client relationships and track project engagements</p>
         </div>
         <button onClick={handleNewClient} className="btn btn-primary">
-          <Plus size={16} className="mr-2" />
+          <Plus aria-hidden="true" size={16} className="mr-2" />
           Add Client
         </button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        <StatCard label="Total Clients" value={kpis.total} icon={<Building2 size={20} />} />
-        <StatCard label="Active" value={kpis.active} icon={<Users size={20} />} variant="success" />
-        <StatCard label="Prospect" value={kpis.prospect} icon={<TrendingUp size={20} />} variant="warning" />
-        <StatCard label="Inactive" value={kpis.inactive} icon={<Archive size={20} />} variant="neutral" />
-        <StatCard label="Active Projects" value={kpis.totalActiveProjects} icon={<AlertCircle size={20} />} variant="info" />
+        <StatCard label="Total Clients" value={kpis.total} icon={<Building2 aria-hidden="true" size={20} />} />
+        <StatCard label="Active" value={kpis.active} icon={<Users aria-hidden="true" size={20} />} variant="success" />
+        <StatCard label="Prospect" value={kpis.prospect} icon={<TrendingUp aria-hidden="true" size={20} />} variant="warning" />
+        <StatCard label="Inactive" value={kpis.inactive} icon={<Archive aria-hidden="true" size={20} />} variant="neutral" />
+        <StatCard label="Active Projects" value={kpis.totalActiveProjects} icon={<AlertCircle aria-hidden="true" size={20} />} variant="info" />
       </div>
 
       <div className="card">
         <div className="flex flex-col sm:flex-row gap-4 p-4 border-b border-gray-200">
           <div className="flex-1 max-w-xs">
-            <label className="sr-only">Search</label>
+            <label className="sr-only" htmlFor="search">Search</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input
+              <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input id="search"
                 type="text"
-                placeholder="Search by name, code, contact..."
+                placeholder="Search by name, code, contact…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="form-input pl-10"
@@ -221,24 +222,24 @@ function ClientFormModal({ open, onClose, initialData, onSubmit }: ClientFormMod
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Client Name *</label>
-            <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="form-input" required />
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="client-name">Client Name *</label>
+            <input id="client-name" type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="form-input" required />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Client Code</label>
-            <input type="text" value={initialData?.clientCode || "Auto-generated"} className="form-input bg-gray-50" readOnly />
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="client-code">Client Code</label>
+            <input id="client-code" type="text" value={initialData?.clientCode || "Auto-generated"} className="form-input bg-gray-50" readOnly />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Country *</label>
-            <select value={formData.country} onChange={(e) => setFormData({ ...formData, country: e.target.value })} className="form-input" required>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="country">Country *</label>
+            <select id="country" value={formData.country} onChange={(e) => setFormData({ ...formData, country: e.target.value })} className="form-input" required>
               {countries.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Industry *</label>
-            <select value={formData.industry} onChange={(e) => setFormData({ ...formData, industry: e.target.value })} className="form-input" required>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="industry">Industry *</label>
+            <select id="industry" value={formData.industry} onChange={(e) => setFormData({ ...formData, industry: e.target.value })} className="form-input" required>
               {industries.map((i) => <option key={i} value={i}>{i}</option>)}
             </select>
           </div>
@@ -247,22 +248,22 @@ function ClientFormModal({ open, onClose, initialData, onSubmit }: ClientFormMod
           <h3 className="text-sm font-semibold text-gray-900 mb-3">Primary Contact</h3>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
-              <input type="text" value={formData.primaryContact.name} onChange={(e) => setFormData({ ...formData, primaryContact: { ...formData.primaryContact, name: e.target.value } })} className="form-input" required />
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="name">Name *</label>
+              <input id="name" type="text" value={formData.primaryContact.name} onChange={(e) => setFormData({ ...formData, primaryContact: { ...formData.primaryContact, name: e.target.value } })} className="form-input" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
-              <input type="email" value={formData.primaryContact.email} onChange={(e) => setFormData({ ...formData, primaryContact: { ...formData.primaryContact, email: e.target.value } })} className="form-input" required />
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">Email *</label>
+              <input id="email" type="email" spellCheck={false} autoCapitalize="off" value={formData.primaryContact.email} onChange={(e) => setFormData({ ...formData, primaryContact: { ...formData.primaryContact, email: e.target.value } })} className="form-input" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone *</label>
-              <input type="tel" value={formData.primaryContact.phone} onChange={(e) => setFormData({ ...formData, primaryContact: { ...formData.primaryContact, phone: e.target.value } })} className="form-input" required />
+              <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="phone">Phone *</label>
+              <input id="phone" type="tel" value={formData.primaryContact.phone} onChange={(e) => setFormData({ ...formData, primaryContact: { ...formData.primaryContact, phone: e.target.value } })} className="form-input" required />
             </div>
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
-          <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value as Client["status"] })} className="form-input" required>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="status">Status *</label>
+          <select id="status" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value as Client["status"] })} className="form-input" required>
             {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
         </div>

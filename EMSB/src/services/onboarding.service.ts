@@ -94,7 +94,8 @@ export class OnboardingService {
 
   async createOnboarding(
     input: CreateOnboardingInput,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<OnboardingDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN") {
       throw new AuthorizationError("Access denied: only HR or Admin can create onboarding records.");
@@ -129,7 +130,7 @@ export class OnboardingService {
     };
 
     const created = await this.onboardingRepository.create(record);
-    await this.createAuditLog(actorRole, "onboarding.created", "onboarding", created.employeeId);
+    await this.createAuditLog(actorRole, "onboarding.created", "onboarding", created.employeeId, actorUserId);
 
     return this.toDTO(created);
   }
@@ -154,7 +155,8 @@ export class OnboardingService {
   async updateOnboarding(
     employeeId: string,
     input: UpdateOnboardingInput,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<OnboardingDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN") {
       throw new AuthorizationError("Access denied: only HR or Admin can update onboarding records.");
@@ -188,16 +190,17 @@ export class OnboardingService {
       // downstream eligibility (timesheet transfer) reflects it. HR's explicit
       // value wins over any country-based default.
       await this.employeeRepository.updateBillingStatus(employeeId, input.billingStatus);
-      await this.createAuditLog(actorRole, "employee.billing_status_set", "employee", employeeId);
+      await this.createAuditLog(actorRole, "employee.billing_status_set", "employee", employeeId, actorUserId);
     }
 
-    await this.createAuditLog(actorRole, "onboarding.updated", "onboarding", employeeId);
+    await this.createAuditLog(actorRole, "onboarding.updated", "onboarding", employeeId, actorUserId);
     return this.toDTO(updated);
   }
 
   async submitOnboarding(
     employeeId: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<OnboardingDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN" && actorRole !== "EMPLOYEE") {
       throw new AuthorizationError("Access denied: cannot submit onboarding.");
@@ -290,7 +293,7 @@ export class OnboardingService {
       throw new NotFoundError("Onboarding record was not found.");
     }
 
-    await this.createAuditLog(actorRole, "onboarding.submitted", "onboarding", employeeId);
+    await this.createAuditLog(actorRole, "onboarding.submitted", "onboarding", employeeId, actorUserId);
     await this.emitOnboardingAwaitingReview(
       employeeId,
       employee ? `${employee.firstName} ${employee.lastName}` : ""
@@ -301,7 +304,8 @@ export class OnboardingService {
   async reviewOnboarding(
     employeeId: string,
     reviewNotes: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<OnboardingDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN") {
       throw new AuthorizationError("Access denied: only HR or Admin can review onboarding.");
@@ -329,13 +333,14 @@ export class OnboardingService {
       throw new NotFoundError("Onboarding record was not found.");
     }
 
-    await this.createAuditLog(actorRole, "onboarding.reviewed", "onboarding", employeeId);
+    await this.createAuditLog(actorRole, "onboarding.reviewed", "onboarding", employeeId, actorUserId);
     return this.toDTO(updated);
   }
 
   async approveOnboarding(
     employeeId: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<OnboardingDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN") {
       throw new AuthorizationError("Access denied: only HR or Admin can approve onboarding.");
@@ -378,14 +383,15 @@ export class OnboardingService {
       throw new NotFoundError("Onboarding record was not found.");
     }
 
-    await this.createAuditLog(actorRole, "onboarding.approved", "onboarding", employeeId);
+    await this.createAuditLog(actorRole, "onboarding.approved", "onboarding", employeeId, actorUserId);
     return this.toDTO(updated);
   }
 
   async rejectOnboarding(
     employeeId: string,
     rejectionReason: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<OnboardingDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN") {
       throw new AuthorizationError("Access denied: only HR or Admin can reject onboarding.");
@@ -413,13 +419,14 @@ export class OnboardingService {
       throw new NotFoundError("Onboarding record was not found.");
     }
 
-    await this.createAuditLog(actorRole, "onboarding.rejected", "onboarding", employeeId);
+    await this.createAuditLog(actorRole, "onboarding.rejected", "onboarding", employeeId, actorUserId);
     return this.toDTO(updated);
   }
 
   async activateOnboarding(
     employeeId: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<OnboardingDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN") {
       throw new AuthorizationError("Access denied: only HR or Admin can activate onboarding.");
@@ -469,7 +476,7 @@ export class OnboardingService {
       occurredAt: new Date()
     });
 
-    await this.createAuditLog(actorRole, "onboarding.activated", "onboarding", employeeId);
+    await this.createAuditLog(actorRole, "onboarding.activated", "onboarding", employeeId, actorUserId);
     return this.toDTO(updated);
   }
 
@@ -560,9 +567,10 @@ export class OnboardingService {
     actorRole: Role,
     action: string,
     entityType: string,
-    entityId: string
+    entityId: string,
+    actorUserId: string
   ): Promise<void> {
-    await writeAuditLog(actorRole, action, entityType, entityId);
+    await writeAuditLog(actorRole, action, entityType, entityId, actorUserId);
   }
 
    private async emitOnboardingAwaitingReview(

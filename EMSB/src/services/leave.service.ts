@@ -91,7 +91,8 @@ export class LeaveService {
   async createLeaveRequest(
     input: CreateLeaveRequestInput,
     actorRole: Role,
-    requestingEmployeeId?: string
+    requestingEmployeeId: string | undefined,
+    actorUserId: string
   ): Promise<LeaveRequestDTO> {
     const employeeId = actorRole === "EMPLOYEE"
       ? requestingEmployeeId
@@ -161,7 +162,7 @@ export class LeaveService {
     };
 
     const created = await this.leaveRepository.createRequest(request);
-    await writeAuditLog(actorRole, "leave.requested", "leave_request", created.requestId);
+    await writeAuditLog(actorRole, "leave.requested", "leave_request", created.requestId, actorUserId);
     await this.emitOnLeaveSubmitted(employee.employeeId, employee.firstName, employee.lastName, input.leaveType, days);
 
     return this.toDTO(created);
@@ -169,7 +170,8 @@ export class LeaveService {
 
   async approveLeaveRequest(
     requestId: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<LeaveRequestDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN") {
       throw new AuthorizationError("Only HR or Admin can approve leave requests.");
@@ -204,7 +206,7 @@ export class LeaveService {
       );
     }
 
-    await writeAuditLog(actorRole, "leave.approved", "leave_request", requestId);
+    await writeAuditLog(actorRole, "leave.approved", "leave_request", requestId, actorUserId);
     await this.emitOnLeaveResolved(request.employeeId, "APPROVED");
 
     return this.toDTO(updated);
@@ -213,7 +215,8 @@ export class LeaveService {
   async rejectLeaveRequest(
     requestId: string,
     rejectionReason: string,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<LeaveRequestDTO> {
     if (actorRole !== "HR" && actorRole !== "ADMIN") {
       throw new AuthorizationError("Only HR or Admin can reject leave requests.");
@@ -241,7 +244,7 @@ export class LeaveService {
       throw new NotFoundError("Leave request was not found.");
     }
 
-    await writeAuditLog(actorRole, "leave.rejected", "leave_request", requestId);
+    await writeAuditLog(actorRole, "leave.rejected", "leave_request", requestId, actorUserId);
     await this.emitOnLeaveResolved(request.employeeId, "REJECTED");
 
     return this.toDTO(updated);

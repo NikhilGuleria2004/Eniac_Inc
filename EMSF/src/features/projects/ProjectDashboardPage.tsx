@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Briefcase, TrendingUp, AlertTriangle, CheckCircle, PauseCircle, Plus, Search } from "lucide-react";
@@ -15,7 +16,7 @@ import type { Project, Client } from "../../types";
 export function ProjectDashboardPage() {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useUrlState("q");
   const [statusFilter, setStatusFilter] = useState("all");
   const [clientFilter, setClientFilter] = useState("all");
   const [healthFilter, setHealthFilter] = useState("all");
@@ -110,29 +111,29 @@ export function ProjectDashboardPage() {
           <p className="text-sm text-gray-500 mt-1">Manage projects, track progress, and oversee team allocations</p>
         </div>
         <button onClick={handleNewProject} className="btn btn-primary">
-          <Plus size={16} className="mr-2" />
+          <Plus aria-hidden="true" size={16} className="mr-2" />
           Create Project
         </button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-        <StatCard label="Total Projects" value={kpis.total} icon={<Briefcase size={20} />} />
-        <StatCard label="Active" value={kpis.active} icon={<TrendingUp size={20} />} variant="success" />
-        <StatCard label="Planning" value={kpis.planning} icon={<Briefcase size={20} />} variant="info" />
-        <StatCard label="At Risk" value={kpis.atRisk} icon={<AlertTriangle size={20} />} variant="warning" />
-        <StatCard label="Completed" value={kpis.completed} icon={<CheckCircle size={20} />} variant="success" />
-        <StatCard label="On Hold" value={kpis.onHold} icon={<PauseCircle size={20} />} variant="neutral" />
+        <StatCard label="Total Projects" value={kpis.total} icon={<Briefcase aria-hidden="true" size={20} />} />
+        <StatCard label="Active" value={kpis.active} icon={<TrendingUp aria-hidden="true" size={20} />} variant="success" />
+        <StatCard label="Planning" value={kpis.planning} icon={<Briefcase aria-hidden="true" size={20} />} variant="info" />
+        <StatCard label="At Risk" value={kpis.atRisk} icon={<AlertTriangle aria-hidden="true" size={20} />} variant="warning" />
+        <StatCard label="Completed" value={kpis.completed} icon={<CheckCircle aria-hidden="true" size={20} />} variant="success" />
+        <StatCard label="On Hold" value={kpis.onHold} icon={<PauseCircle aria-hidden="true" size={20} />} variant="neutral" />
       </div>
 
       <div className="card">
         <div className="flex flex-col sm:flex-row gap-4 p-4 border-b border-gray-200">
           <div className="flex-1 max-w-xs">
-            <label className="sr-only">Search</label>
+            <label className="sr-only" htmlFor="search">Search</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input
+              <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input id="search"
                 type="text"
-                placeholder="Search by name, code, client..."
+                placeholder="Search by name, code, client…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="form-input pl-10"
@@ -244,60 +245,60 @@ function ProjectFormModal({ open, onClose, initialData, onSubmit, clients }: Pro
     <Modal open={open} onClose={onClose} title={initialData ? "Edit Project" : "Create Project"} size="lg">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Project Name *</label>
-          <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="form-input" required />
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="project-name">Project Name *</label>
+          <input id="project-name" type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="form-input" required />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Client *</label>
-            <select value={formData.clientId} onChange={(e) => setFormData({ ...formData, clientId: e.target.value })} className="form-input" required>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="client">Client *</label>
+            <select id="client" value={formData.clientId} onChange={(e) => setFormData({ ...formData, clientId: e.target.value })} className="form-input" required>
               <option value="">Select client</option>
               {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Project Manager *</label>
-            <select value={formData.managerId} onChange={(e) => setFormData({ ...formData, managerId: e.target.value })} className="form-input" required>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="project-manager">Project Manager *</label>
+            <select id="project-manager" value={formData.managerId} onChange={(e) => setFormData({ ...formData, managerId: e.target.value })} className="form-input" required>
               {managers.map((m) => <option key={m.id} value={m.id}>{m.firstName} {m.lastName}</option>)}
             </select>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Supervisor</label>
-            <select value={formData.supervisorId} onChange={(e) => setFormData({ ...formData, supervisorId: e.target.value })} className="form-input">
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="supervisor">Supervisor</label>
+            <select id="supervisor" value={formData.supervisorId} onChange={(e) => setFormData({ ...formData, supervisorId: e.target.value })} className="form-input">
               <option value="">None</option>
               {managers.filter((m) => m.id !== formData.managerId).map((m) => <option key={m.id} value={m.id}>{m.firstName} {m.lastName}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Status *</label>
-            <select value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value as Project["status"] })} className="form-input" required>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="status">Status *</label>
+            <select id="status" value={formData.status} onChange={(e) => setFormData({ ...formData, status: e.target.value as Project["status"] })} className="form-input" required>
               {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Health *</label>
-            <select value={formData.health} onChange={(e) => setFormData({ ...formData, health: e.target.value as Project["health"] })} className="form-input" required>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="health">Health *</label>
+            <select id="health" value={formData.health} onChange={(e) => setFormData({ ...formData, health: e.target.value as Project["health"] })} className="form-input" required>
               {healths.map((h) => <option key={h} value={h}>{h.replace("_", " ")}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
-            <input type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} className="form-input" required />
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="start-date">Start Date *</label>
+            <input id="start-date" type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} className="form-input" required />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">End Date *</label>
-            <input type="date" value={formData.endDate} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} className="form-input" required />
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="end-date">End Date *</label>
+            <input id="end-date" type="date" value={formData.endDate} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} className="form-input" required />
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-          <textarea value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="form-input" rows={3} />
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="description">Description</label>
+          <textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} className="form-input" rows={3} />
         </div>
         <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
           <button type="button" onClick={onClose} className="btn btn-secondary">Cancel</button>

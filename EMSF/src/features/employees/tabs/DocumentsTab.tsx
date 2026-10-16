@@ -73,7 +73,7 @@ export function DocumentsTab({ employee }: { employee: Employee }) {
         <h3 className="text-sm font-semibold text-gray-900">Documents ({docs.length})</h3>
         {canUpload && (
           <button type="button" onClick={openUpload} className="btn btn-secondary text-sm">
-            <Upload size={14} /> Upload Document
+            <Upload aria-hidden="true" size={14} /> Upload Document
           </button>
         )}
       </div>
@@ -85,11 +85,11 @@ export function DocumentsTab({ employee }: { employee: Employee }) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Document</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Type</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Uploaded</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Expiry</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Document</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Type</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Uploaded</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Expiry</th>
               </tr>
             </thead>
             <tbody>
@@ -122,31 +122,31 @@ export function DocumentsTab({ employee }: { employee: Employee }) {
           footer={
             <>
               <button type="button" className="btn btn-secondary text-sm" onClick={() => setUploadOpen(false)}>Cancel</button>
-              <button type="submit" form="upload-doc-form" className="btn btn-primary text-sm" disabled={saving}>{saving ? "Uploading..." : "Upload"}</button>
+              <button type="submit" form="upload-doc-form" className="btn btn-primary text-sm" disabled={saving}>{saving ? "Uploading…" : "Upload"}</button>
             </>
           }
         >
           <form id="upload-doc-form" onSubmit={submit} className="space-y-4">
             {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">{error}</div>}
             <div>
-              <label className="form-label">Document Name *</label>
-              <input className="form-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Aadhaar Card" />
+              <label className="form-label" htmlFor="document-name">Document Name *</label>
+              <input id="document-name" className="form-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Aadhaar Card" />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="form-label">Document Type *</label>
-                <select className="form-input" value={type} onChange={(e) => setType(e.target.value as Document["type"])}>
+                <label className="form-label" htmlFor="document-type">Document Type *</label>
+                <select id="document-type" className="form-input" value={type} onChange={(e) => setType(e.target.value as Document["type"])}>
                   {DOCUMENT_TYPES.map((t) => <option key={t} value={t}>{t.replace(/_/g, " ")}</option>)}
                 </select>
               </div>
               <div>
-                <label className="form-label">Expiry Date</label>
-                <input type="date" className="form-input" value={expiry} onChange={(e) => setExpiry(e.target.value)} />
+                <label className="form-label" htmlFor="expiry-date">Expiry Date</label>
+                <input id="expiry-date" type="date" className="form-input" value={expiry} onChange={(e) => setExpiry(e.target.value)} />
               </div>
             </div>
             <div>
-              <label className="form-label">File</label>
-              <input type="file" className="form-input" onChange={(e) => setFile(e.target.files?.[0])} />
+              <label className="form-label" htmlFor="file">File</label>
+              <input id="file" type="file" className="form-input" onChange={(e) => setFile(e.target.files?.[0])} />
               <p className="text-xs text-gray-500 mt-1">The document record is stored with its metadata; file storage is not yet wired up.</p>
             </div>
           </form>

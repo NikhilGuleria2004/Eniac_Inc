@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Download, Trash2, Loader2 } from "lucide-react";
@@ -21,11 +22,13 @@ export function EmployeeDirectoryPage() {
   const role = user?.role ?? "EMPLOYEE";
   const canCreate = hasPermission(role, "employee.create");
   const canDelete = hasPermission(role, "employee.delete");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useUrlState("q");
   const [statusFilter, setStatusFilter] = useState("all");
   const [deptFilter, setDeptFilter] = useState("all");
   const [billingFilter, setBillingFilter] = useState("all");
-  const [page, setPage] = useState(1);
+  const [pageParam, setPageParam] = useUrlState("page", "1");
+  const page = Math.max(1, parseInt(pageParam, 10) || 1);
+  const setPage = (n: number) => setPageParam(String(n));
   const [selected, setSelected] = useState<string[]>([]);
   const [forceRefresh, setForceRefresh] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -65,10 +68,10 @@ export function EmployeeDirectoryPage() {
     <div className="page-container space-y-6">
       <PageHeader title="Employee Directory" description="Manage employee records and workforce information." breadcrumbs={[{ label: "Employees" }]}
         actions={<>
-          <button className="btn btn-secondary text-sm" onClick={handleExport}><Download size={16} /> Export</button>
+          <button className="btn btn-secondary text-sm" onClick={handleExport}><Download aria-hidden="true" size={16} /> Export</button>
         </>} />
       <div className="card"><div className="flex flex-col lg:flex-row lg:items-center gap-3">
-        <SearchInput placeholder="Search by name, email, code, designation..." value={search} onChange={(v) => { setSearch(v); resetPage(); }} className="w-full lg:max-w-sm" />
+        <SearchInput placeholder="Search by name, email, code, designation…" value={search} onChange={(v) => { setSearch(v); resetPage(); }} className="w-full lg:max-w-sm" />
         <FilterBar filters={[
           { key: "status", label: "Status", value: statusFilter, options: [{ label: "All Statuses", value: "all" }, ...EMPLOYMENT_STATUSES.map((s) => ({ label: s.replace(/_/g, " "), value: s }))], onChange: (v) => { setStatusFilter(v); resetPage(); } },
           { key: "dept", label: "Department", value: deptFilter, options: [{ label: "All Departments", value: "all" }, ...DEPARTMENTS.map((d) => ({ label: d, value: d }))], onChange: (v) => { setDeptFilter(v); resetPage(); } },
@@ -106,7 +109,7 @@ export function EmployeeDirectoryPage() {
                  title="Delete employee"
                  disabled={deletingId === e.id}
                >
-                 {deletingId === e.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                 {deletingId === e.id ? <Loader2 aria-hidden="true" size={16} className="animate-spin" /> : <Trash2 aria-hidden="true" size={16} />}
                </button>
              )
            }] : []),

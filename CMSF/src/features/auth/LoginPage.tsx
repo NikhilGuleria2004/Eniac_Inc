@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "./AuthContext";
+import { useDocumentTitle } from "../../lib/documentTitle";
 import { DEMO_USERS } from "../../data/constants";
 
 export function LoginPage() {
@@ -12,6 +13,7 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { login, isAuthenticated, isLoading: isRestoringSession } = useAuth();
   const navigate = useNavigate();
+  useDocumentTitle();
 
   if (isRestoringSession) {
     return null;

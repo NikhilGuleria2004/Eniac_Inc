@@ -4,8 +4,8 @@ import { LogMailAdapter } from "./log.mail.adapter.js";
 import { SmtpMailAdapter } from "./smtp.mail.adapter.js";
 import { logger } from "../../logger/logger.js";
 
-export { buildInvitationEmail } from "./mail.adapter.js";
-export type { InvitationEmailParams, MailAdapter, MailMessage } from "./mail.adapter.js";
+export { buildInvitationEmail, buildInvoiceEmail } from "./mail.adapter.js";
+export type { InvitationEmailParams, MailAdapter, MailAttachment, MailMessage } from "./mail.adapter.js";
 
 let cachedAdapter: MailAdapter | null = null;
 

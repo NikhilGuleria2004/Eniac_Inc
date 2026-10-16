@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ClipboardCheck, TrendingUp, CheckCircle, Clock, UserCheck, Plus, Search } from "lucide-react";
@@ -14,7 +15,7 @@ import type { Review, Employee } from "../../types";
 export function ReviewDashboardPage() {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useUrlState("q");
   const [statusFilter, setStatusFilter] = useState("all");
   const [periodFilter, setPeriodFilter] = useState("all");
   const [formOpen, setFormOpen] = useState(false);
@@ -49,7 +50,7 @@ export function ReviewDashboardPage() {
         const emp = allEmployees.find((e) => e.id === row.employeeId);
         return emp ? (
           <div className="flex items-center gap-3">
-            <img src={emp.avatar} alt={emp.firstName} className="w-8 h-8 rounded-full" />
+            <img src={emp.avatar} alt={emp.firstName} width={32} height={32} loading="lazy" decoding="async" className="w-8 h-8 rounded-full" />
             <div>
               <p className="font-medium text-gray-900">{emp.firstName} {emp.lastName}</p>
               <p className="text-xs text-gray-500">{emp.designation}</p>
@@ -107,29 +108,29 @@ export function ReviewDashboardPage() {
           <p className="text-sm text-gray-500 mt-1">Manage performance reviews, ratings, and feedback for all employees</p>
         </div>
         <button onClick={handleNewReview} className="btn btn-primary">
-          <Plus size={16} className="mr-2" />
+          <Plus aria-hidden="true" size={16} className="mr-2" />
           Schedule Review
         </button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-        <StatCard label="Total Reviews" value={kpis.total} icon={<ClipboardCheck size={20} />} />
-        <StatCard label="Scheduled" value={kpis.scheduled} icon={<Clock size={20} />} variant="info" />
-        <StatCard label="In Progress" value={kpis.inProgress} icon={<UserCheck size={20} />} variant="warning" />
-        <StatCard label="Completed" value={kpis.completed} icon={<CheckCircle size={20} />} variant="success" />
-        <StatCard label="Acknowledged" value={kpis.acknowledged} icon={<CheckCircle size={20} />} variant="neutral" />
-        <StatCard label="Avg Rating" value={kpis.avgRating.toFixed(1)} icon={<TrendingUp size={20} />} />
+        <StatCard label="Total Reviews" value={kpis.total} icon={<ClipboardCheck aria-hidden="true" size={20} />} />
+        <StatCard label="Scheduled" value={kpis.scheduled} icon={<Clock aria-hidden="true" size={20} />} variant="info" />
+        <StatCard label="In Progress" value={kpis.inProgress} icon={<UserCheck aria-hidden="true" size={20} />} variant="warning" />
+        <StatCard label="Completed" value={kpis.completed} icon={<CheckCircle aria-hidden="true" size={20} />} variant="success" />
+        <StatCard label="Acknowledged" value={kpis.acknowledged} icon={<CheckCircle aria-hidden="true" size={20} />} variant="neutral" />
+        <StatCard label="Avg Rating" value={kpis.avgRating.toFixed(1)} icon={<TrendingUp aria-hidden="true" size={20} />} />
       </div>
 
       <div className="card">
         <div className="flex flex-col sm:flex-row gap-4 p-4 border-b border-gray-200">
           <div className="flex-1 max-w-xs">
-            <label className="sr-only">Search</label>
+            <label className="sr-only" htmlFor="search">Search</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input
+              <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input id="search"
                 type="text"
-                placeholder="Search by employee, reviewer, period..."
+                placeholder="Search by employee, reviewer, period…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="form-input pl-10"
@@ -210,15 +211,15 @@ function ReviewFormModal({ open, onClose, onSubmit, employees }: ReviewFormModal
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Employee *</label>
-            <select value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} className="form-input" required>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="employee">Employee *</label>
+            <select id="employee" value={formData.employeeId} onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })} className="form-input" required>
               <option value="">Select employee</option>
               {manageableEmployees.map((e) => <option key={e.id} value={e.id}>{e.firstName} {e.lastName} ({e.designation})</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Reviewer *</label>
-            <select value={formData.reviewerId} onChange={(e) => setFormData({ ...formData, reviewerId: e.target.value })} className="form-input" required>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="reviewer">Reviewer *</label>
+            <select id="reviewer" value={formData.reviewerId} onChange={(e) => setFormData({ ...formData, reviewerId: e.target.value })} className="form-input" required>
               <option value="">Select reviewer</option>
               {reviewerableEmployees.map((e) => <option key={e.id} value={e.id}>{e.firstName} {e.lastName} ({e.designation})</option>)}
             </select>
@@ -226,35 +227,35 @@ function ReviewFormModal({ open, onClose, onSubmit, employees }: ReviewFormModal
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Review Period *</label>
-            <input type="text" value={formData.reviewPeriod} onChange={(e) => setFormData({ ...formData, reviewPeriod: e.target.value })} className="form-input" placeholder="e.g. 2025-2026" required />
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="review-period">Review Period *</label>
+            <input id="review-period" type="text" value={formData.reviewPeriod} onChange={(e) => setFormData({ ...formData, reviewPeriod: e.target.value })} className="form-input" placeholder="e.g. 2025-2026" required />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Review Date *</label>
-            <input type="date" value={formData.reviewDate} onChange={(e) => setFormData({ ...formData, reviewDate: e.target.value })} className="form-input" required />
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="review-date">Review Date *</label>
+            <input id="review-date" type="date" value={formData.reviewDate} onChange={(e) => setFormData({ ...formData, reviewDate: e.target.value })} className="form-input" required />
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Rating *</label>
-          <select value={formData.rating} onChange={(e) => setFormData({ ...formData, rating: parseInt(e.target.value) })} className="form-input" required>
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="rating">Rating *</label>
+          <select id="rating" value={formData.rating} onChange={(e) => setFormData({ ...formData, rating: parseInt(e.target.value) })} className="form-input" required>
             {RATING_OPTIONS.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Strengths</label>
-          <textarea value={formData.strengths} onChange={(e) => setFormData({ ...formData, strengths: e.target.value })} className="form-input" rows={2} placeholder="Key strengths demonstrated..." />
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="strengths">Strengths</label>
+          <textarea id="strengths" value={formData.strengths} onChange={(e) => setFormData({ ...formData, strengths: e.target.value })} className="form-input" rows={2} placeholder="Key strengths demonstrated…" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Improvement Areas</label>
-          <textarea value={formData.improvementAreas} onChange={(e) => setFormData({ ...formData, improvementAreas: e.target.value })} className="form-input" rows={2} placeholder="Areas for improvement..." />
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="improvement-areas">Improvement Areas</label>
+          <textarea id="improvement-areas" value={formData.improvementAreas} onChange={(e) => setFormData({ ...formData, improvementAreas: e.target.value })} className="form-input" rows={2} placeholder="Areas for improvement…" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Goals</label>
-          <textarea value={formData.goals} onChange={(e) => setFormData({ ...formData, goals: e.target.value })} className="form-input" rows={2} placeholder="Performance goals for the next cycle..." />
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="goals">Goals</label>
+          <textarea id="goals" value={formData.goals} onChange={(e) => setFormData({ ...formData, goals: e.target.value })} className="form-input" rows={2} placeholder="Performance goals for the next cycle…" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Comments</label>
-          <textarea value={formData.comments} onChange={(e) => setFormData({ ...formData, comments: e.target.value })} className="form-input" rows={2} placeholder="Additional comments..." />
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="comments">Comments</label>
+          <textarea id="comments" value={formData.comments} onChange={(e) => setFormData({ ...formData, comments: e.target.value })} className="form-input" rows={2} placeholder="Additional comments…" />
         </div>
         <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
           <button type="button" onClick={onClose} className="btn btn-secondary">Cancel</button>

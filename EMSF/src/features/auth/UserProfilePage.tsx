@@ -23,12 +23,12 @@ const ROLE_DESCRIPTIONS: Record<string, string> = {
 };
 
 const SECTION_ICONS: Record<string, React.ReactNode> = {
-  Personal: <User size={16} />,
-  Account: <Hash size={16} />,
-  Work: <Briefcase size={16} />,
-  Dates: <Calendar size={16} />,
-  Security: <Key size={16} />,
-  System: <Shield size={16} />,
+  Personal: <User aria-hidden="true" size={16} />,
+  Account: <Hash aria-hidden="true" size={16} />,
+  Work: <Briefcase aria-hidden="true" size={16} />,
+  Dates: <Calendar aria-hidden="true" size={16} />,
+  Security: <Key aria-hidden="true" size={16} />,
+  System: <Shield aria-hidden="true" size={16} />,
 };
 
 export function UserProfilePage() {
@@ -94,7 +94,7 @@ export function UserProfilePage() {
               <p className="text-sm text-gray-600 mt-1">{roleDescription}</p>
               <div className="flex flex-wrap items-center gap-2 mt-2">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-accent/10 text-accent">
-                  <Shield size={12} />
+                  <Shield aria-hidden="true" size={12} />
                   {roleLabel}
                 </span>
                 {employee && <StatusBadge status={employee.employmentStatus} />}
@@ -115,20 +115,20 @@ export function UserProfilePage() {
 
       <SectionCard title="Personal Information" icon={SECTION_ICONS.Personal}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-          <InfoRow label="Full Name" value={`${user.firstName} ${user.lastName}`} icon={<User />} />
-          <InfoRow label="Email Address" value={user.email} icon={<Mail />} />
-          <InfoRow label="Phone Number" value={employee?.phone ?? "—"} icon={<Phone />} />
-          <InfoRow label="Location" value={employee ? `${employee.city}, ${employee.country}` : "—"} icon={<MapPin />} />
-          <InfoRow label="Designation" value={employee?.designation ?? user.designation ?? "—"} icon={<Briefcase />} />
-          <InfoRow label="Department" value={employee?.department ?? user.department ?? "—"} icon={<Briefcase />} />
+          <InfoRow label="Full Name" value={`${user.firstName} ${user.lastName}`} icon={<User aria-hidden="true" />} />
+          <InfoRow label="Email Address" value={user.email} icon={<Mail aria-hidden="true" />} />
+          <InfoRow label="Phone Number" value={employee?.phone ?? "—"} icon={<Phone aria-hidden="true" />} />
+          <InfoRow label="Location" value={employee ? `${employee.city}, ${employee.country}` : "—"} icon={<MapPin aria-hidden="true" />} />
+          <InfoRow label="Designation" value={employee?.designation ?? user.designation ?? "—"} icon={<Briefcase aria-hidden="true" />} />
+          <InfoRow label="Department" value={employee?.department ?? user.department ?? "—"} icon={<Briefcase aria-hidden="true" />} />
         </div>
       </SectionCard>
 
       <SectionCard title="Account Details" icon={SECTION_ICONS.Account}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-          <InfoRow label="User ID" value={user.id} icon={<Hash />} />
-          <InfoRow label="Employee ID" value={user.employeeId ?? "—"} icon={<Hash />} />
-          <InfoRow label="Employee Code" value={employee?.employeeCode ?? "—"} icon={<Hash />} />
+          <InfoRow label="User ID" value={user.id} icon={<Hash aria-hidden="true" />} />
+          <InfoRow label="Employee ID" value={user.employeeId ?? "—"} icon={<Hash aria-hidden="true" />} />
+          <InfoRow label="Employee Code" value={employee?.employeeCode ?? "—"} icon={<Hash aria-hidden="true" />} />
           <InfoRow
             label="Account Created"
             value={
@@ -136,7 +136,7 @@ export function UserProfilePage() {
                 ? new Date(employee.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
                 : "—"
             }
-            icon={<Calendar />}
+            icon={<Calendar aria-hidden="true" />}
           />
           <InfoRow
             label="Last Updated"
@@ -145,22 +145,22 @@ export function UserProfilePage() {
                 ? new Date(employee.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
                 : "—"
             }
-            icon={<Calendar />}
+            icon={<Calendar aria-hidden="true" />}
           />
-          <InfoRow label="IP Address" value={"192.168.1.1"} icon={<Smartphone />} />
+          <InfoRow label="IP Address" value={"192.168.1.1"} icon={<Smartphone aria-hidden="true" />} />
         </div>
       </SectionCard>
 
       {employee && (
         <SectionCard title="Employment Information" icon={SECTION_ICONS.Work}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
-            <InfoRow label="Employment Type" value={employee.employmentType} icon={<Briefcase />} />
-            <InfoRow label="Employment Status" value={<StatusBadge status={employee.employmentStatus} />} icon={<Clock />} />
-            <InfoRow label="Billing Status" value={<StatusBadge status={employee.billingStatus} />} icon={<FileText />} />
-            <InfoRow label="Timesheet Eligibility" value={<StatusBadge status={employee.timesheetEligibility} />} icon={<Clock />} />
+            <InfoRow label="Employment Type" value={employee.employmentType} icon={<Briefcase aria-hidden="true" />} />
+            <InfoRow label="Employment Status" value={<StatusBadge status={employee.employmentStatus} />} icon={<Clock aria-hidden="true" />} />
+            <InfoRow label="Billing Status" value={<StatusBadge status={employee.billingStatus} />} icon={<FileText aria-hidden="true" />} />
+            <InfoRow label="Timesheet Eligibility" value={<StatusBadge status={employee.timesheetEligibility} />} icon={<Clock aria-hidden="true" />} />
             {employee.compensation?.currency && (
               <>
-                <InfoRow label="Currency" value={employee.compensation.currency} icon={<Globe />} />
+                <InfoRow label="Currency" value={employee.compensation.currency} icon={<Globe aria-hidden="true" />} />
                 <InfoRow
                   label="Annual Salary"
                   value={
@@ -168,16 +168,16 @@ export function UserProfilePage() {
                       ? `${employee.compensation.currency} ${employee.compensation.salary.toLocaleString()}`
                       : "—"
                   }
-                  icon={<FileText />}
+                  icon={<FileText aria-hidden="true" />}
                 />
-                <InfoRow label="Pay Frequency" value={employee.compensation.payFrequency ?? "—"} icon={<Clock />} />
+                <InfoRow label="Pay Frequency" value={employee.compensation.payFrequency ?? "—"} icon={<Clock aria-hidden="true" />} />
               </>
             )}
-            {employee.managerId && <InfoRow label="Manager ID" value={employee.managerId} icon={<User />} />}
+            {employee.managerId && <InfoRow label="Manager ID" value={employee.managerId} icon={<User aria-hidden="true" />} />}
             <InfoRow
               label="Joining Date"
               value={new Date(employee.joiningDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-              icon={<Calendar />}
+              icon={<Calendar aria-hidden="true" />}
             />
           </div>
         </SectionCard>
@@ -189,20 +189,20 @@ export function UserProfilePage() {
             label="Role"
             value={
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium bg-accent/10 text-accent">
-                <Shield size={12} />
+                <Shield aria-hidden="true" size={12} />
                 {roleLabel}
               </span>
             }
-            icon={<Shield />}
+            icon={<Shield aria-hidden="true" />}
           />
-          <InfoRow label="Permissions Scope" value="Role-based access control (RBAC)" icon={<Key />} />
-          <InfoRow label="Two-Factor Auth" value="Enabled" icon={<Key />} />
-          <InfoRow label="Session Status" value="Active" icon={<Clock />} />
+          <InfoRow label="Permissions Scope" value="Role-based access control (RBAC)" icon={<Key aria-hidden="true" />} />
+          <InfoRow label="Two-Factor Auth" value="Enabled" icon={<Key aria-hidden="true" />} />
+          <InfoRow label="Session Status" value="Active" icon={<Clock aria-hidden="true" />} />
           <div className="sm:col-span-2">
             <InfoRow
               label="Role Description"
               value={roleDescription || "No description available."}
-              icon={<Shield />}
+              icon={<Shield aria-hidden="true" />}
             />
           </div>
         </div>

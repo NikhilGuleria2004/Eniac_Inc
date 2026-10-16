@@ -13,9 +13,9 @@ export function ThemeToggle() {
       title={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
       {isDark ? (
-        <Sun size={20} className="text-amber-300" />
+        <Sun aria-hidden="true" size={20} className="text-amber-300" />
       ) : (
-        <Moon size={20} className="text-gray-600" />
+        <Moon aria-hidden="true" size={20} className="text-gray-600" />
       )}
     </button>
   );

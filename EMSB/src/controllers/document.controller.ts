@@ -48,7 +48,7 @@ export const documentController = {
       }
 
       const service = getDocumentService();
-      const document = await service.createDocument(result.data, req.user?.role ?? "HR", req.user?.employeeId);
+      const document = await service.createDocument(result.data, req.user!.role, req.user!.employeeId, req.user!.userId);
 
       res.status(HTTP_STATUS.CREATED).json(successResponse(document));
     } catch (error) {
@@ -82,7 +82,8 @@ export const documentController = {
       const document = await service.updateDocument(
         req.params.documentId,
         result.data,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
 
       res.json(successResponse(document));
@@ -103,7 +104,8 @@ export const documentController = {
       const document = await service.approveDocument(
         req.params.documentId,
         result.data.comments,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
 
       res.json(successResponse(document));
@@ -124,7 +126,8 @@ export const documentController = {
       const document = await service.rejectDocument(
         req.params.documentId,
         result.data.comments,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
 
       res.json(successResponse(document));
@@ -145,7 +148,8 @@ export const documentController = {
       const document = await service.requestChanges(
         req.params.documentId,
         result.data.comments,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
 
       res.json(successResponse(document));

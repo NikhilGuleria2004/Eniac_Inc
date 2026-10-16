@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Send, CheckCircle, Clock, FileText, Download, MoreVertical } from "lucide-react";
 import { ROUTES } from "../../data/constants";
 import { PageHeader } from "../../components/layout/PageHeader";
@@ -28,7 +28,6 @@ import { allRequiredDocumentsApproved, REQUIRED_DOCUMENT_TYPES } from "./documen
 
 export function OnboardingWizardPage() {
   const { employeeId } = useParams<{ employeeId: string }>();
-  const navigate = useNavigate();
 
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -41,13 +40,12 @@ export function OnboardingWizardPage() {
           <h1 className="text-lg font-semibold text-gray-900">
             Onboarding record not found
           </h1>
-          <button
-            type="button"
-            onClick={() => navigate(ROUTES.ONBOARDING)}
+          <Link
+            to={ROUTES.ONBOARDING}
             className="btn btn-secondary text-sm mt-4"
           >
-            <ArrowLeft size={16} /> Back to Onboarding
-          </button>
+            <ArrowLeft aria-hidden="true" size={16} /> Back to Onboarding
+          </Link>
         </div>
       </div>
     );
@@ -253,13 +251,12 @@ export function OnboardingWizardPage() {
           { label: employee.firstName + " " + employee.lastName },
         ]}
         actions={
-          <button
-            type="button"
-            onClick={() => navigate(ROUTES.ONBOARDING)}
+          <Link
+            to={ROUTES.ONBOARDING}
             className="btn btn-secondary text-sm"
           >
-            <ArrowLeft size={16} /> Back to List
-          </button>
+            <ArrowLeft aria-hidden="true" size={16} /> Back to List
+          </Link>
         }
       />
 
@@ -315,17 +312,17 @@ function ActionPanel({ steps, currentStep, activeIndex, docsAllApproved, documen
 
   if (isLast && isComplete) {
     primaryLabel = "Done";
-    primaryIcon = <CheckCircle size={16} />;
+    primaryIcon = <CheckCircle aria-hidden="true" size={16} />;
   } else if (isCurrent) {
     if (currentStep.label === "Documents") {
       primaryLabel = "Mark as Complete";
       primaryDisabled = !docsAllApproved;
     } else if (currentStep.label === "HR Review") {
       primaryLabel = "Approve Onboarding";
-      primaryIcon = <CheckCircle size={16} />;
+      primaryIcon = <CheckCircle aria-hidden="true" size={16} />;
     } else if (currentStep.label === "Activation") {
       primaryLabel = "Activate Employee";
-      primaryIcon = <Send size={16} />;
+      primaryIcon = <Send aria-hidden="true" size={16} />;
     } else if (currentStep.label === "Timesheet Eligibility") {
       primaryLabel = "View Timesheet";
     } else {
@@ -358,7 +355,7 @@ function ActionPanel({ steps, currentStep, activeIndex, docsAllApproved, documen
 
         {currentStep.label === "Documents" && (
           <button type="button" className="btn btn-secondary text-sm w-full">
-            <FileText size={14} /> Bulk Upload
+            <FileText aria-hidden="true" size={14} /> Bulk Upload
           </button>
         )}
 
@@ -403,7 +400,7 @@ function ActionPanel({ steps, currentStep, activeIndex, docsAllApproved, documen
         {currentStep.label === "Activation" && (
           <div className="border-t border-gray-200 pt-3 mt-3">
             <div className="flex items-center gap-2 text-xs text-gray-500">
-              <Clock size={12} />
+              <Clock aria-hidden="true" size={12} />
               <span>Activation triggers timesheet provisioning</span>
             </div>
           </div>
@@ -439,12 +436,12 @@ function ActionPanel({ steps, currentStep, activeIndex, docsAllApproved, documen
               URL.revokeObjectURL(url);
             }}
           >
-            <Download size={14} /> Export Summary (CSV)
+            <Download aria-hidden="true" size={14} /> Export Summary (CSV)
           </button>
 
           <details className="group">
             <summary className="btn btn-secondary text-sm w-full cursor-pointer">
-              <MoreVertical size={14} /> More Actions
+              <MoreVertical aria-hidden="true" size={14} /> More Actions
             </summary>
             <div className="mt-1 space-y-1">
               {currentStep.status === "current" && currentStep.label === "HR Review" && (

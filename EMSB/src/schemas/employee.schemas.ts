@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { EMPLOYMENT_STATUSES, BILLING_STATUSES } from "../config/constants.js";
-import { COUNTRIES } from "../config/constants.js";
+import { COUNTRIES, TECH_ROLES } from "../config/constants.js";
 
 const employmentStatusEnum = z.enum(EMPLOYMENT_STATUSES);
 const billingStatusEnum = z.enum(BILLING_STATUSES);
 const employmentTypeEnum = z.enum(["FULL_TIME", "PART_TIME", "CONTRACT", "INTERN"]);
 const countryEnum = z.enum(COUNTRIES);
+const techRoleEnum = z.enum(TECH_ROLES);
 
 export const employeeSearchQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -33,15 +34,16 @@ export const createEmployeeSchema = z.object({
    phone: z.string().optional(),
   profilePhotoUrl: z.string().url().optional(),
   dateOfBirth: z.coerce.date().optional(),
-  designation: z.string().min(1).max(100),
-  department: z.string().min(1).max(100),
-  managerId: z.string().optional(),
-  country: countryEnum,
-  employmentStatus: employmentStatusEnum.default("ONBOARDING"),
-  billingStatus: billingStatusEnum.default("NON_BILLABLE"),
-  joiningDate: z.coerce.date().optional(),
-  employmentType: employmentTypeEnum.optional(),
-  address: z
+   designation: z.string().min(1).max(100),
+   techRole: techRoleEnum.optional(),
+   department: z.string().min(1).max(100),
+   managerId: z.string().optional(),
+   country: countryEnum,
+   employmentStatus: employmentStatusEnum.default("ONBOARDING"),
+   billingStatus: billingStatusEnum.default("NON_BILLABLE"),
+   joiningDate: z.coerce.date().optional(),
+   employmentType: employmentTypeEnum.optional(),
+   address: z
     .object({
       line1: z.string().optional(),
       line2: z.string().optional(),
@@ -104,12 +106,13 @@ export const hrEmployeeUpdateSchema = z.object({
   firstName: z.string().min(1).max(100).optional(),
   middleName: z.string().max(100).optional(),
   lastName: z.string().min(1).max(100).optional(),
-   email: z.string().email().optional(),
-   workMail: z.string().email().optional(),
-   phone: z.string().optional(),
+    email: z.string().email().optional(),
+    workMail: z.string().email().optional(),
+    phone: z.string().optional(),
   profilePhotoUrl: z.string().url().optional(),
   dateOfBirth: z.coerce.date().optional(),
   designation: z.string().min(1).max(100).optional(),
+  techRole: techRoleEnum.optional(),
   department: z.string().min(1).max(100).optional(),
   managerId: z.string().optional(),
   country: countryEnum.optional(),

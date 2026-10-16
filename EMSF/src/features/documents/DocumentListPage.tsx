@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useMemo, useState } from "react";
 import { NavLink, useNavigate, Navigate } from "react-router-dom";
 import { Download, Eye, Pencil, Plus, RefreshCw } from "lucide-react";
@@ -28,13 +29,15 @@ export function DocumentListPage() {
   const role = user?.role ?? "EMPLOYEE";
   const [version, setVersion] = useState(0);
   const bump = () => setVersion((v) => v + 1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useUrlState("q");
   const [employeeFilter, setEmployeeFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [expiryFilter, setExpiryFilter] = useState("all");
   const [countryFilter, setCountryFilter] = useState("all");
-  const [page, setPage] = useState(1);
+  const [pageParam, setPageParam] = useUrlState("page", "1");
+  const page = Math.max(1, parseInt(pageParam, 10) || 1);
+  const setPage = (n: number) => setPageParam(String(n));
   const [preview, setPreview] = useState<Document | null>(null);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [replaceTarget, setReplaceTarget] = useState<Document | null>(null);
@@ -76,7 +79,7 @@ export function DocumentListPage() {
         breadcrumbs={[{ label: "Documents" }]}
         actions={
           <button className="btn btn-primary text-sm" onClick={() => setUploadOpen(true)}>
-            <Plus size={16} /> Upload Document
+            <Plus aria-hidden="true" size={16} /> Upload Document
           </button>
         }
       />
@@ -90,7 +93,7 @@ export function DocumentListPage() {
       </div>
       <div className="card">
         <div className="flex flex-col xl:flex-row xl:items-center gap-3">
-          <SearchInput placeholder="Search documents or employees..." value={search} onChange={(v) => { setSearch(v); resetPage(); }} className="w-full xl:max-w-sm" />
+          <SearchInput placeholder="Search documents or employees…" value={search} onChange={(v) => { setSearch(v); resetPage(); }} className="w-full xl:max-w-sm" />
           <FilterBar
             filters={[
               { key: "employee", label: "Employee", value: employeeFilter, options: [{ label: "All Employees", value: "all" }, ...employeeOptions.map((e) => ({ label: `${e.firstName} ${e.lastName}`, value: e.id }))], onChange: (v) => { setEmployeeFilter(v); resetPage(); } },
@@ -111,7 +114,7 @@ export function DocumentListPage() {
         columns={[
           { key: "name", header: "Document", sortable: true, cell: (d) => (
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center text-gray-500"><Eye size={14} /></div>
+              <div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center text-gray-500"><Eye aria-hidden="true" size={14} /></div>
               <div>
                 <NavLink to={ROUTES.DOCUMENT_DETAIL(d.id)} onClick={(e) => e.stopPropagation()} className="font-medium text-gray-900 hover:text-accent hover:underline">{d.name}</NavLink>
                 <p className="text-xs text-gray-500">{d.id}</p>
@@ -141,13 +144,13 @@ export function DocumentListPage() {
           { key: "reviewer", header: "Reviewer", cell: (d) => <span className="text-gray-600">{d.reviewedBy ? empName(d.reviewedBy) : "—"}</span> },
           { key: "actions", header: "Actions", cell: (d) => (
             <div className="flex items-center gap-1">
-              <button title="View" className="p-1 text-gray-500 hover:text-accent" onClick={(e) => { e.stopPropagation(); setPreview(d); }}><Eye size={15} /></button>
-              <button title="Download (mock)" className="p-1 text-gray-500 hover:text-accent" onClick={(e) => { e.stopPropagation(); setPreview(d); }}><Download size={15} /></button>
+              <button title="View" className="p-1 text-gray-500 hover:text-accent" onClick={(e) => { e.stopPropagation(); setPreview(d); }}><Eye aria-hidden="true" size={15} /></button>
+              <button title="Download (mock)" className="p-1 text-gray-500 hover:text-accent" onClick={(e) => { e.stopPropagation(); setPreview(d); }}><Download aria-hidden="true" size={15} /></button>
               {canReview && (
-                <button title="Review" className="p-1 text-gray-500 hover:text-accent" onClick={(e) => { e.stopPropagation(); navigate(ROUTES.DOCUMENT_DETAIL(d.id)); }}><Pencil size={15} /></button>
+                <button title="Review" className="p-1 text-gray-500 hover:text-accent" onClick={(e) => { e.stopPropagation(); navigate(ROUTES.DOCUMENT_DETAIL(d.id)); }}><Pencil aria-hidden="true" size={15} /></button>
               )}
               {canReplace(d) && (
-                <button title="Replace" className="p-1 text-gray-500 hover:text-accent" onClick={(e) => { e.stopPropagation(); setReplaceTarget(d); }}><RefreshCw size={15} /></button>
+                <button title="Replace" className="p-1 text-gray-500 hover:text-accent" onClick={(e) => { e.stopPropagation(); setReplaceTarget(d); }}><RefreshCw aria-hidden="true" size={15} /></button>
               )}
             </div>
           ) },
@@ -263,26 +266,26 @@ function UploadDocumentModal({ employees, fixedEmployeeId, existing, onClose, on
       <form id="upload-doc-form" onSubmit={submit} className="space-y-4">
         {error && <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">{error}</div>}
         <div>
-          <label className="form-label">Employee *</label>
-          <select className="form-input" value={targetEmployeeId} disabled={Boolean(fixedEmployeeId)} onChange={(e) => setEmployeeId(e.target.value)}>
-            {!fixedEmployeeId && <option value="">Select employee...</option>}
+          <label className="form-label" htmlFor="employee">Employee *</label>
+          <select id="employee" className="form-input" value={targetEmployeeId} disabled={Boolean(fixedEmployeeId)} onChange={(e) => setEmployeeId(e.target.value)}>
+            {!fixedEmployeeId && <option value="">Select employee…</option>}
             {employees.map((emp) => <option key={emp.id} value={emp.id}>{emp.firstName} {emp.lastName}</option>)}
           </select>
         </div>
         <div>
-          <label className="form-label">Document Name *</label>
-          <input className="form-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Passport Copy" required />
+          <label className="form-label" htmlFor="document-name">Document Name *</label>
+          <input id="document-name" className="form-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Passport Copy" required />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="form-label">Document Type *</label>
-            <select className="form-input" value={type} onChange={(e) => setType(e.target.value)}>
+            <label className="form-label" htmlFor="document-type">Document Type *</label>
+            <select id="document-type" className="form-input" value={type} onChange={(e) => setType(e.target.value)}>
               {DOC_TYPES.map((t) => <option key={t} value={t}>{t.replace(/_/g, " ")}</option>)}
             </select>
           </div>
           <div>
-            <label className="form-label">Expiry Date</label>
-            <input type="date" className="form-input" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} />
+            <label className="form-label" htmlFor="expiry-date">Expiry Date</label>
+            <input id="expiry-date" type="date" className="form-input" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} />
           </div>
         </div>
         <div>

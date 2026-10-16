@@ -6,7 +6,9 @@ const notificationTypeEnum = z.enum([
   "PROJECT",
   "ONBOARDING",
   "ATTENDANCE",
-  "SYSTEM"
+  "SYSTEM",
+  "TIMESHEET",
+  "INVOICE"
 ] as const);
 
 export const notificationListQuerySchema = z.object({
@@ -24,7 +26,7 @@ export type MarkReadInput = z.infer<typeof markReadSchema>;
 
 export interface CreateNotificationInput {
   userId: string;
-  type: "LEAVE" | "DOCUMENT" | "PROJECT" | "ONBOARDING" | "ATTENDANCE" | "SYSTEM";
+  type: "LEAVE" | "DOCUMENT" | "PROJECT" | "ONBOARDING" | "ATTENDANCE" | "SYSTEM" | "TIMESHEET" | "INVOICE";
   title: string;
   message: string;
   link?: string;

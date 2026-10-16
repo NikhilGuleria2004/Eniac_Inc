@@ -39,7 +39,12 @@ export class SmtpMailAdapter implements MailAdapter {
       to: message.to,
       subject: message.subject,
       text: message.text,
-      html: message.html
+      html: message.html,
+      attachments: message.attachments?.map((a) => ({
+        filename: a.filename,
+        content: a.content,
+        contentType: a.contentType
+      }))
     });
   }
 }

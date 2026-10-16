@@ -4,6 +4,7 @@ import { getEmployees, getProjects, getClients, getAuditLogs, getAssignments, ge
 import { ROUTES } from "../../data/constants";
 import { WorkforceChart } from "../../components/charts/WorkforceChart";
 import { StatusDistributionChart } from "../../components/charts/StatusDistributionChart";
+import { EMPLOYEE_STATUS_COLORS, CHART_FALLBACK_COLOR } from "../../components/charts/palette";
 
 function StatusBadge({ status }: { status: string }) {
   const variants: Record<string, string> = {
@@ -108,20 +109,10 @@ export function AdminDashboard() {
     return acc;
   }, {} as Record<string, number>);
 
-  const statusColors: Record<string, string> = {
-    ACTIVE: "#16803C",
-    ON_LEAVE: "#B7791F",
-    ONBOARDING: "#2563EB",
-    INACTIVE: "#667085",
-    SUSPENDED: "#C53030",
-    RESIGNED: "#9CA3AF",
-    TERMINATED: "#7F1D1D",
-  };
-
   const statusData = Object.entries(statusCounts).map(([status, count]) => ({
     status,
     count,
-    fill: statusColors[status] || "#667085",
+    fill: EMPLOYEE_STATUS_COLORS[status] || CHART_FALLBACK_COLOR,
   }));
 
   return (
@@ -132,12 +123,12 @@ export function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-        <StatCard label="Total Employees" value={employees.length.toString()} icon={<Users size={20} />} />
-        <StatCard label="Active Employees" value={activeEmployees.length.toString()} icon={<UserCheck size={20} />} />
-        <StatCard label="Billable Employees" value={billableEmployees.length.toString()} icon={<TrendingUp size={20} />} />
-        <StatCard label="Non-Billable Employees" value={nonBillableEmployees.length.toString()} icon={<UserX size={20} />} />
-        <StatCard label="Active Projects" value={activeProjects.length.toString()} icon={<Briefcase size={20} />} />
-        <StatCard label="Active Clients" value={activeClients.length.toString()} icon={<Building2 size={20} />} />
+        <StatCard label="Total Employees" value={employees.length.toString()} icon={<Users aria-hidden="true" size={20} />} />
+        <StatCard label="Active Employees" value={activeEmployees.length.toString()} icon={<UserCheck aria-hidden="true" size={20} />} />
+        <StatCard label="Billable Employees" value={billableEmployees.length.toString()} icon={<TrendingUp aria-hidden="true" size={20} />} />
+        <StatCard label="Non-Billable Employees" value={nonBillableEmployees.length.toString()} icon={<UserX aria-hidden="true" size={20} />} />
+        <StatCard label="Active Projects" value={activeProjects.length.toString()} icon={<Briefcase aria-hidden="true" size={20} />} />
+        <StatCard label="Active Clients" value={activeClients.length.toString()} icon={<Building2 aria-hidden="true" size={20} />} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -218,12 +209,12 @@ export function AdminDashboard() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Project</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Client</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Manager</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Employees</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Progress</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Project</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Client</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Manager</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Employees</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Progress</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
               </tr>
             </thead>
             <tbody>

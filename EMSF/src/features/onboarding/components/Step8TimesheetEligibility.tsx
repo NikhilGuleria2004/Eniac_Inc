@@ -76,7 +76,7 @@ export function Step8TimesheetEligibility({ employee }: Step8TimesheetEligibilit
       {isBillable && isProvisioned && (
         <div className="rounded-md border border-green-200 bg-green-50 px-4 py-3">
           <div className="flex items-start gap-3">
-            <CheckCircle size={18} className="text-green-600 mt-0.5" />
+            <CheckCircle aria-hidden="true" size={18} className="text-green-600 mt-0.5" />
             <div>
               <p className="font-medium text-green-900">ELIGIBLE — provisioned to timesheet platform</p>
               <p className="text-sm text-green-800 mt-1">
@@ -91,7 +91,7 @@ export function Step8TimesheetEligibility({ employee }: Step8TimesheetEligibilit
       {!isBillable && (
         <div className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3">
           <div className="flex items-start gap-3">
-            <Clock size={18} className="text-gray-500 mt-0.5" />
+            <Clock aria-hidden="true" size={18} className="text-gray-500 mt-0.5" />
             <div>
               <p className="font-medium text-gray-700">NOT ELIGIBLE — non-billable employee</p>
               <p className="text-sm text-gray-600 mt-1">
@@ -106,7 +106,7 @@ export function Step8TimesheetEligibility({ employee }: Step8TimesheetEligibilit
       {eligibility === "PROVISIONING_FAILED" && (
         <div className="rounded-md border border-red-200 bg-red-50 px-4 py-3">
           <div className="flex items-start gap-3">
-            <CheckCircle size={18} className="text-red-600 mt-0.5" />
+            <CheckCircle aria-hidden="true" size={18} className="text-red-600 mt-0.5" />
             <div>
               <p className="font-medium text-red-900">PROVISIONING FAILED</p>
               <p className="text-sm text-red-800 mt-1">
@@ -127,7 +127,7 @@ export function Step8TimesheetEligibility({ employee }: Step8TimesheetEligibilit
             href={ROUTES.EMPLOYEE_DETAIL(employee.id) + "#timesheet"}
             className="btn btn-secondary text-sm"
           >
-            <ExternalLink size={14} /> View Timesheet Details
+            <ExternalLink aria-hidden="true" size={14} /> View Timesheet Details
           </a>
           {offerLetter && canViewDocs && (
             <button
@@ -135,7 +135,7 @@ export function Step8TimesheetEligibility({ employee }: Step8TimesheetEligibilit
               onClick={handleDownloadOfferLetter}
               className="btn btn-secondary text-sm"
             >
-              <FileText size={14} /> Download Offer Letter
+              <FileText aria-hidden="true" size={14} /> Download Offer Letter
             </button>
           )}
         </div>

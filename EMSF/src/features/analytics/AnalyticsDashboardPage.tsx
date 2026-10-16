@@ -6,6 +6,12 @@ import { LeaveStatusChart } from "../../components/charts/LeaveStatusChart";
 import { DataTable } from "../../components/tables/DataTable";
 import { StatusBadge } from "../../components/data/StatusBadge";
 import { getEmployees, getProjects, getAssignments, getLeaveRequests } from "../../data/mock/repositories";
+import {
+  EMPLOYEE_STATUS_COLORS,
+  PROJECT_STATUS_COLORS,
+  ASSIGNMENT_STATUS_COLORS,
+  CHART_FALLBACK_COLOR,
+} from "../../components/charts/palette";
 import { computeAnalyticsKPIs } from "./analytics";
 import { ROUTES } from "../../data/constants";
 import type { Employee, Project, ProjectAssignment } from "../../types";
@@ -68,20 +74,10 @@ function computeStatusData(employees: Employee[]) {
     return acc;
   }, {} as Record<string, number>);
 
-  const statusColors: Record<string, string> = {
-    ACTIVE: "#16803C",
-    ON_LEAVE: "#B7791F",
-    ONBOARDING: "#2563EB",
-    INACTIVE: "#667085",
-    SUSPENDED: "#C53030",
-    RESIGNED: "#9CA3AF",
-    TERMINATED: "#7F1D1D",
-  };
-
   return Object.entries(statusCounts).map(([status, count]) => ({
     status,
     count,
-    fill: statusColors[status] || "#667085",
+    fill: EMPLOYEE_STATUS_COLORS[status] || CHART_FALLBACK_COLOR,
   }));
 }
 
@@ -91,17 +87,10 @@ function computeProjectStatusData(projects: Project[]) {
     return acc;
   }, {} as Record<string, number>);
 
-  const statusColors: Record<string, string> = {
-    PLANNING: "#2563EB",
-    ACTIVE: "#16803C",
-    ON_HOLD: "#B7791F",
-    COMPLETED: "#059669",
-  };
-
   return Object.entries(statusCounts).map(([status, count]) => ({
     status,
     count,
-    fill: statusColors[status] || "#667085",
+    fill: PROJECT_STATUS_COLORS[status] || CHART_FALLBACK_COLOR,
   }));
 }
 
@@ -111,16 +100,10 @@ function computeAssignmentStatusData(assignments: ProjectAssignment[]) {
     return acc;
   }, {} as Record<string, number>);
 
-  const statusColors: Record<string, string> = {
-    ACTIVE: "#16803C",
-    ENDED: "#667085",
-    PENDING: "#B7791F",
-  };
-
   return Object.entries(statusCounts).map(([status, count]) => ({
     status,
     count,
-    fill: statusColors[status] || "#667085",
+    fill: ASSIGNMENT_STATUS_COLORS[status] || CHART_FALLBACK_COLOR,
   }));
 }
 
@@ -202,14 +185,14 @@ export function AnalyticsDashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Total Employees" value={kpis.totalEmployees} icon={<Users size={20} />} />
-        <StatCard label="Active Projects" value={kpis.totalProjects} icon={<Briefcase size={20} />} variant="success" />
-        <StatCard label="Total Clients" value={kpis.totalClients} icon={<Users size={20} />} variant="info" />
-        <StatCard label="Active Assignments" value={kpis.activeAssignments} icon={<BarChart3 size={20} />} />
-        <StatCard label="Billable Allocation" value={`${kpis.billableAllocation}%`} icon={<BarChart3 size={20} />} variant="success" />
-        <StatCard label="Total Hours" value={kpis.totalHours.toLocaleString()} icon={<Clock size={20} />} />
-        <StatCard label="Pending Leave" value={kpis.pendingLeave} icon={<Clock size={20} />} variant="warning" />
-        <StatCard label="Pending Reviews" value={kpis.pendingReviews} icon={<TrendingUp size={20} />} variant="info" />
+        <StatCard label="Total Employees" value={kpis.totalEmployees} icon={<Users aria-hidden="true" size={20} />} />
+        <StatCard label="Active Projects" value={kpis.totalProjects} icon={<Briefcase aria-hidden="true" size={20} />} variant="success" />
+        <StatCard label="Total Clients" value={kpis.totalClients} icon={<Users aria-hidden="true" size={20} />} variant="info" />
+        <StatCard label="Active Assignments" value={kpis.activeAssignments} icon={<BarChart3 aria-hidden="true" size={20} />} />
+        <StatCard label="Billable Allocation" value={`${kpis.billableAllocation}%`} icon={<BarChart3 aria-hidden="true" size={20} />} variant="success" />
+        <StatCard label="Total Hours" value={kpis.totalHours.toLocaleString()} icon={<Clock aria-hidden="true" size={20} />} />
+        <StatCard label="Pending Leave" value={kpis.pendingLeave} icon={<Clock aria-hidden="true" size={20} />} variant="warning" />
+        <StatCard label="Pending Reviews" value={kpis.pendingReviews} icon={<TrendingUp aria-hidden="true" size={20} />} variant="info" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

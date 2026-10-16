@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Hide all visible scrollbars application-wide while preserving scroll behaviour.
+   Covers WebKit/Blink (Chrome/Safari/Edge), Firefox, and legacy IE/Edge. */
+*, *::-webkit-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -78,6 +88,74 @@
 
   #root {
     min-height: 100vh;
+  }
+
+  /* Desktop: suppress rubber-band bounce (keep mobile pull-to-refresh). */
+  @media (pointer: fine) {
+    html {
+      overscroll-behavior: none;
+    }
+  }
+
+  /* Anchored headings/ids must clear the fixed 64px header. */
+  [id] {
+    scroll-margin-top: 80px;
+  }
+
+  /* Numeric tables align with tabular figures. */
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Generous, responsive hit targets on touch; suppress tap flash. */
+  button,
+  a,
+  [role="button"],
+  label,
+  input,
+  select,
+  textarea {
+    touch-action: manipulation;
+  }
+
+  html {
+    -webkit-tap-highlight-color: rgba(29, 78, 216, 0.12);
+  }
+
+  /* Programmatic focus target for the skip link — no visible ring needed. */
+  main:focus,
+  #main-content:focus {
+    outline: none;
+  }
+
+  /* iOS Safari zooms inputs under 16px — bump font size on mobile only. */
+  @media (max-width: 640px) {
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea {
+      font-size: 16px;
+    }
+  }
+
+  /* Touch devices: icon buttons meet the 44px minimum target. */
+  @media (pointer: coarse) {
+    .app-header button,
+    .btn,
+    button.p-2 {
+      min-width: 44px;
+      min-height: 44px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -192,6 +270,15 @@
 
     .page-container {
       padding: 16px 12px;
+    }
+
+    /* iOS Safari auto-zooms when a focused input is < 16px. Bump every text
+       field to 16px on phones to prevent the zoom/pan-on-focus behavior. */
+    .form-input,
+    input,
+    select,
+    textarea {
+      font-size: 16px;
     }
   }
 
@@ -308,7 +395,13 @@
     line-height: 20px;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: all 0.15s ease;
+    /* Explicit properties only — never `transition: all` (layout jank). */
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease,
+      opacity 0.15s ease;
   }
 
   .btn:disabled {

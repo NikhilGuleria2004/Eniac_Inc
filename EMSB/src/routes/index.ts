@@ -15,6 +15,11 @@ import dashboardRoutes from "./dashboard.routes.js";
 import reportRoutes from "./report.routes.js";
 import settingsRoutes from "./settings.routes.js";
 import invitationRoutes from "./invitation.routes.js";
+import dailyLogRoutes from "./daily-log.routes.js";
+import billingTimesheetRoutes from "./billing-timesheet.routes.js";
+import invoiceRoutes from "./invoice.routes.js";
+import invoiceTemplateRoutes from "./invoice-template.routes.js";
+import analyticsRoutes from "./analytics.routes.js";
 
 const router = Router();
 
@@ -34,6 +39,11 @@ router.use("/dashboard", dashboardRoutes);
 router.use("/reports", reportRoutes);
 router.use("/settings", settingsRoutes);
 router.use("/invitations", invitationRoutes);
+router.use("/daily-logs", dailyLogRoutes);
+router.use("/timesheets", billingTimesheetRoutes);
+router.use("/invoices", invoiceRoutes);
+router.use("/invoice-templates", invoiceTemplateRoutes);
+router.use("/analytics", analyticsRoutes);
 
 router.get("/", (_req, res) => {
   res.json({

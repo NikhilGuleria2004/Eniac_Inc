@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ListTodo, UserPlus, Search, Edit, Trash2 } from "lucide-react";
@@ -92,8 +93,8 @@ function AssignmentModal({ open, onClose, initialData, availableEmployees, onSub
     <Modal open={open} onClose={onClose} title={initialData ? "Edit Assignment" : "New Assignment"} size="lg">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Employee *</label>
-          <select
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="employee">Employee *</label>
+          <select id="employee"
             value={formData.employeeId}
             onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
             className="form-input"
@@ -109,8 +110,8 @@ function AssignmentModal({ open, onClose, initialData, availableEmployees, onSub
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Project *</label>
-          <select
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="project">Project *</label>
+          <select id="project"
             value={formData.projectId}
             onChange={(e) => setFormData({ ...formData, projectId: e.target.value })}
             className="form-input"
@@ -128,8 +129,8 @@ function AssignmentModal({ open, onClose, initialData, availableEmployees, onSub
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Role *</label>
-            <select
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="role">Role *</label>
+            <select id="role"
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               className="form-input"
@@ -144,8 +145,8 @@ function AssignmentModal({ open, onClose, initialData, availableEmployees, onSub
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Allocation (%) *</label>
-            <input
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="allocation">Allocation (%) *</label>
+            <input id="allocation"
               type="number"
               min="1"
               max="100"
@@ -158,8 +159,8 @@ function AssignmentModal({ open, onClose, initialData, availableEmployees, onSub
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
-            <input
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="start-date">Start Date *</label>
+            <input id="start-date"
               type="date"
               value={formData.startDate}
               onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
@@ -168,8 +169,8 @@ function AssignmentModal({ open, onClose, initialData, availableEmployees, onSub
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-            <input
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="end-date">End Date</label>
+            <input id="end-date"
               type="date"
               value={formData.endDate}
               onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
@@ -216,7 +217,7 @@ function AssignmentModal({ open, onClose, initialData, availableEmployees, onSub
 export function AssignmentsDashboardPage() {
   const { addToast } = useToast();
   const { user } = useAuth();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useUrlState("q");
   const [statusFilter, setStatusFilter] = useState("all");
   const [projectFilter, setProjectFilter] = useState("all");
   const [formOpen, setFormOpen] = useState(false);
@@ -391,7 +392,7 @@ export function AssignmentsDashboardPage() {
                   aria-label="Edit"
                   title="Edit"
                 >
-                  <Edit size={14} />
+                  <Edit aria-hidden="true" size={14} />
                 </button>
                 <button
                   onClick={(e) => {
@@ -402,7 +403,7 @@ export function AssignmentsDashboardPage() {
                   aria-label="Remove"
                   title="Remove"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 aria-hidden="true" size={14} />
                 </button>
               </div>
             ),
@@ -420,30 +421,30 @@ export function AssignmentsDashboardPage() {
         </div>
         {canManage && (
           <button onClick={handleNewAssignment} className="btn btn-primary">
-            <UserPlus size={16} className="mr-2" />
+            <UserPlus aria-hidden="true" size={16} className="mr-2" />
             New Assignment
           </button>
         )}
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
-        <StatCard label="Total" value={kpis.total} icon={<ListTodo size={20} />} />
-        <StatCard label="Active" value={kpis.active} icon={<ListTodo size={20} />} variant="success" />
-        <StatCard label="Ended" value={kpis.ended} icon={<ListTodo size={20} />} variant="neutral" />
-        <StatCard label="Pending" value={kpis.pending} icon={<ListTodo size={20} />} variant="warning" />
-        <StatCard label="Billable" value={kpis.billable} icon={<ListTodo size={20} />} variant="info" />
-        <StatCard label="Non-Billable" value={kpis.nonBillable} icon={<ListTodo size={20} />} />
+        <StatCard label="Total" value={kpis.total} icon={<ListTodo aria-hidden="true" size={20} />} />
+        <StatCard label="Active" value={kpis.active} icon={<ListTodo aria-hidden="true" size={20} />} variant="success" />
+        <StatCard label="Ended" value={kpis.ended} icon={<ListTodo aria-hidden="true" size={20} />} variant="neutral" />
+        <StatCard label="Pending" value={kpis.pending} icon={<ListTodo aria-hidden="true" size={20} />} variant="warning" />
+        <StatCard label="Billable" value={kpis.billable} icon={<ListTodo aria-hidden="true" size={20} />} variant="info" />
+        <StatCard label="Non-Billable" value={kpis.nonBillable} icon={<ListTodo aria-hidden="true" size={20} />} />
       </div>
 
       <div className="card">
         <div className="flex flex-col sm:flex-row gap-4 p-4 border-b border-gray-200">
           <div className="flex-1 max-w-xs">
-            <label className="sr-only">Search</label>
+            <label className="sr-only" htmlFor="search">Search</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input
+              <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input id="search"
                 type="text"
-                placeholder="Search by employee, project, client..."
+                placeholder="Search by employee, project, client…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="form-input pl-10"

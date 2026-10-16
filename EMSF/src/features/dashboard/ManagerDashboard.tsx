@@ -1,17 +1,7 @@
 import { getClients, getProjects, getAssignments, getAuditLogs } from "../../data/mock/repositories";
 import { ProjectHealthChart } from "../../components/charts/ProjectHealthChart";
 import { AttendanceMarker } from "../../components/dashboard/AttendanceMarker";
-
-const HEALTH_COLORS: Record<string, string> = {
-  ON_TRACK: "#16803C",
-  AT_RISK: "#B7791F",
-  DELAYED: "#C53030",
-  COMPLETED: "#1D4ED8",
-  PLANNING: "#2563EB",
-  ON_HOLD: "#667085",
-  ACTIVE: "#16803C",
-  CANCELLED: "#7F1D1D",
-};
+import { PROJECT_HEALTH_COLORS, PROJECT_STATUS_COLORS, CHART_FALLBACK_COLOR } from "../../components/charts/palette";
 
 export function ManagerDashboard() {
   const clients = getClients();
@@ -34,7 +24,7 @@ export function ManagerDashboard() {
   const healthData = Object.entries(healthCounts).map(([name, value]) => ({
     name,
     value,
-    fill: HEALTH_COLORS[name] || "#667085",
+    fill: PROJECT_HEALTH_COLORS[name] || CHART_FALLBACK_COLOR,
   }));
 
   // Project Status Distribution
@@ -46,7 +36,7 @@ export function ManagerDashboard() {
   const statusData = Object.entries(statusCounts).map(([name, value]) => ({
     name,
     value,
-    fill: HEALTH_COLORS[name] || "#667085",
+    fill: PROJECT_STATUS_COLORS[name] || CHART_FALLBACK_COLOR,
   }));
 
   // Recent Client Activity (from audit logs)
@@ -77,13 +67,13 @@ export function ManagerDashboard() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Project</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Client</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Team Size</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Start Date</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">End Date</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Progress</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Project</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Client</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Team Size</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Start Date</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">End Date</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Progress</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -121,12 +111,12 @@ export function ManagerDashboard() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Employee</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Current Project</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Allocation</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Role</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Billable</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Employee</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Current Project</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Allocation</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Role</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Billable</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
               </tr>
             </thead>
             <tbody>

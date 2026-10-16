@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useMemo, useState } from "react";
 import { UserCheck, UserX, Clock, CalendarDays, AlertTriangle } from "lucide-react";
 import { PageHeader } from "../../components/layout/PageHeader";
@@ -23,6 +24,8 @@ import type { Attendance } from "../../types";
 type Flash = { type: "success" | "error"; message: string } | null;
 
 export function AttendanceDashboardPage() {
+  const [tab, setTab] = useUrlState("tab", "today");
+
   const { user } = useAuth();
   const role = user?.role ?? "EMPLOYEE";
   const userId = user?.id ?? "";
@@ -84,14 +87,14 @@ export function AttendanceDashboardPage() {
 
       {/* §44 KPI row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-        <StatCard label="Present Today" value={kpis.presentToday} icon={<UserCheck size={20} />} />
-        <StatCard label="Absent" value={kpis.absent} icon={<UserX size={20} />} />
-        <StatCard label="Late" value={kpis.late} icon={<Clock size={20} />} />
-        <StatCard label="On Leave" value={kpis.onLeave} icon={<CalendarDays size={20} />} />
-        <StatCard label="Missing Punches" value={kpis.missingPunches} icon={<AlertTriangle size={20} />} />
+        <StatCard label="Present Today" value={kpis.presentToday} icon={<UserCheck aria-hidden="true" size={20} />} />
+        <StatCard label="Absent" value={kpis.absent} icon={<UserX aria-hidden="true" size={20} />} />
+        <StatCard label="Late" value={kpis.late} icon={<Clock aria-hidden="true" size={20} />} />
+        <StatCard label="On Leave" value={kpis.onLeave} icon={<CalendarDays aria-hidden="true" size={20} />} />
+        <StatCard label="Missing Punches" value={kpis.missingPunches} icon={<AlertTriangle aria-hidden="true" size={20} />} />
       </div>
 
-      <Tabs defaultValue="today">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="mb-4">
           <TabsTrigger value="today">Today</TabsTrigger>
           <TabsTrigger value="calendar">Calendar</TabsTrigger>

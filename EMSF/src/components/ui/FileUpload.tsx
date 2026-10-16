@@ -54,7 +54,7 @@ export function FileUpload({ accept = [], multiple = false, maxSize = 10, onUplo
           Drag & drop files here, or <span className="text-accent">browse</span>
         </p>
         <p className="text-xs text-gray-400 mt-1">
-          Max file size: {maxSize} MB
+          Max file size: {maxSize}&nbsp;MB
         </p>
       </label>
       {files.length > 0 && (
@@ -66,7 +66,7 @@ export function FileUpload({ accept = [], multiple = false, maxSize = 10, onUplo
             >
               <span className="truncate">{file.name}</span>
               <span className="text-xs text-gray-500">
-                {(file.size / 1024 / 1024).toFixed(2)} MB
+                {(file.size / 1024 / 1024).toFixed(2)}&nbsp;MB
               </span>
             </div>
           ))}

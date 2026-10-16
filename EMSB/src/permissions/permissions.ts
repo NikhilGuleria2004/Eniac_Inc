@@ -52,7 +52,20 @@ export const PERMISSIONS = [
   "timesheet.provision",
   "notification.view",
   "compensation.view",
-  "compensation.manage"
+  "compensation.manage",
+  "daily_log.view",
+  "daily_log.create",
+  "daily_log.edit",
+  "daily_log.view_all",
+  "timesheet.view_all",
+  "timesheet.submit",
+  "timesheet.approve",
+  "timesheet.reject",
+  "invoice.view",
+  "invoice.view_all",
+  "invoice.create",
+  "invoice.edit",
+  "invoice.send"
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
@@ -112,6 +125,15 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "leave.reject",
     "report.view",
     "timesheet.view",
+    "timesheet.view_all",
+    "timesheet.approve",
+    "timesheet.reject",
+    "daily_log.view_all",
+    "daily_log.create",
+    "invoice.view_all",
+    "invoice.create",
+    "invoice.edit",
+    "invoice.send",
     "notification.view"
   ],
   SUPERVISOR: [
@@ -124,6 +146,11 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "attendance.view",
     "attendance.mark",
     "timesheet.view",
+    "timesheet.view_all",
+    "timesheet.approve",
+    "timesheet.reject",
+    "daily_log.view_all",
+    "daily_log.create",
     "notification.view"
   ],
   EMPLOYEE: [
@@ -138,6 +165,12 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     "project.view_self",
     "assignment.view_self",
     "review.view_self",
+    "daily_log.view",
+    "daily_log.create",
+    "daily_log.edit",
+    "timesheet.view",
+    "timesheet.submit",
+    "project.view",
     "notification.view"
   ]
 };

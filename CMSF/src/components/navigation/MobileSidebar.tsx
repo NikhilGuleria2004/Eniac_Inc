@@ -6,7 +6,7 @@ export function MobileSidebar({ open, onClose }: { open: boolean; onClose: () =>
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
-      <div className="absolute top-0 left-0 h-full w-64 overflow-y-auto">
+      <div className="sidebar-nav absolute top-0 left-0 h-full w-64">
         <Sidebar collapsed={false} onNavigate={onClose} />
       </div>
     </div>

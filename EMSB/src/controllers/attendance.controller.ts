@@ -68,7 +68,8 @@ export const attendanceController = {
       const record = await service.checkIn(
         result.data,
         req.user?.role ?? "EMPLOYEE",
-        req.user?.employeeId
+        req.user?.employeeId,
+        req.user!.userId
       );
 
       res.status(HTTP_STATUS.CREATED).json(successResponse(record));
@@ -89,7 +90,8 @@ export const attendanceController = {
       const record = await service.checkOut(
         result.data,
         req.user?.role ?? "EMPLOYEE",
-        req.user?.employeeId
+        req.user?.employeeId,
+        req.user!.userId
       );
 
       res.json(successResponse(record));
@@ -110,7 +112,8 @@ export const attendanceController = {
       const record = await service.updateAttendance(
         req.params.attendanceId,
         result.data,
-        req.user?.role ?? "HR"
+        req.user?.role ?? "HR",
+        req.user!.userId
       );
 
       res.json(successResponse(record));
@@ -132,7 +135,8 @@ export const attendanceController = {
         req.params.attendanceId,
         result.data,
         req.user?.role ?? "EMPLOYEE",
-        req.user?.employeeId
+        req.user?.employeeId,
+        req.user!.userId
       );
 
       res.status(HTTP_STATUS.CREATED).json(successResponse(correction));
@@ -176,7 +180,8 @@ export const attendanceController = {
         req.params.correctionId,
         action === "approve" ? "APPROVED" : "REJECTED",
         result.data.comments,
-        req.user?.role ?? "HR"
+        req.user?.role ?? "HR",
+        req.user!.userId
       );
 
       res.json(successResponse(correction));

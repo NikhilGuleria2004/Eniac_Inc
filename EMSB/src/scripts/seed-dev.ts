@@ -67,6 +67,8 @@ async function seed(): Promise<void> {
   // ===== EMPLOYEES =====
   console.log("Creating employees...");
   const allEmployeeIds = [...seededEmployeeIds];
+  // Document literals carry optional fields assigned conditionally below.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const employeeDocs: any[] = [...seededEmployeeIds.map((empId, i) => ({
     employeeId: empId,
     firstName: seededFirstNames[i],
@@ -242,6 +244,7 @@ async function seed(): Promise<void> {
       const date = new Date(now.getTime() - d * MS_PER_DAY);
       if (date.getDay() === 0) continue;
       const status = rand(["P", "P", "P", "P", "P", "A", "L", "M"]);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const doc: any = {
         attendanceId: `ATT-${randomBytes(4).toString("hex")}`,
         employeeId: emp.employeeId,

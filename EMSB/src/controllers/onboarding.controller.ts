@@ -43,7 +43,7 @@ export const onboardingController = {
       }
 
       const service = getOnboardingService();
-      const record = await service.createOnboarding(result.data, req.user?.role ?? "HR");
+      const record = await service.createOnboarding(result.data, req.user!.role, req.user!.userId);
       res.status(HTTP_STATUS.CREATED).json(successResponse(record));
     } catch (error) {
       next(error);
@@ -76,7 +76,8 @@ export const onboardingController = {
       const record = await service.updateOnboarding(
         req.params.employeeId,
         result.data,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(record));
     } catch (error) {
@@ -89,7 +90,8 @@ export const onboardingController = {
       const service = getOnboardingService();
       const record = await service.submitOnboarding(
         req.params.employeeId,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(record));
     } catch (error) {
@@ -104,7 +106,8 @@ export const onboardingController = {
       const record = await service.reviewOnboarding(
         req.params.employeeId,
         reviewNotes ?? "",
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(record));
     } catch (error) {
@@ -117,7 +120,8 @@ export const onboardingController = {
       const service = getOnboardingService();
       const record = await service.approveOnboarding(
         req.params.employeeId,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(record));
     } catch (error) {
@@ -132,7 +136,8 @@ export const onboardingController = {
       const record = await service.rejectOnboarding(
         req.params.employeeId,
         rejectionReason ?? "",
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(record));
     } catch (error) {
@@ -145,7 +150,8 @@ export const onboardingController = {
       const service = getOnboardingService();
       const record = await service.activateOnboarding(
         req.params.employeeId,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(record));
     } catch (error) {

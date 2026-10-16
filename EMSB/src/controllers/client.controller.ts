@@ -43,7 +43,7 @@ export const clientController = {
       }
 
       const service = getClientService();
-      const client = await service.createClient(result.data, req.user?.role ?? "MANAGER");
+      const client = await service.createClient(result.data, req.user!.role, req.user!.userId);
 
       res.status(HTTP_STATUS.CREATED).json(successResponse(client));
     } catch (error) {
@@ -73,7 +73,8 @@ export const clientController = {
       const client = await service.updateClient(
         req.params.clientId,
         result.data,
-        req.user?.role ?? "MANAGER"
+        req.user!.role,
+        req.user!.userId
       );
 
       res.json(successResponse(client));
@@ -87,7 +88,8 @@ export const clientController = {
       const service = getClientService();
       const client = await service.deactivateClient(
         req.params.clientId,
-        req.user?.role ?? "MANAGER"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(client));
     } catch (error) {

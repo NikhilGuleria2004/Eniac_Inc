@@ -89,14 +89,23 @@ export function SearchBar() {
   return (
     <div className="relative flex-1 max-w-xl" ref={dropdownRef}>
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} aria-hidden="true" />
         <input
           ref={inputRef}
-          type="text"
+          type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setOpen(true)}
-          placeholder="Search employees, projects, clients..."
+          onKeyDown={(e) => {
+            if (e.key === "ArrowDown" && open) {
+              e.preventDefault();
+              dropdownRef.current?.querySelector<HTMLAnchorElement>('a[href]')?.focus();
+            }
+          }}
+          placeholder="Search employees, projects, clients…"
+          aria-label="Search employees, projects, clients"
+          aria-expanded={open}
+          aria-autocomplete="list"
           className="form-input pl-10 pr-4 text-sm"
         />
       </div>
@@ -119,7 +128,7 @@ export function SearchBar() {
                       <p className="text-xs text-gray-500">{result.sub}</p>
                     </div>
                   </div>
-                  <ArrowRight size={14} className="text-gray-400" />
+                  <ArrowRight aria-hidden="true" size={14} className="text-gray-400" />
                 </NavLink>
               ))}
             </div>

@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import { Building2, Mail, Phone, MapPin, Users, Briefcase, Clock, ArrowLeft, Plus, TrendingUp } from "lucide-react";
@@ -12,6 +13,8 @@ import { ROUTES } from "../../data/constants";
 import type { Project } from "../../types";
 
 export function ClientDetailPage() {
+  const [tab, setTab] = useUrlState("tab", "overview");
+
   const { clientId } = useParams<{ clientId: string }>();
   const navigate = useNavigate();
 
@@ -47,7 +50,7 @@ export function ClientDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <button onClick={handleBack} className="p-2 hover:bg-gray-100 rounded-md text-gray-500"><ArrowLeft size={20} /></button>
+        <button onClick={handleBack} aria-label="Go back" className="p-2 hover:bg-gray-100 rounded-md text-gray-500"><ArrowLeft aria-hidden="true" size={20} /></button>
         <div>
           <h1 className="text-xl font-semibold text-gray-900">{client.name}</h1>
           <p className="text-sm text-gray-500">{client.clientCode} • {client.country} • {client.industry}</p>
@@ -57,25 +60,25 @@ export function ClientDetailPage() {
 
       <div className="flex flex-wrap gap-4">
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md">
-          <Building2 size={14} className="text-gray-500" />
+          <Building2 aria-hidden="true" size={14} className="text-gray-500" />
           <span className="text-sm text-gray-600">{client.country}</span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md">
-          <TrendingUp size={14} className="text-gray-500" />
+          <TrendingUp aria-hidden="true" size={14} className="text-gray-500" />
           <span className="text-sm text-gray-600">{client.industry}</span>
         </div>
         <StatusBadge status={client.status} />
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md">
-          <Users size={14} className="text-gray-500" />
+          <Users aria-hidden="true" size={14} className="text-gray-500" />
           <span className="text-sm text-gray-600">{activeProjects.length} active projects</span>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-md">
-          <Clock size={14} className="text-gray-500" />
+          <Clock aria-hidden="true" size={14} className="text-gray-500" />
           <span className="text-sm text-gray-600">Avg progress: {progress.progress}%</span>
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="contacts">Contacts</TabsTrigger>
@@ -125,19 +128,19 @@ export function ClientDetailPage() {
             <h3 className="text-sm font-semibold text-gray-900 mb-4">Primary Contact</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-md">
-                <Mail size={20} className="text-gray-400" />
+                <Mail aria-hidden="true" size={20} className="text-gray-400" />
                 <div><p className="text-xs text-gray-500">Email</p><p className="font-medium text-gray-900">{client.primaryContact.email}</p></div>
               </div>
               <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-md">
-                <Phone size={20} className="text-gray-400" />
+                <Phone aria-hidden="true" size={20} className="text-gray-400" />
                 <div><p className="text-xs text-gray-500">Phone</p><p className="font-medium text-gray-900">{client.primaryContact.phone}</p></div>
               </div>
               <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-md">
-                <MapPin size={20} className="text-gray-400" />
+                <MapPin aria-hidden="true" size={20} className="text-gray-400" />
                 <div><p className="text-xs text-gray-500">Country</p><p className="font-medium text-gray-900">{client.country}</p></div>
               </div>
               <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-md">
-                <Building2 size={20} className="text-gray-400" />
+                <Building2 aria-hidden="true" size={20} className="text-gray-400" />
                 <div><p className="text-xs text-gray-500">Contact Name</p><p className="font-medium text-gray-900">{client.primaryContact.name}</p></div>
               </div>
             </div>
@@ -154,11 +157,11 @@ export function ClientDetailPage() {
             />
           ) : (
             <div className="card text-center py-12">
-              <Briefcase size={48} className="mx-auto text-gray-300 mb-4" />
+              <Briefcase aria-hidden="true" size={48} className="mx-auto text-gray-300 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No projects yet</h3>
               <p className="text-gray-500 mb-4">This client doesn't have any projects assigned.</p>
               <Link to={ROUTES.PROJECT_DETAIL("new")} className="btn btn-primary inline-flex">
-                <Plus size={16} className="mr-2" />
+                <Plus aria-hidden="true" size={16} className="mr-2" />
                 Create Project
               </Link>
             </div>
@@ -170,7 +173,7 @@ export function ClientDetailPage() {
             <DataTable data={auditLogs} columns={activityColumns} keyExtractor={(r) => r.id} emptyState={{ title: "No activity" }} />
           ) : (
             <div className="card text-center py-12">
-              <Clock size={48} className="mx-auto text-gray-300 mb-4" />
+              <Clock aria-hidden="true" size={48} className="mx-auto text-gray-300 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No recent activity</h3>
               <p className="text-gray-500">No audit log entries for this client.</p>
             </div>

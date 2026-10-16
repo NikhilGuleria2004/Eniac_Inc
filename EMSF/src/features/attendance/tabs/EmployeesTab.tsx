@@ -1,6 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { DataTable } from "../../../components/tables/DataTable";
-import { Button } from "../../../components/ui/Button";
 import { formatHours, getEmployeeAttendanceStats } from "../attendance";
 import { getEmployees } from "../../../data/mock/repositories";
 import { ROUTES } from "../../../data/constants";
@@ -12,7 +11,6 @@ interface EmployeesTabProps {
 
 /** §44 "Employees" tab: per-employee attendance table with drill-down. */
 export function EmployeesTab({ records }: EmployeesTabProps) {
-  const navigate = useNavigate();
   const employees = getEmployees();
   const nameOf = (id: string) => {
     const e = employees.find((emp) => emp.id === id);
@@ -42,9 +40,9 @@ export function EmployeesTab({ records }: EmployeesTabProps) {
           key: "action",
           header: "Action",
           cell: (s) => (
-            <Button variant="secondary" size="sm" onClick={() => navigate(ROUTES.ATTENDANCE_DETAIL(s.employeeId))}>
+            <Link to={ROUTES.ATTENDANCE_DETAIL(s.employeeId)} className="btn btn-secondary btn-sm">
               View
-            </Button>
+            </Link>
           ),
         },
       ]}

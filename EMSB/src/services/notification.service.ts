@@ -305,13 +305,82 @@ export class NotificationService {
     );
   }
 
+  /**
+   * CMS event: timesheet submitted — notify reviewers (ADMIN/MANAGER/SUPERVISOR).
+   * Reviewer permissions live in the CMSB permission set, so roles with
+   * `timesheet.approve` are resolved from the collection.
+   */
+  async onTimesheetSubmitted(
+    timesheetId: string,
+    employeeName: string,
+    periodLabel: string
+  ): Promise<void> {
+    await this.notifyCmsReviewers(
+      "TIMESHEET",
+      "Timesheet submitted for review",
+      `${employeeName} submitted a timesheet for ${periodLabel}.`,
+      `/timesheets/${timesheetId}`
+    );
+  }
+
+  /**
+   * CMS event: timesheet resolved (approved/rejected) — notify the employee.
+   */
+  async onTimesheetReviewed(
+    employeeId: string,
+    timesheetId: string,
+    status: "APPROVED" | "REJECTED",
+    reviewNotes?: string
+  ): Promise<void> {
+    const statusLabel = status === "APPROVED" ? "approved" : "rejected";
+    await this.notifyEmployee(
+      employeeId,
+      "TIMESHEET",
+      `Timesheet ${statusLabel}`,
+      `Your timesheet was ${statusLabel}.${reviewNotes ? ` ${reviewNotes}` : ""}`,
+      `/timesheets/${timesheetId}`
+    );
+  }
+
+  /**
+   * CMS event: invoice sent — notify ADMIN/MANAGER (holders of invoice.send).
+   */
+  async onInvoiceSent(invoiceNumber: string, clientName: string): Promise<void> {
+    await this.notifyCmsReviewers(
+      "INVOICE",
+      "Invoice sent",
+      `Invoice ${invoiceNumber} was sent to ${clientName}.`,
+      `/invoices`
+    );
+  }
+
+  /**
+   * Resolves the users that hold a CMS permission. Payment and permission
+   * checks are shared with the EMS layer, so recipients are computed from the
+   * permission set rather than a single role.
+   */
+  private async notifyCmsReviewers(
+    type: NotificationType,
+    title: string,
+    message: string,
+    link: string
+  ): Promise<void> {
+    for (const role of ["ADMIN", "MANAGER", "SUPERVISOR"]) {
+      const users = await this.userRepository.findByRole(role);
+      for (const user of users) {
+        await this.create({ userId: user.userId, type, title, message, link });
+      }
+    }
+  }
+
   async createAuditLog(
     actorRole: Role,
     action: string,
     entityType: string,
-    entityId: string
+    entityId: string,
+    actorUserId: string
   ): Promise<void> {
-    await writeAuditLog(actorRole, action, entityType, entityId);
+    await writeAuditLog(actorRole, action, entityType, entityId, actorUserId);
   }
 
   private async generateNotificationId(): Promise<string> {

@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Plus, Trash2, Loader2 } from "lucide-react";
@@ -25,10 +26,12 @@ export function OnboardingDashboardPage() {
   const canCreate = hasPermission(role, "employee.create");
   const canDelete = hasPermission(role, "employee.delete");
   if (!hasPermission(role, "onboarding.manage")) return <Navigate to="/403" replace />;
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useUrlState("q");
   const [stageFilter, setStageFilter] = useState("all");
   const [billingFilter, setBillingFilter] = useState("all");
-  const [page, setPage] = useState(1);
+  const [pageParam, setPageParam] = useUrlState("page", "1");
+  const page = Math.max(1, parseInt(pageParam, 10) || 1);
+  const setPage = (n: number) => setPageParam(String(n));
   const [forceRefresh, setForceRefresh] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const employees = useMemo(() => getEmployees(), [forceRefresh]);
@@ -67,7 +70,7 @@ export function OnboardingDashboardPage() {
   return (
     <div className="page-container space-y-6">
       <PageHeader title="Employee Onboarding" description="Track every new hire through the 8-step activation workflow." breadcrumbs={[{ label: "Onboarding" }]}
-        actions={canCreate ? (<NavLink to={ROUTES.EMPLOYEES + "/new"} className="btn btn-primary text-sm"><Plus size={16} /> Add Employee</NavLink>) : undefined} />
+        actions={canCreate ? (<NavLink to={ROUTES.EMPLOYEES + "/new"} className="btn btn-primary text-sm"><Plus aria-hidden="true" size={16} /> Add Employee</NavLink>) : undefined} />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <StatCard label="Total Onboarding" value={inPipeline.length} />
         <StatCard label="Documents Pending" value={docsPending} />
@@ -76,7 +79,7 @@ export function OnboardingDashboardPage() {
         <StatCard label="Completed" value={completed} />
       </div>
       <div className="card"><div className="flex flex-col lg:flex-row lg:items-center gap-3">
-        <SearchInput placeholder="Search onboarding employees..." value={search} onChange={(v) => { setSearch(v); resetPage(); }} className="w-full lg:max-w-sm" />
+        <SearchInput placeholder="Search onboarding employees…" value={search} onChange={(v) => { setSearch(v); resetPage(); }} className="w-full lg:max-w-sm" />
         <FilterBar filters={[
           { key: "stage", label: "Stage", value: stageFilter, options: [{ label: "All Stages", value: "all" }, ...stages.map((s) => ({ label: s, value: s }))], onChange: (v) => { setStageFilter(v); resetPage(); } },
           { key: "billing", label: "Billing", value: billingFilter, options: [{ label: "All", value: "all" }, { label: "Billable", value: "BILLABLE" }, { label: "Non-Billable", value: "NON_BILLABLE" }], onChange: (v) => { setBillingFilter(v); resetPage(); } },
@@ -108,7 +111,7 @@ export function OnboardingDashboardPage() {
                  title="Delete employee"
                  disabled={deletingId === r.employee.id}
                >
-                 {deletingId === r.employee.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                 {deletingId === r.employee.id ? <Loader2 aria-hidden="true" size={16} className="animate-spin" /> : <Trash2 aria-hidden="true" size={16} />}
               </button>
             )
           }] : []),

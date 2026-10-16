@@ -1,5 +1,4 @@
 import { Role } from "../config/constants.js";
-import type { AuditContext } from "../services/audit.service.js";
 
 export interface AuthenticatedUser {
   userId: string;
@@ -13,7 +12,6 @@ declare global {
     interface Request {
       user?: AuthenticatedUser;
       requestId?: string;
-      auditContext?: AuditContext;
     }
   }
 }

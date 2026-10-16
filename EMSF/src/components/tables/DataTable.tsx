@@ -135,16 +135,18 @@ export function DataTable<T>({
           <thead>
             <tr className="border-b border-gray-200">
               {selectable && (
-                <th className="py-2 px-3 w-10">
+                <th scope="col" className="py-2 px-3 w-10">
                   <Checkbox
                     checked={selectedRows.length === data.length && data.length > 0}
                     onChange={toggleAll}
+                    aria-label="Select all rows"
                   />
                 </th>
               )}
               {columns.map((column) => (
                 <th
                   key={column.key}
+                  scope="col"
                   className={`text-left py-2 px-3 font-medium text-gray-600 ${column.width || ""}`}
                 >
                   <button
@@ -169,6 +171,17 @@ export function DataTable<T>({
                   key={id}
                   className={`border-b border-gray-100 hover:bg-gray-50 ${onRowClick ? "cursor-pointer" : ""}`}
                   onClick={() => onRowClick?.(row)}
+                  tabIndex={onRowClick ? 0 : undefined}
+                  onKeyDown={
+                    onRowClick
+                      ? (e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            onRowClick(row);
+                          }
+                        }
+                      : undefined
+                  }
                 >
                   {selectable && (
                     <td className="py-2 px-3">

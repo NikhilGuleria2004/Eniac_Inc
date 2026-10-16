@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useState, useMemo } from "react";
 import { BarChart3, FileText, Download, Users, Clock, Calendar, File, Briefcase, ListTodo, DollarSign, Search } from "lucide-react";
 import { DataTable } from "../../components/tables/DataTable";
@@ -8,10 +9,18 @@ import type { ReportDefinition, ReportResult } from "./reports";
 import { StatusDistributionChart } from "../../components/charts/StatusDistributionChart";
 import { LeaveStatusChart } from "../../components/charts/LeaveStatusChart";
 import { useToast } from "../../components/ui/Toast";
+import {
+  EMPLOYEE_STATUS_COLORS,
+  PROJECT_STATUS_COLORS,
+  LEAVE_STATUS_COLORS,
+  DOCUMENT_STATUS_COLORS,
+  ASSIGNMENT_STATUS_COLORS,
+  CHART_FALLBACK_COLOR,
+} from "../../components/charts/palette";
 
 export function ReportCenterPage() {
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useUrlState("q");
   const [selectedReport, setSelectedReport] = useState<ReportDefinition | null>(null);
 
   const filteredReports = useMemo(() => {
@@ -39,12 +48,12 @@ export function ReportCenterPage() {
           <p className="text-sm text-gray-500 mt-1">Generate and export reports across all modules</p>
         </div>
         <div className="flex-1 max-w-xs">
-          <label className="sr-only">Search reports</label>
+          <label className="sr-only" htmlFor="search-reports">Search reports</label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input
+            <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <input id="search-reports"
               type="text"
-              placeholder="Search reports..."
+              placeholder="Search reports…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="form-input pl-10"
@@ -83,7 +92,7 @@ export function ReportCenterPage() {
         })}
         {filteredReports.length === 0 && (
           <div className="col-span-full card text-center py-12">
-            <FileText size={48} className="mx-auto text-gray-300 mb-4" />
+            <FileText aria-hidden="true" size={48} className="mx-auto text-gray-300 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No reports found</h3>
             <p className="text-gray-500">Try adjusting your search or category filter.</p>
           </div>
@@ -170,11 +179,11 @@ function ReportDetailModal({ open, onClose, report }: ReportDetailModalProps) {
           </div>
           <div className="flex gap-2">
             <button onClick={handlePrint} className="btn btn-secondary">
-              <FileText size={16} className="mr-2" />
+              <FileText aria-hidden="true" size={16} className="mr-2" />
               Print
             </button>
             <button onClick={handleExport} className="btn btn-primary">
-              <Download size={16} className="mr-2" />
+              <Download aria-hidden="true" size={16} className="mr-2" />
               Export
             </button>
           </div>
@@ -269,18 +278,12 @@ function renderChart(category: string, reportData: ReportResult): React.ReactNod
 }
 
 function getStatusFill(status: string): string {
-  const fills: Record<string, string> = {
-    ACTIVE: "#16803C",
-    ON_LEAVE: "#B7791F",
-    ONBOARDING: "#4F46E5",
-    INACTIVE: "#6B7280",
-    SUSPENDED: "#EAB308",
-    RESIGNED: "#C53030",
-    TERMINATED: "#991B1B",
-    PENDING: "#B7791F",
-    APPROVED: "#16803C",
-    REJECTED: "#C53030",
-    CANCELLED: "#6B7280",
-  };
-  return fills[status] || "#9CA3AF";
+  return (
+    EMPLOYEE_STATUS_COLORS[status] ??
+    PROJECT_STATUS_COLORS[status] ??
+    LEAVE_STATUS_COLORS[status] ??
+    DOCUMENT_STATUS_COLORS[status] ??
+    ASSIGNMENT_STATUS_COLORS[status] ??
+    CHART_FALLBACK_COLOR
+  );
 }

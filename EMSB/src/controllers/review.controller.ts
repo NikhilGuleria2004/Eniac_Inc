@@ -47,7 +47,7 @@ export const reviewController = {
       }
 
       const service = getReviewService();
-      const review = await service.createReview(result.data, req.user?.role ?? "HR");
+      const review = await service.createReview(result.data, req.user!.role, req.user!.userId);
 
       res.status(HTTP_STATUS.CREATED).json(successResponse(review));
     } catch (error) {
@@ -81,7 +81,8 @@ export const reviewController = {
       const review = await service.updateReview(
         req.params.reviewId,
         result.data,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
 
       res.json(successResponse(review));
@@ -95,7 +96,8 @@ export const reviewController = {
       const service = getReviewService();
       const review = await service.submitReview(
         req.params.reviewId,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(review));
     } catch (error) {
@@ -108,7 +110,8 @@ export const reviewController = {
       const service = getReviewService();
       const review = await service.completeReview(
         req.params.reviewId,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(review));
     } catch (error) {

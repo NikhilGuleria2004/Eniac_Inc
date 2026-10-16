@@ -6,6 +6,8 @@ interface AvatarProps {
   className?: string;
 }
 
+const sizePx = { sm: 32, md: 40, lg: 48 } as const;
+
 const sizeClasses = {
   sm: "h-8 w-8 text-xs",
   md: "h-10 w-10 text-sm",
@@ -27,6 +29,10 @@ export function Avatar({ name, src, alt, size = "md", className = "" }: AvatarPr
       <img
         src={src}
         alt={alt || name || "Avatar"}
+        loading="lazy"
+        decoding="async"
+        width={sizePx[size]}
+        height={sizePx[size]}
         className={`${classes} object-cover`}
       />
     );

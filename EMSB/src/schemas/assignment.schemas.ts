@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const assignmentStatusEnum = z.enum(["ACTIVE", "ENDED", "CANCELLED"] as const);
+const assignmentStatusEnum = z.enum(["ACTIVE", "PENDING", "ENDED", "CANCELLED"] as const);
 
 export const assignmentListQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),

@@ -6,7 +6,19 @@ export const Textarea = forwardRef<HTMLTextAreaElement, ComponentPropsWithoutRef
       "form-input min-h-[80px] resize-y " +
       className;
 
-    return <textarea ref={ref} className={classes} {...props} />;
+    // ⌘/Ctrl+Enter submits the enclosing form (textarea Enter inserts newline).
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+        const form = e.currentTarget.form;
+        if (form) {
+          e.preventDefault();
+          form.requestSubmit();
+        }
+      }
+      props.onKeyDown?.(e);
+    };
+
+    return <textarea ref={ref} className={classes} {...props} onKeyDown={handleKeyDown} />;
   }
 );
 

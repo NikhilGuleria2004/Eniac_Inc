@@ -76,3 +76,6 @@ Desktop.ini
 # Project-specific (this monorepo root)
 # =============================================================================
 EMSB.zip
+
+# Sensitive credential files — must never be committed
+credentials.txt

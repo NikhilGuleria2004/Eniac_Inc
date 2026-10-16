@@ -85,6 +85,7 @@ export const ROUTES = {
   INVOICES: "/invoices",
   INVOICE_NEW: "/invoices/new",
   INVOICE_DETAIL: "/invoices/:invoiceId",
+  INVOICE_EDIT: "/invoices/:invoiceId/edit",
   INVOICE_TEMPLATE: "/invoices/templates",
   REPORTS: "/reports",
   ANALYTICS: "/analytics",
@@ -236,7 +237,6 @@ export const SIDEBAR_SECTIONS: Record<Role, SidebarSection[]> = {
       items: [
         { label: "Notifications", route: "/notifications", icon: "Notifications" },
         { label: "Audit Log", route: "/audit-log", icon: "Audit Log" },
-        { label: "Settings", route: "/settings", icon: "Settings" },
       ],
     },
     {

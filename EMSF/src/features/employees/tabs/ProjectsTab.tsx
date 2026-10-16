@@ -20,12 +20,12 @@ export function ProjectsTab({ employee }: { employee: Employee }) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Project</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Client</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Role</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Allocation</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Billable</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Project</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Client</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Role</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Allocation</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Billable</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
               </tr>
             </thead>
             <tbody>

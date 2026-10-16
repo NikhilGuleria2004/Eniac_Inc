@@ -1,8 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import type { Employee } from "../../../types";
 import { getEmployees, getLeaveRequestsByEmployee } from "../../../data/mock/repositories";
 import { StatusBadge } from "../../../components/data/StatusBadge";
-import { Button } from "../../../components/ui/Button";
 import { ROUTES } from "../../../data/constants";
 import {
   getLeaveBalances,
@@ -13,7 +12,6 @@ import {
 
 /** §33 Leave Tab: balance cards, Request button, history with Approved By. */
 export function LeaveTab({ employee }: { employee: Employee }) {
-  const navigate = useNavigate();
   const leaves = getLeaveRequestsByEmployee(employee.id);
   const balances = getLeaveBalances(employee.id, leaves);
   const types = Object.keys(LEAVE_QUOTAS) as LeaveType[];
@@ -27,9 +25,9 @@ export function LeaveTab({ employee }: { employee: Employee }) {
       <div className="card">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-gray-900">Leave Balance</h3>
-          <Button variant="primary" size="sm" onClick={() => navigate(ROUTES.LEAVE_REQUEST)}>
+          <Link to={ROUTES.LEAVE_REQUEST} className="btn btn-primary btn-sm">
             Request Leave
-          </Button>
+          </Link>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {types.map((type) => (
@@ -59,13 +57,13 @@ export function LeaveTab({ employee }: { employee: Employee }) {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Type</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Start</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">End</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Days</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Reason</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
-                  <th className="text-left py-2 px-3 font-medium text-gray-600">Approved By</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Type</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Start</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">End</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Days</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Reason</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                  <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Approved By</th>
                 </tr>
               </thead>
               <tbody>

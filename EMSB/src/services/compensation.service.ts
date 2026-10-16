@@ -56,7 +56,8 @@ export class CompensationService {
   async updateCompensation(
     employeeId: string,
     input: UpdateCompensationInput,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<CompensationDTO> {
     const employee = await this.employeeRepository.findByEmployeeId(employeeId);
     if (!employee) {
@@ -88,7 +89,7 @@ export class CompensationService {
         salary: toDecimal128(input.salary.amount),
         payFrequency: input.salary.payFrequency
       };
-      await writeAuditLog(actorRole, "salary.updated", "employee", employeeId);
+      await writeAuditLog(actorRole, "salary.updated", "employee", employeeId, actorUserId);
     }
 
     if (input.billRate) {
@@ -110,7 +111,7 @@ export class CompensationService {
         amount: toDecimal128(input.billRate.amount),
         unit: input.billRate.unit
       };
-      await writeAuditLog(actorRole, "bill_rate.updated", "employee", employeeId);
+      await writeAuditLog(actorRole, "bill_rate.updated", "employee", employeeId, actorUserId);
     }
 
     const updated = await this.employeeRepository.update(employeeId, update);

@@ -6,7 +6,9 @@ export type NotificationType =
   | "PROJECT"
   | "ONBOARDING"
   | "ATTENDANCE"
-  | "SYSTEM";
+  | "SYSTEM"
+  | "TIMESHEET"
+  | "INVOICE";
 
 export interface Notification {
   _id: ObjectId;

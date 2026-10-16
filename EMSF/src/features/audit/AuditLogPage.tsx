@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useState, useMemo } from "react";
 import { Shield, Search, BarChart3, Users, Clock, Eye, AlertTriangle } from "lucide-react";
 import { DataTable } from "../../components/tables/DataTable";
@@ -8,7 +9,7 @@ import { computeAuditKPIs, filterAuditLogs, getUniqueAuditUsers, getUniqueAuditR
 import type { AuditLog } from "../../types";
 
 export function AuditLogPage() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useUrlState("q");
   const [userFilter, setUserFilter] = useState("all");
   const [roleFilter, setRoleFilter] = useState("all");
   const [actionFilter, setActionFilter] = useState("all");
@@ -74,7 +75,7 @@ export function AuditLogPage() {
         const emp = employees.find((e) => e.id === row.userId);
         return (
           <div className="flex items-center gap-2">
-            {emp?.avatar && <img src={emp.avatar} alt={row.userName} className="w-6 h-6 rounded-full" />}
+            {emp?.avatar && <img src={emp.avatar} alt={row.userName} width={24} height={24} loading="lazy" decoding="async" className="w-6 h-6 rounded-full" />}
             <span className="text-sm text-gray-900">{row.userName}</span>
           </div>
         );
@@ -123,7 +124,7 @@ export function AuditLogPage() {
           className="text-accent hover:text-accent-hover text-xs font-medium"
           title="View details"
         >
-          <Eye size={14} />
+          <Eye aria-hidden="true" size={14} />
         </button>
       ),
     },
@@ -138,26 +139,26 @@ export function AuditLogPage() {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-gray-500">Admin only</span>
-          <Shield size={18} className="text-gray-400" />
+          <Shield aria-hidden="true" size={18} className="text-gray-400" />
         </div>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPIStat label="Total Logs" value={kpis.totalLogs} icon={<BarChart3 size={20} />} />
-        <KPIStat label="Critical Actions" value={kpis.criticalActions} icon={<AlertTriangle size={20} />} variant="warning" />
-        <KPIStat label="Active Users" value={kpis.uniqueUsers} icon={<Users size={20} />} variant="info" />
-        <KPIStat label="Today" value={kpis.todayCount} icon={<Clock size={20} />} variant="success" />
+        <KPIStat label="Total Logs" value={kpis.totalLogs} icon={<BarChart3 aria-hidden="true" size={20} />} />
+        <KPIStat label="Critical Actions" value={kpis.criticalActions} icon={<AlertTriangle aria-hidden="true" size={20} />} variant="warning" />
+        <KPIStat label="Active Users" value={kpis.uniqueUsers} icon={<Users aria-hidden="true" size={20} />} variant="info" />
+        <KPIStat label="Today" value={kpis.todayCount} icon={<Clock aria-hidden="true" size={20} />} variant="success" />
       </div>
 
       <div className="card">
         <div className="flex flex-col sm:flex-row gap-4 p-4 border-b border-gray-200">
           <div className="flex-1 max-w-xs">
-            <label className="sr-only">Search audit logs</label>
+            <label className="sr-only" htmlFor="search-audit-logs">Search audit logs</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input
+              <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input id="search-audit-logs"
                 type="text"
-                placeholder="Search by description, user, or entity ID..."
+                placeholder="Search by description, user, or entity ID…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="form-input pl-10"

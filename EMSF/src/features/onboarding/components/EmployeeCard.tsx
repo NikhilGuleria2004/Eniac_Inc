@@ -1,6 +1,6 @@
 import { EmployeeAvatar } from "../../../components/data/EmployeeAvatar";
 import { StatusBadge } from "../../../components/data/StatusBadge";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ROUTES } from "../../../data/constants";
 import type { Employee } from "../../../types";
 
@@ -10,7 +10,6 @@ interface EmployeeCardProps {
 }
 
 export function EmployeeCard({ employee, currentStage }: EmployeeCardProps) {
-  const navigate = useNavigate();
 
   return (
     <div className="card mb-6 min-w-0">
@@ -37,13 +36,12 @@ export function EmployeeCard({ employee, currentStage }: EmployeeCardProps) {
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center shrink-0">
-          <button
-            type="button"
-            onClick={() => navigate(ROUTES.EMPLOYEE_EDIT(employee.id))}
+          <Link
+            to={ROUTES.EMPLOYEE_EDIT(employee.id)}
             className="btn btn-secondary text-sm w-full sm:w-auto"
           >
             Edit Employee
-          </button>
+          </Link>
         </div>
       </div>
     </div>

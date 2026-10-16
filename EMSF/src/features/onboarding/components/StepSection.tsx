@@ -24,7 +24,7 @@ export function StepSection({ step, index, isActive, children }: StepSectionProp
   return (
     <section
       id={`step-${index + 1}`}
-      className={`card mb-4 transition-all duration-200 ${sectionColors} ${isActive ? "ring-2 ring-accent/20" : ""}`}
+      className={`card mb-4 transition-[box-shadow,background-color,border-color] duration-200 ${sectionColors} ${isActive ? "ring-2 ring-accent/20" : ""}`}
     >
       <div className="flex items-center gap-3 mb-4">
         <div

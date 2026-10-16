@@ -1,4 +1,6 @@
-import { type ReactNode, useEffect, useRef } from "react";
+import { type ReactNode, useEffect } from "react";
+import { X } from "lucide-react";
+import { useFocusTrap } from "../../lib/useFocusTrap";
 
 interface ModalProps {
   open: boolean;
@@ -26,7 +28,7 @@ export function Modal({
   footer,
   size = "md",
 }: ModalProps) {
-  const modalRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
 
   useEffect(() => {
     if (!open) return;
@@ -50,13 +52,21 @@ export function Modal({
     <div className="fixed inset-0 z-50 flex items-center justify-center" role="presentation">
       <div className="fixed inset-0 bg-black/50" onClick={onClose} aria-hidden="true" />
       <div
-        ref={modalRef}
+        ref={dialogRef}
         className={`relative w-full ${sizeClasses[size]} mx-4 card shadow-xl`}
         role="dialog"
         aria-modal="true"
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
       >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-accent"
+        >
+          <X size={18} />
+        </button>
         {(title || description) && (
           <div className="border-b border-gray-200 pb-4 mb-4">
             {title && (

@@ -10,6 +10,59 @@ export interface MailMessage {
   subject: string;
   text: string;
   html: string;
+  attachments?: MailAttachment[];
+}
+
+export interface MailAttachment {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+}
+
+/**
+ * Builds the email sent when an invoice is dispatched to a client, with the
+ * rendered invoice PDF attached.
+ */
+export function buildInvoiceEmail(params: {
+  to: string;
+  invoiceNumber: string;
+  clientName: string;
+  subject: string;
+  totalDue: string;
+  dueDate: string;
+  paymentTerms: string;
+  attachment?: MailAttachment;
+}): MailMessage {
+  const subjectText = params.subject || `Invoice ${params.invoiceNumber}`;
+  const text = [
+    `Dear ${params.clientName},`,
+    "",
+    `Please find attached invoice ${params.invoiceNumber} for ${subjectText}.`,
+    "",
+    `Total Due: ${params.totalDue} (${params.paymentTerms})`,
+    `Due Date: ${params.dueDate}`,
+    "",
+    "Thank you for your business.",
+    "",
+    "— Eniac Inc."
+  ].join("\n");
+
+  const html = [
+    `<p>Dear ${escapeHtml(params.clientName)},</p>`,
+    `<p>Please find attached invoice <strong>${escapeHtml(params.invoiceNumber)}</strong> for ${escapeHtml(subjectText)}.</p>`,
+    `<p><strong>Total Due:</strong> ${escapeHtml(params.totalDue)} (${escapeHtml(params.paymentTerms)})<br>`,
+    `<strong>Due Date:</strong> ${escapeHtml(params.dueDate)}</p>`,
+    "<p>Thank you for your business.</p>",
+    "<p>— Eniac Inc.</p>"
+  ].join("\n");
+
+  return {
+    to: params.to,
+    subject: `Invoice ${params.invoiceNumber} from Eniac Inc.`,
+    text,
+    html,
+    attachments: params.attachment ? [params.attachment] : []
+  };
 }
 
 /**

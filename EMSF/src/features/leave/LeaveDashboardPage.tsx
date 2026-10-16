@@ -1,10 +1,10 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Clock, CheckCircle2, XCircle, CalendarDays, PlusCircle } from "lucide-react";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { StatCard } from "../../components/data/StatCard";
 import { Alert } from "../../components/ui/Alert";
-import { Button } from "../../components/ui/Button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../../components/ui/Tabs";
 import { ROUTES } from "../../data/constants";
 import { getLeaveRequests, decideLeaveRequest } from "../../data/mock/repositories";
@@ -23,10 +23,11 @@ type Flash = { type: "success" | "error"; message: string } | null;
 
 /** §47 Leave Management: KPI row + requests table + balances. */
 export function LeaveDashboardPage() {
+  const [tab, setTab] = useUrlState("tab", "requests");
+
   const { user } = useAuth();
   const role = user?.role ?? "EMPLOYEE";
   const userId = user?.id ?? "";
-  const navigate = useNavigate();
   const location = useLocation();
   const [version, setVersion] = useState(0);
   const incomingFlash = (location.state as { flash?: string } | null)?.flash;
@@ -66,10 +67,10 @@ export function LeaveDashboardPage() {
         title="Leave Management"
         description={`Requests, balances and approvals — ${today}`}
         actions={
-          <Button variant="primary" onClick={() => navigate(ROUTES.LEAVE_REQUEST)}>
-            <PlusCircle size={16} className="mr-1.5" />
+          <Link to={ROUTES.LEAVE_REQUEST} className="btn btn-primary">
+            <PlusCircle aria-hidden="true" size={16} className="mr-1.5" />
             Request Leave
-          </Button>
+          </Link>
         }
       />
 
@@ -81,13 +82,13 @@ export function LeaveDashboardPage() {
 
       {/* §47 KPI row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Pending" value={kpis.pending} icon={<Clock size={20} />} />
-        <StatCard label="Approved" value={kpis.approved} icon={<CheckCircle2 size={20} />} />
-        <StatCard label="Rejected" value={kpis.rejected} icon={<XCircle size={20} />} />
-        <StatCard label="On Leave Today" value={kpis.onLeaveToday} icon={<CalendarDays size={20} />} />
+        <StatCard label="Pending" value={kpis.pending} icon={<Clock aria-hidden="true" size={20} />} />
+        <StatCard label="Approved" value={kpis.approved} icon={<CheckCircle2 aria-hidden="true" size={20} />} />
+        <StatCard label="Rejected" value={kpis.rejected} icon={<XCircle aria-hidden="true" size={20} />} />
+        <StatCard label="On Leave Today" value={kpis.onLeaveToday} icon={<CalendarDays aria-hidden="true" size={20} />} />
       </div>
 
-      <Tabs defaultValue="requests">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="mb-4">
           <TabsTrigger value="requests">Requests</TabsTrigger>
           <TabsTrigger value="balances">Balances</TabsTrigger>

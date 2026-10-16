@@ -18,7 +18,9 @@ export interface ProjectDTO {
   projectCode: string;
   name: string;
   clientId: string;
+  clientName: string;
   managerId: string;
+  supervisorId?: string;
   description: string;
   startDate: string;
   endDate: string;
@@ -26,7 +28,12 @@ export interface ProjectDTO {
   status: ProjectStatus;
   health: ProjectHealth;
   teamSize: number;
+  budget?: number;
+  budgetCurrency?: string;
+  tags?: string[];
+  visibility?: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 const VALID_TRANSITIONS: Record<ProjectStatus, ProjectStatus[]> = {
@@ -82,7 +89,7 @@ export class ProjectService {
     return { projects: projectDTOs, total, page: filters.page, pageSize: filters.pageSize };
   }
 
-  async createProject(input: CreateProjectInput, actorRole: Role): Promise<ProjectDTO> {
+  async createProject(input: CreateProjectInput, actorRole: Role, actorUserId: string): Promise<ProjectDTO> {
     const client = await this.clientRepository.findById(input.clientId);
     if (!client) {
       throw new NotFoundError("Client was not found.");
@@ -116,14 +123,20 @@ export class ProjectService {
       startDate: input.startDate,
       endDate: input.endDate,
       managerId: input.managerId,
+      supervisorId: input.supervisorId,
       progressPercent: input.progressPercent ?? 0,
+      budget: input.budget,
+      budgetCurrency: input.budgetCurrency,
+      tags: input.tags,
+      visibility: input.visibility,
+      clientName: client.name,
       createdBy: actorRole,
       createdAt: new Date(),
       updatedAt: new Date()
     };
 
     const created = await this.projectRepository.create(project);
-    await writeAuditLog(actorRole, "project.created", "project", created.projectId);
+    await writeAuditLog(actorRole, "project.created", "project", created.projectId, actorUserId);
 
     return this.toDTO(created);
   }
@@ -139,7 +152,8 @@ export class ProjectService {
   async updateProject(
     projectId: string,
     input: UpdateProjectInput,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<ProjectDTO> {
     const project = await this.projectRepository.findById(projectId);
     if (!project) {
@@ -156,23 +170,28 @@ export class ProjectService {
     if (input.endDate !== undefined) update.endDate = input.endDate;
     if (input.managerId !== undefined) update.managerId = input.managerId;
     if (input.progressPercent !== undefined) update.progressPercent = input.progressPercent;
+    if (input.supervisorId !== undefined) update.supervisorId = input.supervisorId;
+    if (input.budget !== undefined) update.budget = input.budget;
+    if (input.budgetCurrency !== undefined) update.budgetCurrency = input.budgetCurrency;
+    if (input.tags !== undefined) update.tags = input.tags;
+    if (input.visibility !== undefined) update.visibility = input.visibility;
 
     const updated = await this.projectRepository.update(projectId, update);
     if (!updated) {
       throw new NotFoundError("Project was not found.");
     }
 
-    await writeAuditLog(actorRole, "project.updated", "project", projectId);
+    await writeAuditLog(actorRole, "project.updated", "project", projectId, actorUserId);
 
     return this.toDTO(updated);
   }
 
-  async activateProject(projectId: string, actorRole: Role): Promise<ProjectDTO> {
-    return this.transitionStatus(projectId, "ACTIVE", actorRole);
+  async activateProject(projectId: string, actorRole: Role, actorUserId: string): Promise<ProjectDTO> {
+    return this.transitionStatus(projectId, "ACTIVE", actorRole, actorUserId);
   }
 
-  async completeProject(projectId: string, actorRole: Role): Promise<ProjectDTO> {
-    const updated = await this.transitionStatus(projectId, "COMPLETED", actorRole);
+  async completeProject(projectId: string, actorRole: Role, actorUserId: string): Promise<ProjectDTO> {
+    const updated = await this.transitionStatus(projectId, "COMPLETED", actorRole, actorUserId);
     if (updated.progress !== 100) {
       const result = await this.projectRepository.update(projectId, {
         progressPercent: 100
@@ -182,14 +201,15 @@ export class ProjectService {
     return updated;
   }
 
-  async archiveProject(projectId: string, actorRole: Role): Promise<ProjectDTO> {
-    return this.transitionStatus(projectId, "CANCELLED", actorRole);
+  async archiveProject(projectId: string, actorRole: Role, actorUserId: string): Promise<ProjectDTO> {
+    return this.transitionStatus(projectId, "CANCELLED", actorRole, actorUserId);
   }
 
   private async transitionStatus(
     projectId: string,
     targetStatus: ProjectStatus,
-    actorRole: Role
+    actorRole: Role,
+    actorUserId: string
   ): Promise<ProjectDTO> {
     const project = await this.projectRepository.findById(projectId);
     if (!project) {
@@ -217,7 +237,7 @@ export class ProjectService {
       CANCELLED: "project.archived"
     };
 
-    await writeAuditLog(actorRole, actionMap[targetStatus], "project", projectId);
+    await writeAuditLog(actorRole, actionMap[targetStatus], "project", projectId, actorUserId);
 
     return this.toDTO(updated);
   }
@@ -256,7 +276,14 @@ export class ProjectService {
       status: project.status,
       health: project.health,
       teamSize,
-      createdAt: toISO(project.createdAt) ?? ""
+      budget: project.budget,
+      budgetCurrency: project.budgetCurrency,
+      tags: project.tags,
+      visibility: project.visibility,
+      clientName: project.clientName ?? "",
+      supervisorId: project.supervisorId,
+      createdAt: toISO(project.createdAt) ?? "",
+      updatedAt: toISO(project.updatedAt) ?? ""
     };
   }
 

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useNavigate, useParams, Navigate } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { StatusBadge } from "../../components/data/StatusBadge";
 import { Button } from "../../components/ui/Button";
@@ -26,7 +26,6 @@ export function LeaveDetailPage() {
   const { user } = useAuth();
   const role = user?.role ?? "EMPLOYEE";
   const userId = user?.id ?? "";
-  const navigate = useNavigate();
   const [version, setVersion] = useState(0);
   const [flash, setFlash] = useState<Flash>(null);
   const [deciding, setDeciding] = useState<"APPROVED" | "REJECTED" | null>(null);
@@ -60,9 +59,9 @@ export function LeaveDetailPage() {
           title="Leave request not found"
           description="This request may have been removed."
           action={
-            <Button variant="primary" onClick={() => navigate(ROUTES.LEAVE)}>
+            <Link to={ROUTES.LEAVE} className="btn btn-primary">
               Back to Leave
-            </Button>
+            </Link>
           }
         />
       </div>
@@ -103,7 +102,7 @@ export function LeaveDetailPage() {
     ["To", request.endDate],
     ["Days", String(request.days)],
     ["Reason", request.reason],
-    ["Submitted", request.createdAt.slice(0, 10)],
+    ["Submitted", new Date(request.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })],
     ["Status", request.status],
     ["Approved By", request.approvedBy ? employeeName(employees, request.approvedBy) : "—"],
     ["Decision Comment", request.reviewComment ?? "—"],

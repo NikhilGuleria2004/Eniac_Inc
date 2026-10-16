@@ -17,6 +17,7 @@ export function BrandMark({ size = 36, variant = "default", className = "" }: Br
       style={{ width: size, height: size }}
       role="img"
       aria-label="Eniac Inc. logo"
+      translate="no"
     >
       <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden="true">
         <defs>

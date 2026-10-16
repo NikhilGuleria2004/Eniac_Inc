@@ -31,6 +31,9 @@ export function UserMenu() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-label="User menu"
         className="flex items-center gap-2 p-2 rounded-md hover:bg-gray-100 text-gray-700"
       >
         <span className="hidden md:block text-sm font-medium">
@@ -40,7 +43,7 @@ export function UserMenu() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-50">
+        <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg py-1 z-50" role="menu">
           <div className="px-3 py-2 border-b border-gray-200">
             <p className="text-sm font-medium text-gray-900">
               {user.firstName} {user.lastName}
@@ -50,6 +53,8 @@ export function UserMenu() {
 
           <button
             onClick={() => setRoleOpen(!roleOpen)}
+            aria-expanded={roleOpen}
+            aria-haspopup="menu"
             className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
           >
             <span>Switch Role</span>

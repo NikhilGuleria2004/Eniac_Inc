@@ -9,6 +9,7 @@ export function NotificationsDropdown() {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const notifications = user ? getNotificationsByUser(user.id) : [];
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -18,9 +19,19 @@ export function NotificationsDropdown() {
         setOpen(false);
       }
     }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && open) {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    }
     if (open) {
       document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener("keydown", handleKeyDown);
+      };
     }
   }, [open]);
 
@@ -29,11 +40,13 @@ export function NotificationsDropdown() {
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={triggerRef}
         onClick={() => setOpen(!open)}
         className="p-2 hover:bg-gray-100 rounded-md relative"
-        aria-label="Notifications"
+        aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
+        aria-expanded={open}
       >
-        <Bell size={20} className="text-gray-600" />
+        <Bell size={20} className="text-gray-600" aria-hidden="true" />
         {unreadCount > 0 && (
           <span className="absolute top-1 right-1 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full px-1">
             {unreadCount}

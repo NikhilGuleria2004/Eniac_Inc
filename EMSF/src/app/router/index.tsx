@@ -30,23 +30,19 @@ import { AssignmentsDashboardPage } from "../../features/assignments/Assignments
 import { AnalyticsDashboardPage } from "../../features/analytics/AnalyticsDashboardPage";
 import { useAuth } from "../../features/auth/AuthContext";
 import { hasPermission } from "../../lib/permissions";
+import { PageSkeleton } from "../../components/ui/PageSkeleton";
+import { useLoadingVisible } from "../../lib/useLoadingVisible";
 import type { Permission } from "../../types";
 
 function RouteLoading() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-3">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-accent" />
-        <p className="text-sm text-gray-500">Loading...</p>
-      </div>
-    </div>
-  );
+  return <PageSkeleton />;
 }
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
+  const showSkeleton = useLoadingVisible(isLoading);
   if (isLoading) {
-    return <RouteLoading />;
+    return showSkeleton ? <RouteLoading /> : null;
   }
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

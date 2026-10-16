@@ -2,8 +2,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import type { ReactNode } from "react";
 import { AppShell } from "../layouts/AppShell";
 import { LoginPage } from "../../features/auth/LoginPage";
-import { DashboardRouter } from "../../features/dashboard/DashboardRouter";
-import { PlaceholderPage } from "../../components/pages/PlaceholderPage";
+import { DashboardPage } from "../../features/dashboard/DashboardPage";
 import { ClientDashboardPage } from "../../features/clients/ClientDashboardPage";
 import { ClientDetailPage } from "../../features/clients/ClientDetailPage";
 import { ProjectDashboardPage } from "../../features/projects/ProjectDashboardPage";
@@ -11,6 +10,19 @@ import { ProjectDetailPage } from "../../features/projects/ProjectDetailPage";
 import { AssignmentsDashboardPage } from "../../features/assignments/AssignmentsDashboardPage";
 import { DailyLogsDashboardPage } from "../../features/dailylogs/DailyLogsDashboardPage";
 import { DailyLogDetailPage } from "../../features/dailylogs/DailyLogDetailPage";
+import { TimesheetsDashboardPage } from "../../features/timesheets/TimesheetsDashboardPage";
+import { TimesheetDetailPage } from "../../features/timesheets/TimesheetDetailPage";
+import { MyTimesheetsPage } from "../../features/timesheets/MyTimesheetsPage";
+import { InvoicesDashboardPage } from "../../features/invoices/InvoicesDashboardPage";
+import { InvoiceDetailPage } from "../../features/invoices/InvoiceDetailPage";
+import { InvoiceComposerPage } from "../../features/invoices/InvoiceComposerPage";
+import { InvoiceTemplatesPanel } from "../../features/invoices/InvoiceTemplatesPanel";
+import { ReportCenterPage } from "../../features/reports/ReportCenterPage";
+import { AnalyticsDashboardPage } from "../../features/analytics/AnalyticsDashboardPage";
+import { NotificationCenterPage } from "../../features/notifications/NotificationCenterPage";
+import { AuditLogPage } from "../../features/audit/AuditLogPage";
+import { SettingsPage } from "../../features/settings/SettingsPage";
+import { UserProfilePage } from "../../features/auth/UserProfilePage";
 import { useAuth } from "../../features/auth/AuthContext";
 import { hasAnyPermission } from "../../lib/permissions";
 import type { Permission, Role } from "../../types";
@@ -95,7 +107,7 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: "dashboard", element: <DashboardRouter /> },
+       { path: "dashboard", element: <DashboardPage /> },
       {
         path: "clients",
         element: (
@@ -129,26 +141,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "projects/:projectId/edit",
-        element: (
-          <PermissionGuard permission="project.edit">
-            <PlaceholderPage title="Edit Project" />
-          </PermissionGuard>
-        ),
-      },
-      {
         path: "assignments",
         element: (
           <PermissionGuard permission="assignment.view">
             <AssignmentsDashboardPage />
-          </PermissionGuard>
-        ),
-      },
-      {
-        path: "assignments/:assignmentId",
-        element: (
-          <PermissionGuard permission="assignment.view">
-            <PlaceholderPage title="Assignment" />
           </PermissionGuard>
         ),
       },
@@ -177,18 +173,10 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "daily-logs/:employeeId",
-        element: (
-          <PermissionGuard permission="daily_log.view_all">
-            <PlaceholderPage title="Employee Daily Logs" />
-          </PermissionGuard>
-        ),
-      },
-      {
         path: "timesheets",
         element: (
-          <PermissionGuard permission={["timesheet.view", "timesheet.view_all"]}>
-            <PlaceholderPage title="Timesheets" />
+          <PermissionGuard permission="timesheet.view_all">
+            <TimesheetsDashboardPage />
           </PermissionGuard>
         ),
       },
@@ -196,7 +184,7 @@ export const router = createBrowserRouter([
         path: "timesheets/my",
         element: (
           <PermissionGuard permission="timesheet.view">
-            <PlaceholderPage title="My Timesheets" />
+            <MyTimesheetsPage />
           </PermissionGuard>
         ),
       },
@@ -204,15 +192,15 @@ export const router = createBrowserRouter([
         path: "timesheets/:timesheetId",
         element: (
           <PermissionGuard permission={["timesheet.view", "timesheet.view_all"]}>
-            <PlaceholderPage title="Timesheet" />
+            <TimesheetDetailPage />
           </PermissionGuard>
         ),
       },
       {
         path: "invoices",
         element: (
-          <PermissionGuard permission={["invoice.view", "invoice.view_all"]}>
-            <PlaceholderPage title="Invoices" />
+          <PermissionGuard permission="invoice.view_all">
+            <InvoicesDashboardPage />
           </PermissionGuard>
         ),
       },
@@ -220,23 +208,31 @@ export const router = createBrowserRouter([
         path: "invoices/new",
         element: (
           <PermissionGuard permission="invoice.create">
-            <PlaceholderPage title="New Invoice" />
-          </PermissionGuard>
-        ),
-      },
-      {
-        path: "invoices/:invoiceId",
-        element: (
-          <PermissionGuard permission={["invoice.view", "invoice.view_all"]}>
-            <PlaceholderPage title="Invoice" />
+            <InvoiceComposerPage />
           </PermissionGuard>
         ),
       },
       {
         path: "invoices/templates",
         element: (
-          <PermissionGuard permission="settings.manage">
-            <PlaceholderPage title="Invoice Templates" />
+          <PermissionGuard permission="invoice.create">
+            <InvoiceTemplatesPanel />
+          </PermissionGuard>
+        ),
+      },
+      {
+        path: "invoices/:invoiceId/edit",
+        element: (
+          <PermissionGuard permission="invoice.edit">
+            <InvoiceComposerPage />
+          </PermissionGuard>
+        ),
+      },
+      {
+        path: "invoices/:invoiceId",
+        element: (
+          <PermissionGuard permission="invoice.view_all">
+            <InvoiceDetailPage />
           </PermissionGuard>
         ),
       },
@@ -244,7 +240,7 @@ export const router = createBrowserRouter([
         path: "reports",
         element: (
           <PermissionGuard permission="report.view">
-            <PlaceholderPage title="Reports" />
+            <ReportCenterPage />
           </PermissionGuard>
         ),
       },
@@ -252,7 +248,7 @@ export const router = createBrowserRouter([
         path: "reports/:reportId",
         element: (
           <PermissionGuard permission="report.view">
-            <PlaceholderPage title="Report" />
+            <ReportCenterPage />
           </PermissionGuard>
         ),
       },
@@ -260,7 +256,7 @@ export const router = createBrowserRouter([
         path: "analytics",
         element: (
           <PermissionGuard permission="report.view">
-            <PlaceholderPage title="Analytics" />
+            <AnalyticsDashboardPage />
           </PermissionGuard>
         ),
       },
@@ -268,7 +264,7 @@ export const router = createBrowserRouter([
         path: "notifications",
         element: (
           <PermissionGuard permission="notification.view">
-            <PlaceholderPage title="Notifications" />
+            <NotificationCenterPage />
           </PermissionGuard>
         ),
       },
@@ -276,7 +272,7 @@ export const router = createBrowserRouter([
         path: "audit-log",
         element: (
           <PermissionGuard permission="audit.view">
-            <PlaceholderPage title="Audit Log" />
+            <AuditLogPage />
           </PermissionGuard>
         ),
       },
@@ -284,7 +280,7 @@ export const router = createBrowserRouter([
         path: "settings",
         element: (
           <PermissionGuard permission="settings.manage">
-            <PlaceholderPage title="Settings" />
+            <SettingsPage />
           </PermissionGuard>
         ),
       },
@@ -292,7 +288,7 @@ export const router = createBrowserRouter([
         path: "settings/:section",
         element: (
           <PermissionGuard permission="settings.manage">
-            <PlaceholderPage title="Settings" />
+            <SettingsPage />
           </PermissionGuard>
         ),
       },
@@ -300,7 +296,7 @@ export const router = createBrowserRouter([
         path: "profile",
         element: (
           <PermissionGuard permission="profile.edit">
-            <PlaceholderPage title="Profile" />
+            <UserProfilePage />
           </PermissionGuard>
         ),
       },
@@ -308,7 +304,7 @@ export const router = createBrowserRouter([
         path: "profile/:tab",
         element: (
           <PermissionGuard permission="profile.edit">
-            <PlaceholderPage title="Profile" />
+            <UserProfilePage />
           </PermissionGuard>
         ),
       },

@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { CalendarDays, Pencil, Lock } from "lucide-react";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { StatusBadge } from "../../components/data/StatusBadge";
+import { useAuth } from "../../features/auth/AuthContext";
+import { hasPermission } from "../../lib/permissions";
 import { getDailyLogs, getProjects, getEmployees, getTimesheets } from "../../data/mock/repositories";
 import { ROUTES } from "../../data/constants";
 import { DailyLogFormModal } from "./DailyLogFormModal";
@@ -10,6 +12,7 @@ import { DailyLogFormModal } from "./DailyLogFormModal";
 export function DailyLogDetailPage() {
   const { logId = "" } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [editOpen, setEditOpen] = useState(false);
 
   const log = getDailyLogs().find((d) => d.id === logId);
@@ -28,6 +31,12 @@ export function DailyLogDetailPage() {
     );
   }
 
+  const canViewAll = hasPermission(user?.role ?? "EMPLOYEE", "daily_log.view_all");
+  const isOwner = user?.role === "EMPLOYEE" && user?.employeeId === log.employeeId;
+  if (!canViewAll && !isOwner) {
+    return <Navigate to="/403" replace />;
+  }
+
   return (
     <div className="page-container space-y-6">
       <PageHeader
@@ -36,8 +45,10 @@ export function DailyLogDetailPage() {
         actions={
           locked ? (
             <span className="flex items-center gap-2 text-sm text-gray-500"><Lock size={16} /> Locked (timesheet approved/paid)</span>
-          ) : (
+          ) : isOwner ? (
             <button className="btn btn-primary" onClick={() => setEditOpen(true)}><Pencil size={16} className="mr-2" />Edit</button>
+          ) : (
+            <span className="text-sm text-gray-500">View only (review via rejection)</span>
           )
         }
       />

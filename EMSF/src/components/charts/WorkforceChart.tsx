@@ -1,4 +1,5 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { WORKFORCE_LINE_COLORS } from "./palette";
 
 interface WorkforceDataPoint {
   month: string;
@@ -51,18 +52,18 @@ export function WorkforceChart({ data }: WorkforceChartProps) {
             type="monotone"
             dataKey="headcount"
             name="Total Headcount"
-            stroke="#1D4ED8"
+            stroke={WORKFORCE_LINE_COLORS.headcount}
             strokeWidth={2}
-            dot={{ r: 4, strokeWidth: 2, fill: "#1D4ED8" }}
+            dot={{ r: 4, strokeWidth: 2, fill: WORKFORCE_LINE_COLORS.headcount }}
             activeDot={{ r: 6, strokeWidth: 3 }}
           />
           <Line
             type="monotone"
             dataKey="newHires"
             name="New Hires"
-            stroke="#16803C"
+            stroke={WORKFORCE_LINE_COLORS.newHires}
             strokeWidth={2}
-            dot={{ r: 4, strokeWidth: 2, fill: "#16803C" }}
+            dot={{ r: 4, strokeWidth: 2, fill: WORKFORCE_LINE_COLORS.newHires }}
             activeDot={{ r: 6, strokeWidth: 3 }}
             strokeDasharray="5 5"
           />
@@ -70,9 +71,9 @@ export function WorkforceChart({ data }: WorkforceChartProps) {
             type="monotone"
             dataKey="exits"
             name="Exits"
-            stroke="#C53030"
+            stroke={WORKFORCE_LINE_COLORS.exits}
             strokeWidth={2}
-            dot={{ r: 4, strokeWidth: 2, fill: "#C53030" }}
+            dot={{ r: 4, strokeWidth: 2, fill: WORKFORCE_LINE_COLORS.exits }}
             activeDot={{ r: 6, strokeWidth: 3 }}
             strokeDasharray="3 3"
           />

@@ -1,5 +1,7 @@
+import { useUnsavedChangesWarning } from "../../lib/useUnsavedChangesWarning";
+import { useFocusError } from "../../lib/useFocusError";
 import { useMemo, useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CalendarPlus } from "lucide-react";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { Alert } from "../../components/ui/Alert";
@@ -31,6 +33,11 @@ export function LeaveRequestPage() {
   const [reason, setReason] = useState("");
   const [documentName, setDocumentName] = useState<string | undefined>(undefined);
   const [errors, setErrors] = useState<string[]>([]);
+  const errorSummaryRef = useFocusError<HTMLUListElement>(errors.length);
+
+  useUnsavedChangesWarning(
+    type !== "" || startDate !== "" || endDate !== "" || reason !== "" || !!documentName
+  );
 
   const existing = useMemo(() => getLeaveRequests(), []);
   const input = { employeeId, type, startDate, endDate, reason, documentName };
@@ -74,7 +81,7 @@ export function LeaveRequestPage() {
 
       {errors.length > 0 && (
         <Alert variant="error" className="mb-4">
-          <ul className="list-disc pl-4 space-y-1">
+          <ul className="list-disc pl-4 space-y-1" tabIndex={-1} ref={errorSummaryRef}>
             {errors.map((err) => (
               <li key={err}>{err}</li>
             ))}
@@ -142,11 +149,11 @@ export function LeaveRequestPage() {
         </div>
 
         <div className="flex justify-end gap-2 border-t border-gray-200 pt-4">
-          <Button variant="secondary" type="button" onClick={() => navigate(ROUTES.LEAVE)}>
+          <Link to={ROUTES.LEAVE} className="btn btn-secondary">
             Cancel
-          </Button>
+          </Link>
           <Button variant="primary" type="submit">
-            <CalendarPlus size={16} className="mr-1.5" />
+            <CalendarPlus aria-hidden="true" size={16} className="mr-1.5" />
             Submit Request
           </Button>
         </div>

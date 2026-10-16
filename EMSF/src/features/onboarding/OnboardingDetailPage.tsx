@@ -83,17 +83,17 @@ export function OnboardingDetailPage() {
         breadcrumbs={[{ label: "Onboarding", href: ROUTES.ONBOARDING }, { label: name }]}
         actions={(
           <>
-            {canEdit && (<NavLink to={ROUTES.EMPLOYEE_EDIT(employee.id)} className="btn btn-secondary text-sm"><Pencil size={16} /> Edit Employee</NavLink>)}
+            {canEdit && (<NavLink to={ROUTES.EMPLOYEE_EDIT(employee.id)} className="btn btn-secondary text-sm"><Pencil aria-hidden="true" size={16} /> Edit Employee</NavLink>)}
             {canInvite && (
               <button type="button" onClick={handleSendInvite} className="btn btn-primary text-sm">
-                <Mail size={16} /> Send Invite
+                <Mail aria-hidden="true" size={16} /> Send Invite
               </button>
             )}
           </>
         )} />
       {inviteState.status === "sent" && (
         <div className="flex items-start gap-2 rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">
-          <MailCheck size={16} className="mt-0.5 flex-shrink-0" />
+          <MailCheck aria-hidden="true" size={16} className="mt-0.5 flex-shrink-0" />
            <span>
              Invitation sent to <span className="font-medium">{inviteState.email ?? inviteState.workMail ?? "the employee"}</span>.
              {!inviteState.emailSent && " The email could not be delivered — check the server log for the invite link."}
@@ -120,7 +120,7 @@ export function OnboardingDetailPage() {
             <li key={s.key} className="flex gap-4">
               <div className="flex flex-col items-center">
                 <div className={"w-8 h-8 rounded-full flex items-center justify-center " + (s.status === "complete" ? "bg-green-600 text-white" : s.status === "current" ? "bg-accent text-white" : "bg-gray-100 text-gray-400")}>
-                  {s.status === "complete" ? <Check size={16} /> : s.status === "current" ? <Circle size={16} /> : <Lock size={14} />}
+                  {s.status === "complete" ? <Check aria-hidden="true" size={16} /> : s.status === "current" ? <Circle aria-hidden="true" size={16} /> : <Lock aria-hidden="true" size={14} />}
                 </div>
                 {i < steps.length - 1 && <div className={"w-0.5 flex-1 min-h-6 " + (s.status === "complete" ? "bg-green-200" : "bg-gray-100")} />}
               </div>
@@ -152,7 +152,7 @@ export function OnboardingDetailPage() {
                       disabled={!billingStatus || billingSaving || billingStatus === employee.billingStatus}
                       className="btn btn-primary text-sm"
                     >
-                      <Save size={14} /> {billingSaving ? "Saving…" : "Save"}
+                      <Save aria-hidden="true" size={14} /> {billingSaving ? "Saving…" : "Save"}
                     </button>
                     <span className="text-xs text-gray-500">
                       {employee.timesheetEligibility === "ELIGIBLE"

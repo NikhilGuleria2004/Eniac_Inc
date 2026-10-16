@@ -57,7 +57,7 @@ export const employeeController = {
       }
 
       const service = getEmployeeService();
-      const employee = await service.createEmployee(result.data);
+      const employee = await service.createEmployee(result.data, req.user!.userId);
 
       res.status(HTTP_STATUS.CREATED).json(successResponse(employee));
     } catch (error) {
@@ -82,7 +82,7 @@ export const employeeController = {
   update: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const service = getEmployeeService();
-      const role = req.user?.role ?? "HR";
+       const role = req.user!.role;
 
       let schema;
       if (role === "HR") {
@@ -105,7 +105,8 @@ export const employeeController = {
         req.params.employeeId,
         result.data,
         role,
-        req.user?.employeeId
+        req.user?.employeeId,
+        req.user!.userId
       );
 
       res.json(successResponse(employee));
@@ -125,7 +126,8 @@ export const employeeController = {
       const service = getEmployeeService();
       const employee = await service.updateBillingStatus(
         req.params.employeeId,
-        result.data
+        result.data,
+        req.user!.userId
       );
 
       res.json(successResponse(employee));
@@ -148,7 +150,8 @@ export const employeeController = {
       const employee = await service.changeEmploymentStatus(
         req.params.employeeId,
         targetStatus,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
 
       res.json(successResponse(employee));
@@ -160,7 +163,7 @@ export const employeeController = {
   delete: async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const service = getEmployeeService();
-      await service.deleteEmployee(req.params.employeeId, req.user?.role ?? "HR");
+      await service.deleteEmployee(req.params.employeeId, req.user!.role, req.user!.userId);
       res.status(HTTP_STATUS.NO_CONTENT).json({ success: true, data: null });
     } catch (error) {
       next(error);

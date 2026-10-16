@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useState, useMemo, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Users, Clock, ArrowLeft, UserPlus } from "lucide-react";
@@ -71,8 +72,8 @@ function AssignmentModal({ open, onClose, initialData, availableEmployees, onSub
     <Modal open={open} onClose={onClose} title={initialData ? "Edit Assignment" : "Assign Employee"} size="lg">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Employee *</label>
-          <select
+          <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="employee">Employee *</label>
+          <select id="employee"
             value={formData.employeeId}
             onChange={(e) => setFormData({ ...formData, employeeId: e.target.value })}
             className="form-input"
@@ -92,25 +93,25 @@ function AssignmentModal({ open, onClose, initialData, availableEmployees, onSub
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Role *</label>
-            <select value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="form-input" required>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="role">Role *</label>
+            <select id="role" value={formData.role} onChange={(e) => setFormData({ ...formData, role: e.target.value })} className="form-input" required>
               <option value="">Select role</option>
               {roles.map((r) => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Allocation (%) *</label>
-            <input type="number" min="1" max="100" value={formData.allocation} onChange={(e) => setFormData({ ...formData, allocation: Number(e.target.value) })} className="form-input" required />
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="allocation">Allocation (%) *</label>
+            <input id="allocation" type="number" min="1" max="100" value={formData.allocation} onChange={(e) => setFormData({ ...formData, allocation: Number(e.target.value) })} className="form-input" required />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
-            <input type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} className="form-input" required />
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="start-date">Start Date *</label>
+            <input id="start-date" type="date" value={formData.startDate} onChange={(e) => setFormData({ ...formData, startDate: e.target.value })} className="form-input" required />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
-            <input type="date" value={formData.endDate} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} className="form-input" />
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="end-date">End Date</label>
+            <input id="end-date" type="date" value={formData.endDate} onChange={(e) => setFormData({ ...formData, endDate: e.target.value })} className="form-input" />
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -139,6 +140,8 @@ function AssignmentModal({ open, onClose, initialData, availableEmployees, onSub
 }
 
 export function ProjectDetailPage() {
+  const [tab, setTab] = useUrlState("tab", "overview");
+
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -244,7 +247,7 @@ export function ProjectDetailPage() {
   return (
      <div className="page-container space-y-6 min-w-0">
       <div className="flex flex-wrap items-center gap-3">
-        <button onClick={handleBack} className="p-2 hover:bg-gray-100 rounded-md text-gray-500 shrink-0"><ArrowLeft size={20} /></button>
+        <button onClick={handleBack} aria-label="Go back" className="p-2 hover:bg-gray-100 rounded-md text-gray-500 shrink-0"><ArrowLeft aria-hidden="true" size={20} /></button>
         <div className="min-w-0 flex-1 basis-48">
           <h1 className="text-xl font-semibold text-gray-900 break-words">{project.name}</h1>
           <p className="text-sm text-gray-500 break-words">{project.projectCode} • {client?.name || "Unknown Client"}</p>
@@ -287,7 +290,7 @@ export function ProjectDetailPage() {
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="team">Team ({teamStats.total})</TabsTrigger>
@@ -339,7 +342,7 @@ export function ProjectDetailPage() {
             <h3 className="text-sm font-semibold text-gray-900">Team Members</h3>
             {canAssign && (
               <button onClick={handleAssign} className="btn btn-primary text-sm">
-                <UserPlus size={14} className="mr-2" />
+                <UserPlus aria-hidden="true" size={14} className="mr-2" />
                 Assign Employee
               </button>
             )}
@@ -348,12 +351,12 @@ export function ProjectDetailPage() {
             <DataTable data={assignments} columns={teamColumns} keyExtractor={(r: ProjectAssignment) => r.id} emptyState={{ title: "No team members" }} />
           ) : (
             <div className="card text-center py-12">
-              <Users size={48} className="mx-auto text-gray-300 mb-4" />
+              <Users aria-hidden="true" size={48} className="mx-auto text-gray-300 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No team members assigned</h3>
               <p className="text-gray-500 mb-4">Assign employees to this project to build the team.</p>
               {canAssign && (
                 <button onClick={handleAssign} className="btn btn-primary">
-                  <UserPlus size={16} className="mr-2" />
+                  <UserPlus aria-hidden="true" size={16} className="mr-2" />
                   Assign First Employee
                 </button>
               )}
@@ -393,12 +396,12 @@ export function ProjectDetailPage() {
             <DataTable data={assignments} columns={assignmentColumns} keyExtractor={(r: ProjectAssignment) => r.id} emptyState={{ title: "No assignments" }} />
           ) : (
             <div className="card text-center py-12">
-              <Users size={48} className="mx-auto text-gray-300 mb-4" />
+              <Users aria-hidden="true" size={48} className="mx-auto text-gray-300 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No assignments yet</h3>
               <p className="text-gray-500 mb-4">No employees assigned to this project.</p>
               {canAssign && (
                 <button onClick={handleAssign} className="btn btn-primary">
-                  <UserPlus size={16} className="mr-2" />
+                  <UserPlus aria-hidden="true" size={16} className="mr-2" />
                   Assign Employee
                 </button>
               )}
@@ -442,7 +445,7 @@ export function ProjectDetailPage() {
             <DataTable data={auditLogs} columns={activityColumns} keyExtractor={(r: any) => r.id} emptyState={{ title: "No activity" }} />
           ) : (
             <div className="card text-center py-12">
-              <Clock size={48} className="mx-auto text-gray-300 mb-4" />
+              <Clock aria-hidden="true" size={48} className="mx-auto text-gray-300 mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No recent activity</h3>
               <p className="text-gray-500">No audit log entries for this project.</p>
             </div>

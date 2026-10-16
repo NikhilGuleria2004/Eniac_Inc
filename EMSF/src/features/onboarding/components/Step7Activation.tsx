@@ -103,14 +103,14 @@ export function Step7Activation({ employee, onActivated }: Step7ActivationProps)
 
       {!isActivated && (
         <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800">
-          <Clock size={14} className="inline mr-1" />
+          <Clock aria-hidden="true" size={14} className="inline mr-1" />
           Employee is not yet activated. Click "Activate Employee" to set them to ACTIVE.
         </div>
       )}
 
       {outcome.status === "activated" && (
         <div className="rounded-md border border-green-200 bg-green-50 px-3 py-3 text-sm text-green-800">
-          <CheckCircle size={16} className="inline mr-1" />
+          <CheckCircle aria-hidden="true" size={16} className="inline mr-1" />
           <span className="font-medium">Employee activated successfully!</span>
           <div className="mt-1 text-xs">
             Employment Status: <strong>{outcome.result.employmentStatus}</strong> ·{" "}
@@ -126,7 +126,7 @@ export function Step7Activation({ employee, onActivated }: Step7ActivationProps)
 
       {outcome.status === "invite_sent" && (
         <div className="rounded-md border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-800">
-          <CheckCircle size={16} className="inline mr-1" />
+          <CheckCircle aria-hidden="true" size={16} className="inline mr-1" />
           {outcome.emailSent
             ? `Invitation sent to ${outcome.email}.`
             : `Invitation link generated but email delivery failed. Share this link manually:`}
@@ -140,7 +140,7 @@ export function Step7Activation({ employee, onActivated }: Step7ActivationProps)
                 onClick={() => navigator.clipboard.writeText(inviteLink)}
                 className="text-xs underline"
               >
-                <Copy size={12} /> Copy
+                <Copy aria-hidden="true" size={12} /> Copy
               </button>
             </div>
           )}
@@ -164,7 +164,7 @@ export function Step7Activation({ employee, onActivated }: Step7ActivationProps)
             size="sm"
             data-step-activate="true"
           >
-            {outcome.status === "activating" ? "Activating..." : "Activate Employee"}
+            {outcome.status === "activating" ? "Activating…" : "Activate Employee"}
           </Button>
         )}
 
@@ -174,7 +174,7 @@ export function Step7Activation({ employee, onActivated }: Step7ActivationProps)
             disabled={!canManage || inviting}
             size="sm"
           >
-            {inviting ? "Sending..." : <><Send size={14} /> Send Invitation</>}
+            {inviting ? "Sending…" : <><Send aria-hidden="true" size={14} /> Send Invitation</>}
           </Button>
         )}
 

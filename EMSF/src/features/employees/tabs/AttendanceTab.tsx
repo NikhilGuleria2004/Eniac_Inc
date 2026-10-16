@@ -18,11 +18,11 @@ export function AttendanceTab({ employee }: { employee: Employee }) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Date</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Check In</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Check Out</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Hours</th>
-                <th className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Date</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Check In</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Check Out</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Hours</th>
+                <th scope="col" className="text-left py-2 px-3 font-medium text-gray-600">Status</th>
               </tr>
             </thead>
             <tbody>

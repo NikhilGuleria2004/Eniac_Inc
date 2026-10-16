@@ -17,8 +17,8 @@ export function FilterBar({ filters, onClearAll, className = "" }: FilterBarProp
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>
       {filters.map((filter) => (
         <div key={filter.key} className="flex items-center gap-1">
-          <label className="text-xs text-gray-500">{filter.label}</label>
-          <select
+          <label className="text-xs text-gray-500" htmlFor="filter-label">{filter.label}</label>
+          <select id="filter-label"
             value={filter.value}
             onChange={(e) => filter.onChange(e.target.value)}
             className="form-input py-1 text-xs w-auto"

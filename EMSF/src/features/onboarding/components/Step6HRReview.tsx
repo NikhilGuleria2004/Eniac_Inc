@@ -132,9 +132,9 @@ export function Step6HRReview({ employee, onApproved, onRejected }: Step6HRRevie
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50">
-                <th className="text-left py-1 px-2 font-medium text-gray-600">Document</th>
-                <th className="text-left py-1 px-2 font-medium text-gray-600">Type</th>
-                <th className="text-left py-1 px-2 font-medium text-gray-600">Status</th>
+                <th scope="col" className="text-left py-1 px-2 font-medium text-gray-600">Document</th>
+                <th scope="col" className="text-left py-1 px-2 font-medium text-gray-600">Type</th>
+                <th scope="col" className="text-left py-1 px-2 font-medium text-gray-600">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -152,7 +152,7 @@ export function Step6HRReview({ employee, onApproved, onRejected }: Step6HRRevie
 
       {!allDocsApproved && (
         <div className="rounded-md border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm text-yellow-800">
-          <FileText size={14} className="inline mr-1" />
+          <FileText aria-hidden="true" size={14} className="inline mr-1" />
           All required documents (OFFER_LETTER, EMPLOYMENT_AGREEMENT, ID_PROOF, ADDRESS_PROOF) must be APPROVED before approval.
           {documents.some((d) => d.status !== "APPROVED") && (
             <button
@@ -168,7 +168,7 @@ export function Step6HRReview({ employee, onApproved, onRejected }: Step6HRRevie
 
       {outcome.status === "approved" && (
         <div className="rounded-md border border-green-200 bg-green-50 px-3 py-3 text-sm text-green-800">
-          <CheckCircle size={16} className="inline mr-1" />
+          <CheckCircle aria-hidden="true" size={16} className="inline mr-1" />
           <span className="font-medium">Onboarding approved!</span>
           <div className="mt-1 text-xs">
             Employment Status: <strong>{outcome.result.employmentStatus}</strong> ·{" "}
@@ -179,7 +179,7 @@ export function Step6HRReview({ employee, onApproved, onRejected }: Step6HRRevie
 
       {outcome.status === "rejected" && (
         <div className="rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-800">
-          <XCircle size={16} className="inline mr-1" />
+          <XCircle aria-hidden="true" size={16} className="inline mr-1" />
           <span className="font-medium">Onboarding rejected</span> — reason: {outcome.reason}
         </div>
       )}
@@ -197,7 +197,7 @@ export function Step6HRReview({ employee, onApproved, onRejected }: Step6HRRevie
           size="sm"
           data-step-primary="true"
         >
-          {outcome.status === "approving" ? "Approving..." : "Approve Onboarding"}
+          {outcome.status === "approving" ? "Approving…" : "Approve Onboarding"}
         </Button>
         <Button
           variant="danger"
@@ -230,7 +230,7 @@ export function Step6HRReview({ employee, onApproved, onRejected }: Step6HRRevie
               onClick={handleReject}
               disabled={rejectSubmitting || !rejectReason.trim()}
             >
-              {rejectSubmitting ? "Rejecting..." : "Reject"}
+              {rejectSubmitting ? "Rejecting…" : "Reject"}
             </button>
           </>
         }
@@ -239,7 +239,7 @@ export function Step6HRReview({ employee, onApproved, onRejected }: Step6HRRevie
           <textarea
             className="form-input"
             rows={3}
-            placeholder="Enter rejection reason..."
+            placeholder="Enter rejection reason…"
             value={rejectReason}
             onChange={(e) => setRejectReason(e.target.value)}
             disabled={rejectSubmitting}

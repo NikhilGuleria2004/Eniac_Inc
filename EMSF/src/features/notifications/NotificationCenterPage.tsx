@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { useState, useMemo } from "react";
 import { Bell, CheckCheck, Clock, Trash2, ExternalLink, Search } from "lucide-react";
 import { DataTable } from "../../components/tables/DataTable";
@@ -13,7 +14,7 @@ import type { Notification } from "../../types";
 export function NotificationCenterPage() {
   const { user } = useAuth();
   const { addToast } = useToast();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useUrlState("q");
   const [activeFilter, setActiveFilter] = useState<NotificationFilter>("all");
   const [deleteConfirm, setDeleteConfirm] = useState<Notification | null>(null);
 
@@ -61,7 +62,7 @@ export function NotificationCenterPage() {
       cell: (row: Notification) => (
         <div className="flex items-center justify-center">
           {!row.read && <div className="w-2 h-2 rounded-full bg-accent" />}
-          {row.read && <CheckCheck size={16} className="text-gray-400" />}
+          {row.read && <CheckCheck aria-hidden="true" size={16} className="text-gray-400" />}
         </div>
       ),
     },
@@ -114,7 +115,7 @@ export function NotificationCenterPage() {
               title="View"
               onClick={(e) => e.stopPropagation()}
             >
-              <ExternalLink size={14} />
+              <ExternalLink aria-hidden="true" size={14} />
             </a>
           )}
           <button
@@ -122,7 +123,7 @@ export function NotificationCenterPage() {
             className="text-gray-400 hover:text-red-500"
             title="Delete"
           >
-            <Trash2 size={14} />
+            <Trash2 aria-hidden="true" size={14} />
           </button>
         </div>
       ),
@@ -141,27 +142,27 @@ export function NotificationCenterPage() {
           disabled={unreadCount === 0}
           className="btn btn-secondary"
         >
-          <CheckCheck size={16} className="mr-2" />
+          <CheckCheck aria-hidden="true" size={16} className="mr-2" />
           Mark All as Read
         </button>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard label="Total" value={kpis.total} icon={<Bell size={20} />} />
-        <KPICard label="Unread" value={kpis.unread} icon={<Bell size={20} className="text-blue-600" />} variant="info" />
-        <KPICard label="Read" value={kpis.read} icon={<CheckCheck size={20} className="text-green-600" />} variant="success" />
-        <KPICard label="System" value={kpis.system} icon={<Clock size={20} className="text-gray-500" />} variant="neutral" />
+        <KPICard label="Total" value={kpis.total} icon={<Bell aria-hidden="true" size={20} />} />
+        <KPICard label="Unread" value={kpis.unread} icon={<Bell aria-hidden="true" size={20} className="text-blue-600" />} variant="info" />
+        <KPICard label="Read" value={kpis.read} icon={<CheckCheck aria-hidden="true" size={20} className="text-green-600" />} variant="success" />
+        <KPICard label="System" value={kpis.system} icon={<Clock aria-hidden="true" size={20} className="text-gray-500" />} variant="neutral" />
       </div>
 
       <div className="card">
         <div className="flex flex-col sm:flex-row gap-4 p-4 border-b border-gray-200">
           <div className="flex-1 max-w-xs">
-            <label className="sr-only">Search notifications</label>
+            <label className="sr-only" htmlFor="search-notifications">Search notifications</label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-              <input
+              <Search aria-hidden="true" className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input id="search-notifications"
                 type="text"
-                placeholder="Search by title or description..."
+                placeholder="Search by title or description…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="form-input pl-10"

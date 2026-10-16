@@ -5,22 +5,22 @@ import { SIDEBAR_SECTIONS } from "../../data/constants";
 import { BrandMark } from "../brand/BrandMark";
 
 const iconMap: Record<string, React.ReactNode> = {
-  Dashboard: <LayoutDashboard size={18} />,
-  Employees: <Users size={18} />,
-  Onboarding: <UserPlus size={18} />,
-  Documents: <FileText size={18} />,
-  Reviews: <ClipboardCheck size={18} />,
-  Attendance: <Calendar size={18} />,
-  Leave: <Clock size={18} />,
-  Clients: <UsersRound size={18} />,
-  Projects: <Briefcase size={18} />,
-  Assignments: <ListTodo size={18} />,
-  Reports: <BarChart3 size={18} />,
-  Analytics: <BarChart3 size={18} />,
-  Notifications: <BellRing size={18} />,
-  "Audit Log": <Shield size={18} />,
-  Settings: <Settings size={18} />,
-  Profile: <User size={18} />,
+  Dashboard: <LayoutDashboard aria-hidden="true" size={18} />,
+  Employees: <Users aria-hidden="true" size={18} />,
+  Onboarding: <UserPlus aria-hidden="true" size={18} />,
+  Documents: <FileText aria-hidden="true" size={18} />,
+  Reviews: <ClipboardCheck aria-hidden="true" size={18} />,
+  Attendance: <Calendar aria-hidden="true" size={18} />,
+  Leave: <Clock aria-hidden="true" size={18} />,
+  Clients: <UsersRound aria-hidden="true" size={18} />,
+  Projects: <Briefcase aria-hidden="true" size={18} />,
+  Assignments: <ListTodo aria-hidden="true" size={18} />,
+  Reports: <BarChart3 aria-hidden="true" size={18} />,
+  Analytics: <BarChart3 aria-hidden="true" size={18} />,
+  Notifications: <BellRing aria-hidden="true" size={18} />,
+  "Audit Log": <Shield aria-hidden="true" size={18} />,
+  Settings: <Settings aria-hidden="true" size={18} />,
+  Profile: <User aria-hidden="true" size={18} />,
 };
 
 interface SidebarProps {
@@ -41,7 +41,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
         <div className="flex flex-col min-w-0">
           {!collapsed && (
             <>
-              <span className="text-sm font-bold text-white leading-tight">ENIAC INC.</span>
+              <span className="text-sm font-bold text-white leading-tight" translate="no">ENIAC INC.</span>
               <span className="text-xs text-sidebar-text opacity-70 leading-tight">Employee Management System</span>
             </>
           )}

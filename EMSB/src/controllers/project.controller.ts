@@ -52,7 +52,7 @@ export const projectController = {
       }
 
       const service = getProjectService();
-      const project = await service.createProject(result.data, req.user?.role ?? "MANAGER");
+      const project = await service.createProject(result.data, req.user!.role, req.user!.userId);
 
       res.status(HTTP_STATUS.CREATED).json(successResponse(project));
     } catch (error) {
@@ -82,7 +82,8 @@ export const projectController = {
       const project = await service.updateProject(
         req.params.projectId,
         result.data,
-        req.user?.role ?? "MANAGER"
+        req.user!.role,
+        req.user!.userId
       );
 
       res.json(successResponse(project));
@@ -96,7 +97,8 @@ export const projectController = {
       const service = getProjectService();
       const project = await service.activateProject(
         req.params.projectId,
-        req.user?.role ?? "MANAGER"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(project));
     } catch (error) {
@@ -109,7 +111,8 @@ export const projectController = {
       const service = getProjectService();
       const project = await service.completeProject(
         req.params.projectId,
-        req.user?.role ?? "MANAGER"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(project));
     } catch (error) {
@@ -122,7 +125,8 @@ export const projectController = {
       const service = getProjectService();
       const project = await service.archiveProject(
         req.params.projectId,
-        req.user?.role ?? "MANAGER"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(project));
     } catch (error) {

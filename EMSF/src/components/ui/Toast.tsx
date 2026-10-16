@@ -44,8 +44,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 }
 
 export function ToastContainer({ toasts, onClose }: { toasts: Toast[]; onClose: (id: string) => void }) {
-  if (toasts.length === 0) return null;
-
+  // Keep the live region mounted even when empty so screen readers reliably
+  // announce toasts as they arrive (aria-live regions must pre-exist).
   const typeStyles: Record<ToastType, string> = {
     success: "border-green-200 bg-green-50 text-green-800",
     error: "border-red-200 bg-red-50 text-red-800",
@@ -54,7 +54,12 @@ export function ToastContainer({ toasts, onClose }: { toasts: Toast[]; onClose: 
   };
 
   return (
-    <div className="fixed top-4 right-4 left-4 sm:left-auto z-50 flex flex-col gap-2">
+    <div
+      className={`fixed top-4 right-4 left-4 sm:left-auto z-50 flex flex-col gap-2${toasts.length === 0 ? " pointer-events-none" : ""}`}
+      role="status"
+      aria-live="polite"
+      aria-atomic="false"
+    >
       {toasts.map((toast) => (
         <div
           key={toast.id}
@@ -65,6 +70,7 @@ export function ToastContainer({ toasts, onClose }: { toasts: Toast[]; onClose: 
             <button
               onClick={() => onClose(toast.id)}
               className="text-gray-400 hover:text-gray-600"
+              aria-label="Dismiss notification"
             >
               &times;
             </button>

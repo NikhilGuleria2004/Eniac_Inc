@@ -91,7 +91,7 @@ npx vitest run        # 467+ tests, ~135s
 **Definition of done:** audit rows are attributable and traceable to request logs; no call site passes an employee ID as `actorUserId`.
 
 **Notes:**
-- `req.auditContext` is still populated on the request for backwards compatibility; `authenticate()` runs after the audit-context middleware (per-route), so the ALS store is enriched with the acting user once verified. All 33 `writeAuditLog` call sites are awaited within the request lifecycle, so context is always available.
+- `req.auditContext` has been removed (NEW-5): the ALS store now provides the same information via `request-context.ts`, populated by `audit-context.middleware.ts` and enriched in `authenticate()`.
 - MongoDB serializes absent optional fields as `null` (not `undefined`) — the no-request-context test asserts `?? null` accordingly.
 
 ---
@@ -290,6 +290,74 @@ Run after all items (or after each merge-worthy batch) from `EMSB/`:
 
 ---
 
+## NEW — Additional fixes (post-P1–P9)
+
+Track items discovered during follow-up work, not in the original `problems.md`.
+
+### NEW-1 — `credentials.txt` tracked in git (credential exposure)
+
+- **Status:** ✅ COMPLETE
+- **Goal:** Remove `credentials.txt` from version control and prevent re-introduction.
+- [x] `git rm --cached EMSB/credentials.txt` (removed from index only; file remains on disk)
+- [x] Added `EMSB/credentials.txt` to `.gitignore`
+- **Definition of done:** `credentials.txt` is not tracked; git will not re-add it.
+
+### NEW-2 — Seed passwords swapped (role ↔ password mismatch)
+
+- **Status:** ✅ COMPLETE
+- **Goal:** SUPERVISOR and EMPLOYEE seed users had swapped passwords.
+- [x] `EMSB/src/scripts/seed.ts:16-17` — swapped back: SUPERVISOR = `Eniacinc4`, EMPLOYEE = `Eniacinc5`
+- [x] `tests/helpers/test-users.ts:18-19` — mirrored swap to keep test auth consistent
+- **Definition of done:** Login with the documented role/password pairs succeeds; seed and test helper agree.
+
+### NEW-3 — `credentials.txt` role label wrong (`SUPERADMIN` → `ADMIN`)
+
+- **Status:** ✅ COMPLETE
+- **Goal:** `credentials.txt` labeled a user as `SUPERADMIN` (not a valid `Role` in this system).
+- [x] Changed label to `ADMIN`
+- **Definition of done:** All role labels in `credentials.txt` are valid `Role` values.
+
+### NEW-4 — Thread `actorUserId` explicitly through all `writeAuditLog` call sites
+
+- **Status:** ✅ COMPLETE
+- **Goal:** Every `writeAuditLog` call passes the acting user's ID explicitly, not just via ALS fallback.
+- [x] `settings.service.ts` — `updateSettings` passes `actorUserId`
+- [x] `timesheet.service.ts` — `provisionTimesheetFor` passes `actorUserId`
+- [x] `review.service.ts` — `createReview`, `updateReview`, `submitReview`, `completeReview` pass `actorUserId`
+- [x] `compensation.service.ts` — `updateCompensation` passes `actorUserId`
+- [x] `leave.service.ts` — `createLeaveRequest`, `approveLeaveRequest`, `rejectLeaveRequest` pass `actorUserId`
+- [x] `client.service.ts` — `createClient`, `updateClient`, `deactivateClient` pass `actorUserId`
+- [x] `project.service.ts` — `createProject`, `updateProject`, `activateProject`, `completeProject`, `archiveProject`, `transitionStatus` pass `actorUserId`
+- [x] `assignment.service.ts` — `createAssignment`, `updateAssignment`, `endAssignment` pass `actorUserId`
+- [x] `invoice.service.ts` — `createInvoice`, `updateInvoice`, `addLineItem`, `updateLineItem`, `removeLineItem`, `reorderLineItems`, `voidInvoice`, `markPaid`, `recordPayment`, `persistLines` pass `actorUserId`
+- [x] `document.service.ts` — `createDocument`, `updateDocument`, `approveDocument`, `rejectDocument`, `requestChanges` pass `actorUserId`
+- [x] `onboarding.service.ts` — `createOnboarding`, `updateOnboarding`, `submitOnboarding`, `reviewOnboarding`, `approveOnboarding`, `rejectOnboarding`, `activateOnboarding` pass `actorUserId`
+- [x] `employee.service.ts` — `createEmployee`, `updateEmployee`, `updateBillingStatus`, `changeEmploymentStatus`, `deleteEmployee` pass `actorUserId`
+- [x] `notification.service.ts` — `createAuditLog` now accepts `actorUserId` param
+- [x] `attendance.service.ts` — `checkIn`, `checkOut`, `updateAttendance`, `requestCorrection`, `reviewCorrection` pass `actorUserId`
+- [x] `daily-log.service.ts` — `createDailyLog`, `updateDailyLog` pass `actorUserId` (were already optional; now required from controllers)
+- [x] `invoice-template.service.ts` — `createTemplate`, `updateTemplate`, `setDefault` pass `actorUserId` (already optional; now required from controllers)
+- [x] `billing-timesheet.service.ts` — all mutating methods pass `actorUserId` (already optional; now required from controllers)
+- [x] All corresponding controllers updated: pass `req.user!.userId` as the `actorUserId` argument
+- **Definition of done:** Grep for `writeAuditLog(` shows `actorUserId` on every call; all gates green.
+
+### NEW-5 — Dead code: `req.auditContext` populated but never read
+
+- **Status:** ✅ COMPLETE
+- **Goal:** Remove the unused `req.auditContext` assignment (ALS now provides the same info).
+- [x] Removed `req.auditContext = { ... }` block from `EMSB/src/middleware/audit-context.middleware.ts`
+- [x] Removed `auditContext?: AuditContext` from `EMSB/src/types/express.d.ts` and its unused import
+- **Definition of done:** No references to `req.auditContext` remain in `src/`.
+
+### NEW-6 — CMSF AuthContext silently swallows API login errors
+
+- **Status:** ✅ COMPLETE
+- **Goal:** The `catch` block in `AuthContext.tsx` (login flow) swallowed API errors with no logging, hiding auth failures.
+- [x] `CMSF/src/features/auth/AuthContext.tsx` — catch block now calls `console.error(...)` with the error before falling back to demo accounts
+- **Definition of done:** API login failures are logged; fallback behavior unchanged.
+
+---
+
 ## Change Log
 
 | Date | Item(s) | Change summary | Gates |
@@ -303,3 +371,12 @@ Run after all items (or after each merge-worthy batch) from `EMSB/`:
 | 2026-10-11 | P7 | New `src/middleware/security.middleware.ts` with the helmet `securityHeaders` config (identical, production-gated); removed from `rate-limit.middleware.ts` (now limiters + `authKeyGenerator` only); single import update in `app.ts` | lint 0 · typecheck 0 · build 0 · tests 491/491 |
 | 2026-10-11 | P8 | `seed.ts`: `SEED_*_PASSWORD` env vars via `resolveSeedPassword()`; dev-only defaults in a single map, production refuses missing/default values before any writes; `.env.example` documents vars as comments only; verified default seed, custom override (hash match), and both production refusals | lint 0 · typecheck 0 · build 0 · tests 491/491 |
 | 2026-10-11 | P9 | `employee.service.ts`: new `isTimesheetEligible()` helper (ACTIVE + BILLABLE + no stored ineligible flag) used by both `toDTO` (replacing the hardcoded `"NOT_ELIGIBLE"`) and `getTimesheetStatus` (deduped); new "Timesheet eligibility in DTO" test in `employees.test.ts` (5 state transitions incl. the ACTIVE+BILLABLE → ELIGIBLE regression) | lint 0 · typecheck 0 · build 0 · tests 492/492 |
+| 2026-10-15 | NEW-1 | `credentials.txt` removed from git index + gitignored | — |
+| 2026-10-15 | NEW-2 | Seed passwords swapped back (SUPERVISOR=`Eniacinc4`, EMPLOYEE=`Eniacinc5`) in `seed.ts` + `test-users.ts` | — |
+| 2026-10-15 | NEW-3 | `credentials.txt` role label `SUPERADMIN` → `ADMIN` | — |
+| 2026-10-15 | NEW-4 | `actorUserId` threaded through all `writeAuditLog` call sites across 16 services + all corresponding controllers | typecheck 0 · lint 0 · tests 554/554 |
+| 2026-10-15 | NEW-5 | Dead `req.auditContext` removed from middleware + type declaration | typecheck 0 · lint 0 · tests 554/554 |
+| 2026-10-15 | NEW-6 | CMSF `AuthContext.tsx` catch block now logs API login errors | typecheck 0
+| 2026-10-15 | NEW-7 | CMSF UI flow simplified: replaced 5 role-based dashboards with a single unified `DashboardPage`; replaced 5-step `InvoiceWizardPage` with a single-page `InvoiceCreateModal` with collapsible sections, inline "Log Hours" button, and role-aware Quick Actions bar | typecheck 0
+| 2026-10-15 | NEW-8 | CMSF dark mode: replicated EMSF dark mode (`ThemeContext`, `ThemeProvider`, `ThemeToggle` in header, `.dark` CSS overrides) — true-black surfaces with green accent palette, persists preference to localStorage | typecheck 0
+| 2026-10-15 | NEW-9 | CMSF Employee dashboard enriched: added 4 stat cards (hours logged, billable hours, logs submitted, timesheet status), timesheet progress bar with expected-hours tracking, "My Projects" section with active assignments, "Recent Activity" feed (excluding invoices for EMPLOYEE role), and inline `DailyLogQuickForm` for direct hour logging without opening a modal | typecheck 0

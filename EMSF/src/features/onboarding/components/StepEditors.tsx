@@ -1,3 +1,4 @@
+import { useUnsavedChangesWarning } from "../../../lib/useUnsavedChangesWarning";
 import { useState } from "react";
 import { Save } from "lucide-react";
 import type { Employee, BillingStatus, EmploymentType } from "../../../types";
@@ -38,6 +39,7 @@ function StepError({ error }: StepErrorProps) {
 export function Step1EmployeeInfo({ employee, onSaved }: StepEditorProps) {
   const [phone, setPhone] = useState(employee.phone ?? "");
   const [editing, setEditing] = useState(false);
+  useUnsavedChangesWarning(editing);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -75,21 +77,21 @@ export function Step1EmployeeInfo({ employee, onSaved }: StepEditorProps) {
       </div>
 
       <div>
-        <label className="form-label">Full Name</label>
-        <input
+        <label className="form-label" htmlFor="full-name">Full Name</label>
+        <input id="full-name"
           className="form-input"
           value={`${employee.firstName} ${employee.lastName}`}
           readOnly
         />
       </div>
       <div>
-        <label className="form-label">Email</label>
-        <input className="form-input" value={employee.email} readOnly />
+        <label className="form-label" htmlFor="email">Email</label>
+        <input id="email" className="form-input" value={employee.email} readOnly />
       </div>
       {editing ? (
         <div>
-          <label className="form-label">Phone *</label>
-          <input
+          <label className="form-label" htmlFor="phone-1">Phone *</label>
+          <input id="phone-1"
             className="form-input"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
@@ -98,8 +100,8 @@ export function Step1EmployeeInfo({ employee, onSaved }: StepEditorProps) {
         </div>
       ) : (
         <div>
-          <label className="form-label">Phone</label>
-          <input className="form-input" value={employee.phone ?? "—"} readOnly />
+          <label className="form-label" htmlFor="phone">Phone</label>
+          <input id="phone" className="form-input" value={employee.phone ?? "—"} readOnly />
         </div>
       )}
 
@@ -108,7 +110,7 @@ export function Step1EmployeeInfo({ employee, onSaved }: StepEditorProps) {
       {editing && (
         <div className="flex gap-2">
           <Button size="sm" onClick={handleSave} disabled={saving}>
-            <Save size={14} /> {saving ? "Saving..." : "Save"}
+            <Save aria-hidden="true" size={14} /> {saving ? "Saving…" : "Save"}
           </Button>
           <Button
             size="sm"
@@ -146,6 +148,7 @@ export function Step2EmploymentDetails({ employee, onSaved }: StepEditorProps) {
   const [joiningDate, setJoiningDate] = useState(employee.joiningDate);
   const [managerId, setManagerId] = useState(employee.managerId ?? "");
   const [editing, setEditing] = useState(false);
+  useUnsavedChangesWarning(editing);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -210,8 +213,8 @@ export function Step2EmploymentDetails({ employee, onSaved }: StepEditorProps) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="form-label">Designation *</label>
-            <select
+            <label className="form-label" htmlFor="designation">Designation *</label>
+            <select id="designation"
               className="form-input"
               value={designation}
               onChange={(e) => setDesignation(e.target.value)}
@@ -222,8 +225,8 @@ export function Step2EmploymentDetails({ employee, onSaved }: StepEditorProps) {
             </select>
           </div>
           <div>
-            <label className="form-label">Department *</label>
-            <select
+            <label className="form-label" htmlFor="department">Department *</label>
+            <select id="department"
               className="form-input"
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
@@ -234,8 +237,8 @@ export function Step2EmploymentDetails({ employee, onSaved }: StepEditorProps) {
             </select>
           </div>
           <div>
-            <label className="form-label">Employment Type *</label>
-            <select
+            <label className="form-label" htmlFor="employment-type">Employment Type *</label>
+            <select id="employment-type"
               className="form-input"
               value={employmentType}
               onChange={(e) => setEmploymentType(e.target.value as EmploymentType)}
@@ -246,8 +249,8 @@ export function Step2EmploymentDetails({ employee, onSaved }: StepEditorProps) {
             </select>
           </div>
           <div>
-            <label className="form-label">Manager</label>
-            <select
+            <label className="form-label" htmlFor="manager">Manager</label>
+            <select id="manager"
               className="form-input"
               value={managerId}
               onChange={(e) => setManagerId(e.target.value)}
@@ -261,8 +264,8 @@ export function Step2EmploymentDetails({ employee, onSaved }: StepEditorProps) {
             </select>
           </div>
           <div className="sm:col-span-2">
-            <label className="form-label">Joining Date *</label>
-            <input
+            <label className="form-label" htmlFor="joining-date">Joining Date *</label>
+            <input id="joining-date"
               type="date"
               className="form-input"
               value={joiningDate}
@@ -277,7 +280,7 @@ export function Step2EmploymentDetails({ employee, onSaved }: StepEditorProps) {
       {editing && (
         <div className="flex gap-2">
           <Button size="sm" onClick={handleSave} disabled={saving}>
-            <Save size={14} /> {saving ? "Saving..." : "Save"}
+            <Save aria-hidden="true" size={14} /> {saving ? "Saving…" : "Save"}
           </Button>
           <Button
             size="sm"
@@ -308,6 +311,7 @@ export function Step3Geography({ employee, onSaved }: StepEditorProps) {
   const [addressLine2, setAddressLine2] = useState("");
   const [_postalCode, setPostalCode] = useState("");
   const [editing, setEditing] = useState(false);
+  useUnsavedChangesWarning(editing);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -369,8 +373,8 @@ export function Step3Geography({ employee, onSaved }: StepEditorProps) {
             ))}
           </div>
           <div>
-            <label className="form-label">City *</label>
-            <select
+            <label className="form-label" htmlFor="city">City *</label>
+            <select id="city"
               className="form-input"
               value={city}
               onChange={(e) => setCity(e.target.value)}
@@ -381,8 +385,8 @@ export function Step3Geography({ employee, onSaved }: StepEditorProps) {
             </select>
           </div>
           <div>
-            <label className="form-label">State</label>
-            <select
+            <label className="form-label" htmlFor="state">State</label>
+            <select id="state"
               className="form-input"
               value={state}
               onChange={(e) => setState(e.target.value)}
@@ -394,8 +398,8 @@ export function Step3Geography({ employee, onSaved }: StepEditorProps) {
             </select>
           </div>
           <div>
-            <label className="form-label">Address Line 1</label>
-            <input
+            <label className="form-label" htmlFor="address-line-1">Address Line 1</label>
+            <input id="address-line-1"
               className="form-input"
               value={addressLine1}
               onChange={(e) => setAddressLine1(e.target.value)}
@@ -403,8 +407,8 @@ export function Step3Geography({ employee, onSaved }: StepEditorProps) {
             />
           </div>
           <div>
-            <label className="form-label">Address Line 2</label>
-            <input
+            <label className="form-label" htmlFor="address-line-2">Address Line 2</label>
+            <input id="address-line-2"
               className="form-input"
               value={addressLine2}
               onChange={(e) => setAddressLine2(e.target.value)}
@@ -412,8 +416,8 @@ export function Step3Geography({ employee, onSaved }: StepEditorProps) {
             />
           </div>
           <div>
-            <label className="form-label">Postal Code</label>
-            <input
+            <label className="form-label" htmlFor="postal-code">Postal Code</label>
+            <input id="postal-code"
               className="form-input"
               value={_postalCode}
               onChange={(e) => setPostalCode(e.target.value)}
@@ -428,7 +432,7 @@ export function Step3Geography({ employee, onSaved }: StepEditorProps) {
       {editing && (
         <div className="flex gap-2">
           <Button size="sm" onClick={handleSave} disabled={saving}>
-            <Save size={14} /> {saving ? "Saving..." : "Save"}
+            <Save aria-hidden="true" size={14} /> {saving ? "Saving…" : "Save"}
           </Button>
           <Button
             size="sm"
@@ -513,7 +517,7 @@ export function Step4BillingClassification({ employee, onSaved }: StepEditorProp
 
       <div className="flex gap-2">
         <Button size="sm" onClick={handleSave} disabled={saving}>
-          <Save size={14} /> {saving ? "Saving..." : "Save Billing"}
+          <Save aria-hidden="true" size={14} /> {saving ? "Saving…" : "Save Billing"}
         </Button>
       </div>
 

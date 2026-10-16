@@ -178,7 +178,7 @@ export class SettingsService {
       }
     }
 
-    await writeAuditLog(actorRole, "settings.updated", "settings", input.settings.map((s) => s.key).join(","));
+    await writeAuditLog(actorRole, "settings.updated", "settings", input.settings.map((s) => s.key).join(","), actorUserId);
 
     return updated;
   }

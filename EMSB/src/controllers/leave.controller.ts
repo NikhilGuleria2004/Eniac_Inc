@@ -63,8 +63,9 @@ export const leaveController = {
       const service = getLeaveService();
       const request = await service.createLeaveRequest(
         result.data,
-        req.user?.role ?? "EMPLOYEE",
-        req.user?.employeeId
+        req.user!.role,
+        req.user!.employeeId,
+        req.user!.userId
       );
 
       res.status(HTTP_STATUS.CREATED).json(successResponse(request));
@@ -78,7 +79,8 @@ export const leaveController = {
       const service = getLeaveService();
       const request = await service.approveLeaveRequest(
         req.params.requestId,
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(request));
     } catch (error) {
@@ -98,7 +100,8 @@ export const leaveController = {
       const request = await service.rejectLeaveRequest(
         req.params.requestId,
         result.data.rejectionReason ?? result.data.comments ?? "",
-        req.user?.role ?? "HR"
+        req.user!.role,
+        req.user!.userId
       );
       res.json(successResponse(request));
     } catch (error) {

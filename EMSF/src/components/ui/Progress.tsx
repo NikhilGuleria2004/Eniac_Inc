@@ -18,7 +18,7 @@ export function Progress({ value, max = 100, className = "", showLabel = false }
       )}
       <div className="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
         <div
-          className="h-full bg-accent transition-all duration-300"
+          className="h-full bg-accent transition-[width] duration-300 motion-reduce:transition-none"
           style={{ width: `${percentage}%` }}
         />
       </div>

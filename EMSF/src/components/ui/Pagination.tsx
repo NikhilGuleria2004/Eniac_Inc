@@ -16,7 +16,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className = 
     for (let i = 1; i <= totalPages; i++) pages.push(i);
   } else {
     pages.push(1);
-    if (showEllipsisStart) pages.push("...");
+    if (showEllipsisStart) pages.push("…");
     if (currentPage > 2 && currentPage < totalPages - 1) {
       pages.push(currentPage - 1, currentPage, currentPage + 1);
     } else if (currentPage <= 2) {
@@ -24,7 +24,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, className = 
     } else {
       pages.push(totalPages - 2, totalPages - 1);
     }
-    if (showEllipsisEnd) pages.push("...");
+    if (showEllipsisEnd) pages.push("…");
     pages.push(totalPages);
   }
 

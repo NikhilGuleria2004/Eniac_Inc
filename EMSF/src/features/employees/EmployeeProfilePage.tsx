@@ -1,3 +1,4 @@
+import { useUrlState } from "../../lib/useUrlState";
 import { NavLink, useParams, Navigate } from "react-router-dom";
 import { Pencil } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
@@ -19,6 +20,8 @@ import { ReviewsTab } from "./tabs/ReviewsTab";
 import { ProjectsTab } from "./tabs/ProjectsTab";
 import { TimesheetTab } from "./tabs/TimesheetTab";
 export function EmployeeProfilePage() {
+  const [tab, setTab] = useUrlState("tab", "overview");
+
   const { employeeId } = useParams();
   const { user } = useAuth();
   const role = user?.role ?? "EMPLOYEE";
@@ -31,7 +34,7 @@ export function EmployeeProfilePage() {
     <div className="page-container space-y-6">
       <PageHeader title={name} description={employee.employeeCode + " | " + employee.designation + " | " + employee.department}
         breadcrumbs={[{ label: "Employees", href: ROUTES.EMPLOYEES }, { label: name }]}
-        actions={canEdit ? (<NavLink to={ROUTES.EMPLOYEE_EDIT(employee.id)} className="btn btn-primary text-sm"><Pencil size={16} /> Edit Employee</NavLink>) : undefined} />
+        actions={canEdit ? (<NavLink to={ROUTES.EMPLOYEE_EDIT(employee.id)} className="btn btn-primary text-sm"><Pencil aria-hidden="true" size={16} /> Edit Employee</NavLink>) : undefined} />
       <div className="card min-w-0"><div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <EmployeeAvatar firstName={employee.firstName} lastName={employee.lastName} avatar={employee.avatar} size="lg" />
         <div className="flex-1 min-w-0">
@@ -40,7 +43,7 @@ export function EmployeeProfilePage() {
           <div className="flex flex-wrap gap-2 mt-2"><StatusBadge status={employee.employmentStatus} /><StatusBadge status={employee.billingStatus} /><StatusBadge status={employee.timesheetEligibility} /></div>
         </div>
       </div></div>
-      <Tabs defaultValue="overview" className="w-full">
+      <Tabs value={tab} onValueChange={setTab} className="w-full">
         <TabsList className="flex flex-wrap h-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="employment">Employment</TabsTrigger>

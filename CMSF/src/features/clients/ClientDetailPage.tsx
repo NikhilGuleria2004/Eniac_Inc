@@ -18,6 +18,9 @@ import {
 import { ROUTES } from "../../data/constants";
 import { formatCurrency } from "../../lib/charts";
 import { getCurrentBillingPeriod } from "../../lib/utils";
+import { ProjectFormModal } from "../projects/ProjectFormModal";
+import { useAuth } from "../../features/auth/AuthContext";
+import { hasPermission } from "../../lib/permissions";
 import type { Client } from "../../types";
 
 export function ClientDetailPage() {
@@ -25,6 +28,9 @@ export function ClientDetailPage() {
   const navigate = useNavigate();
   const { addToast } = useToast();
   const [editOpen, setEditOpen] = useState(false);
+  const [projectOpen, setProjectOpen] = useState(false);
+  const { user } = useAuth();
+  const canCreateProject = hasPermission(user?.role ?? "EMPLOYEE", "project.create");
   const period = getCurrentBillingPeriod();
 
   const client = getClientById(clientId);
@@ -74,7 +80,9 @@ export function ClientDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           <button className="btn btn-secondary" onClick={() => setEditOpen(true)}><Pencil size={16} className="mr-2" />Edit</button>
-          <button className="btn btn-primary" onClick={() => navigate(ROUTES.PROJECTS)}><FolderPlus size={16} className="mr-2" />New Project</button>
+          {canCreateProject && (
+            <button className="btn btn-primary" onClick={() => setProjectOpen(true)}><FolderPlus size={16} className="mr-2" />New Project</button>
+          )}
         </div>
       </div>
 
@@ -228,6 +236,7 @@ export function ClientDetailPage() {
       </Tabs>
 
       <ClientFormModal open={editOpen} initialData={client} onClose={() => setEditOpen(false)} onSubmit={handleEdit} />
+      {client && <ProjectFormModal open={projectOpen} defaultClientId={client.id} onClose={() => setProjectOpen(false)} />}
     </div>
   );
 }
