@@ -1,24 +1,20 @@
 import { useState, useRef, useEffect } from "react";
 import { User as UserIcon, ChevronDown, LogOut } from "lucide-react";
 import { useAuth } from "../../features/auth/AuthContext";
-import { CMS_ROLES } from "../../data/constants";
-import type { Role } from "../../types";
 
-function roleLabel(r: Role): string {
+function roleLabel(r: string): string {
   return r.charAt(0) + r.slice(1).toLowerCase();
 }
 
 export function UserMenu() {
-  const { user, logout, setRoleForDev } = useAuth();
+  const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
-  const [roleOpen, setRoleOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false);
-        setRoleOpen(false);
       }
     }
     document.addEventListener("mousedown", handler);
@@ -50,34 +46,6 @@ export function UserMenu() {
             </p>
             <p className="text-xs text-gray-500">{roleLabel(user.role)}</p>
           </div>
-
-          <button
-            onClick={() => setRoleOpen(!roleOpen)}
-            aria-expanded={roleOpen}
-            aria-haspopup="menu"
-            className="w-full flex items-center justify-between px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-          >
-            <span>Switch Role</span>
-            <ChevronDown size={14} />
-          </button>
-
-          {roleOpen && (
-            <div className="border-t border-gray-200">
-              {CMS_ROLES.map((r) => (
-                <button
-                  key={r}
-                  onClick={() => {
-                    setRoleForDev(r);
-                    setRoleOpen(false);
-                    setOpen(false);
-                  }}
-                  className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                >
-                  {roleLabel(r)}
-                </button>
-              ))}
-            </div>
-          )}
 
           <a
             href="/profile"

@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Save, Send, Plus, Trash2, ChevronUp, ChevronDown, RefreshCw, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Save, Send, Plus, RefreshCw, AlertTriangle } from "lucide-react";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { Select } from "../../components/ui/Select";
 import { Input } from "../../components/ui/Input";
@@ -25,7 +25,7 @@ import { getClients } from "../../data/mock/repositories";
 import { PAYMENT_TERMS, CURRENCIES, ROUTES } from "../../data/constants";
 import { computeInvoiceTotals, dueDateFromTerms, todayIso, formatInvoiceDate } from "./invoices";
 import { InvoiceEmailModal } from "./InvoiceEmailModal";
-import type { Client, Invoice, InvoiceLineItem, InvoiceTemplate } from "../../types";
+import type { Invoice, InvoiceLineItem, InvoiceTemplate } from "../../types";
 
 let localSeq = 0;
 function tempLineId(): string {
@@ -231,7 +231,7 @@ export function InvoiceComposerPage() {
     taxRate,
     notes,
     termsAndConditions: terms,
-    templateId: templateId || undefined,
+    templateId: templateId ?? "",
   };
   const headerDirty = isEdit && baselineHeader !== null && JSON.stringify(headerPatch) !== JSON.stringify(baselineHeader);
   const linesDirty = isEdit && baselineLines !== null && JSON.stringify(lineItems) !== JSON.stringify(baselineLines);
@@ -362,7 +362,7 @@ export function InvoiceComposerPage() {
         taxRate,
         notes: notes || undefined,
         termsAndConditions: terms || undefined,
-        templateId: templateId || undefined,
+    templateId: templateId ?? "",
         lineItems,
         timesheetIds: sourceIds,
       });
@@ -394,39 +394,16 @@ export function InvoiceComposerPage() {
   };
 
   // ── line-item editing ─────────────────────────────────────────────────────
-  const updateLine = (id: string, patch: Partial<InvoiceLineItem>) => {
-    setLineItems((prev) =>
-      prev.map((li) => {
-        if (li.id !== id) return li;
-        const next = { ...li, ...patch };
-        if (patch.quantity !== undefined || patch.rate !== undefined) {
-          next.amount = Number((next.quantity * next.rate).toFixed(2));
-        }
-        return next;
-      })
-    );
-  };
   const addLine = () => {
     setLineItems((prev) => [
       ...prev,
       { id: tempLineId(), description: "", quantity: 1, rate: 0, amount: 0, manual: true, sortOrder: prev.length },
     ]);
   };
-  const removeLine = (id: string) => setLineItems((prev) => prev.filter((li) => li.id !== id));
-  const moveLine = (index: number, dir: -1 | 1) => {
-    setLineItems((prev) => {
-      const to = index + dir;
-      if (to < 0 || to >= prev.length) return prev;
-      const next = [...prev];
-      const [moved] = next.splice(index, 1);
-      next.splice(to, 0, moved);
-      return next.map((li, i) => ({ ...li, sortOrder: i }));
-    });
-  };
 
   const dueDateTouchedRef = useRef(false);
-  const termsTouchedRef = useRef(false);
   const taxTouchedRef = useRef(false);
+  const termsTouchedRef = useRef(false);
   const clientLocked = isEdit;
   const periodLocked = isEdit;
   const duplicate = isEdit ? overlaps.find((o) => o.id !== invoice?.id) : overlaps[0];
@@ -769,7 +746,7 @@ export function InvoiceComposerPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {lineItems.map((li, i) => (
+                        {lineItems.map((li) => (
                           <tr key={li.id} className="border-b border-gray-100">
                             <td className="py-2 pr-2">{li.description || <span className="text-gray-400">(untitled row)</span>}</td>
                             <td className="py-2 pr-2 text-right">{li.quantity.toFixed(li.quantity % 1 === 0 ? 0 : 2)}</td>

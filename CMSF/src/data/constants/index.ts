@@ -4,8 +4,6 @@ export const ENV_LABEL = "DEMO";
 
 export const ROLES: Role[] = ["ADMIN", "HR", "MANAGER", "SUPERVISOR", "EMPLOYEE"] as const;
 
-export const CMS_ROLES: Role[] = ["ADMIN", "MANAGER", "SUPERVISOR", "EMPLOYEE"] as const;
-
 export const TECH_ROLES = [
   "Java Developer",
   "Frontend Developer",
@@ -59,14 +57,6 @@ export const INDUSTRIES = [
   "Media & Entertainment",
   "Education",
   "Consulting",
-] as const;
-
-export const DEMO_USERS = [
-  { email: "admin@eniac.demo", password: "demo123", role: "ADMIN", name: "Admin User" },
-  { email: "hr@eniac.demo", password: "demo123", role: "HR", name: "HR User" },
-  { email: "manager@eniac.demo", password: "demo123", role: "MANAGER", name: "Manager User" },
-  { email: "supervisor@eniac.demo", password: "demo123", role: "SUPERVISOR", name: "Supervisor User" },
-  { email: "Employee@eniac.demo", password: "demo123", role: "EMPLOYEE", name: "Employee User" },
 ] as const;
 
 export const ROUTES = {

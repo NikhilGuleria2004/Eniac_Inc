@@ -1,13 +1,11 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Calendar, Clock, Receipt, FileText, FolderKanban, Send, AlertCircle, Briefcase } from "lucide-react";
+import { Plus, Calendar, Clock, Receipt, FileText, FolderKanban, AlertCircle, Briefcase } from "lucide-react";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { StatCard } from "../../components/ui/StatCard";
 import { SectionCard } from "../../components/ui/SectionCard";
 import { StatusBadge } from "../../components/data/StatusBadge";
 import { DataTable } from "../../components/tables/DataTable";
-import { Modal } from "../../components/ui/Modal";
-import { useToast } from "../../components/ui/Toast";
 import { useAuth } from "../../features/auth/AuthContext";
 import {
   getClients,
@@ -19,13 +17,11 @@ import {
   getDailyLogsInPeriod,
   getActiveAssignmentsByEmployee,
 } from "../../data/mock/repositories";
-import { ClientIndustryChart } from "../../components/charts/ClientIndustryChart";
 import { ProjectHealthChart } from "../../components/charts/ProjectHealthChart";
 import { RevenueTrendChart } from "../../components/charts/RevenueTrendChart";
 import { formatCurrency, formatNumber } from "../../lib/charts";
 import { getPreviousBillingPeriods } from "../../lib/utils";
 import {
-  industryDistribution,
   projectHealthData,
   unbilledHours,
   outstandingInvoices,
@@ -37,11 +33,6 @@ import {
 import { DailyLogFormModal } from "../dailylogs/DailyLogFormModal";
 import { DailyLogQuickForm } from "../dailylogs/DailyLogQuickForm";
 import { ROUTES } from "../../data/constants";
-import type { Role, DailyLog, Timesheet, Invoice } from "../../types";
-
-function isoToday(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function recentDateLabel(iso: string): string {
   const d = new Date(iso);
@@ -55,7 +46,6 @@ function recentDateLabel(iso: string): string {
 export function DashboardPage() {
   const { user, cmsAccess } = useAuth();
   const navigate = useNavigate();
-  const { addToast } = useToast();
   const [logModalOpen, setLogModalOpen] = useState(false);
 
   const clients = useMemo(() => getClients(), []);
@@ -67,11 +57,9 @@ export function DashboardPage() {
   const period = currentPeriod();
 
   const role = user?.role ?? "EMPLOYEE";
-
-const employeeId = user?.employeeId;
+  const employeeId = user?.employeeId;
 
   const canCreateInvoice = !!user && (role === "ADMIN" || role === "MANAGER");
-  const canViewAll = role === "ADMIN" || role === "MANAGER" || role === "SUPERVISOR";
 
   const myDailyLogs = useMemo(() => {
     if (role === "EMPLOYEE" && employeeId) {
@@ -440,7 +428,7 @@ const employeeId = user?.employeeId;
               </div>
             </SectionCard>
 
-            {(role === "ADMIN" || role === "SUPERVISOR") && (
+            {(["ADMIN", "SUPERVISOR"] as string[]).includes(role) && (
               <SectionCard title="Recent Activity">
                 {recentActivity.length === 0 ? (
                   <p className="text-sm text-gray-500">No recent activity.</p>

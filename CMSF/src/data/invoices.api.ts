@@ -205,7 +205,7 @@ export async function previewLineItems(clientId: string, periodStart: string, pe
 
 export async function sendInvoice(id: string, to?: string | null): Promise<Invoice> {
   if (!USE_API) {
-    const sent = mockSendInvoice(id);
+    const sent = mockSendInvoice(id, to ?? "unknown");
     if (!sent) throw new Error("Only draft invoices can be sent.");
     return sent;
   }
@@ -219,7 +219,7 @@ export async function sendInvoice(id: string, to?: string | null): Promise<Invoi
     return invoice;
   } catch (error) {
     console.warn("sendInvoice: API unreachable, falling back to mock store", error);
-    const sent = mockSendInvoice(id);
+    const sent = mockSendInvoice(id, to ?? "unknown");
     if (!sent) throw new Error("Only draft invoices can be sent.");
     return sent;
   }
@@ -362,6 +362,7 @@ export async function syncLineItems(
         description: a.description,
         quantity: a.quantity,
         rate: a.rate,
+        amount: a.quantity * a.rate,
         employeeId: a.employeeId,
         employeeName: a.employeeName,
         projectId: a.projectId,

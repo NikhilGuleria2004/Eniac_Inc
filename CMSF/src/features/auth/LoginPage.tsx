@@ -3,7 +3,6 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "./AuthContext";
 import { useDocumentTitle } from "../../lib/documentTitle";
-import { DEMO_USERS } from "../../data/constants";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -33,19 +32,6 @@ export function LoginPage() {
       navigate("/dashboard");
     } else {
       setError("Invalid email or password");
-    }
-    setIsLoading(false);
-  };
-
-  const handleQuickLogin = async (demoEmail: string, demoPassword: string) => {
-    setError("");
-    setIsLoading(true);
-
-    const success = await login(demoEmail, demoPassword);
-    if (success) {
-      navigate("/dashboard");
-    } else {
-      setError(`Quick login failed for ${demoEmail}`);
     }
     setIsLoading(false);
   };
@@ -109,25 +95,6 @@ export function LoginPage() {
               {isLoading ? "Signing in..." : "Sign In"}
             </button>
           </form>
-
-          <div className="mt-6 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-400 text-center mb-3">DEV QUICK LOGIN</p>
-            <div className="grid grid-cols-2 gap-2">
-              {DEMO_USERS.map((u) => (
-                <button
-                  key={u.role}
-                  type="button"
-                  disabled={isLoading}
-                  onClick={() => handleQuickLogin(u.email, u.password)}
-                  className="btn btn-secondary flex flex-col items-start gap-0.5"
-                  title={`${u.email} / ${u.password}`}
-                >
-                  <span className="font-medium">{u.role}</span>
-                  <span className="text-xs text-gray-500">{u.email}</span>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-4">

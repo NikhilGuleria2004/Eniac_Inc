@@ -283,8 +283,8 @@ export function InvoiceDetailPage() {
         invoice={invoice}
         clientEmail=""
         onClose={() => setEmailOpen(false)}
-        onSend={(id, email) => {
-          apply(() => sendInvoice(id, email.to || undefined));
+          onSend={(id, email) => {
+            apply(() => sendInvoice(id, email.to || "unknown"));
           addToast("success", `Invoice sent to ${email.to} (simulated)`);
           setEmailOpen(false);
         }}

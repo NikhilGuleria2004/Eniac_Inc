@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
-import type { User, Role, CmsAccess } from "../../types";
-import { DEMO_USERS } from "../../data/constants";
+import type { User, CmsAccess } from "../../types";
 import { loadBackendData } from "../../data/mock";
 import { apiFetch, setTokens, clearTokens, getAccessToken, getRefreshToken, USE_API, refreshAccessToken, clearTokensIfRoleMismatch } from "../../lib/api";
 
@@ -10,35 +9,12 @@ interface AuthContextType {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  setRoleForDev: (role: Role) => void;
   cmsAccess: CmsAccess;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const STORAGE_KEY = "cmsf_user";
-
-function buildUser(role: Role): User {
-  const demo = DEMO_USERS.find((d) => d.role === role) ?? DEMO_USERS[0];
-  const [firstName, lastName] = demo.name.split(" ");
-  return {
-    id: `user_${role.toLowerCase()}`,
-    email: demo.email,
-    firstName: firstName,
-    lastName: lastName,
-    role,
-    employeeId:
-      role === "EMPLOYEE"
-        ? "EMP-005"
-        : role === "SUPERVISOR"
-        ? "EMP-002"
-        : role === "HR"
-        ? undefined
-        : "EMP-001",
-    billingStatus: role === "EMPLOYEE" ? "BILLABLE" : role === "HR" ? "NON_BILLABLE" : "BILLABLE",
-    timesheetEligibility: "ELIGIBLE",
-  };
-}
 
 export function checkCmsAccess(user: User | null): CmsAccess {
   if (!user) {
@@ -76,14 +52,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (!cancelled) setUser(storedUser);
 
         // If the JWT in localStorage has a role that doesn't match the stored
-        // user, clear the stale tokens so the API calls use the correct role
-        // (or no token at all, falling back to mock data).
+        // user, clear the stale tokens so the API calls use the correct role.
         if (USE_API && storedUser.role) {
           clearTokensIfRoleMismatch(storedUser.role);
         }
 
         // Proactively refresh an expired access token before hitting the API
-        // for the data bootstrap — avoids a cascade of 401s during boot.
+        // for the data bootstrap.
         if (USE_API && getAccessToken() && getRefreshToken()) {
           const refreshed = await refreshAccessToken();
           if (!refreshed) {
@@ -110,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const res = await apiFetch<{
           accessToken: string;
           refreshToken?: string;
-          user: { id: string; email: string; firstName: string; lastName: string; role: Role; employeeId?: string };
+          user: { id: string; email: string; firstName: string; lastName: string; role: string; employeeId?: string };
         }>("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
         const data = res.data;
         setTokens(data.accessToken, data.refreshToken);
@@ -119,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: data.user.email,
           firstName: data.user.firstName,
           lastName: data.user.lastName,
-          role: data.user.role,
+          role: data.user.role as User["role"],
           employeeId: data.user.employeeId,
           billingStatus:
             data.user.role === "EMPLOYEE"
@@ -133,23 +108,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(apiUser));
         await loadBackendData();
         return true;
-       } catch (error) {
-        console.error("Login API call failed, falling back to demo accounts:", error);
+      } catch (error) {
+        console.error("Login failed:", error);
+        return false;
       }
     }
 
-    const match = DEMO_USERS.find(
-      (d) => d.email.toLowerCase() === email.toLowerCase() && d.password === password
-    );
-    if (!match) return false;
-    // Clear any stale API token from a previous session before falling back
-    // to demo mode — otherwise the backend authorizes with the old role.
-    clearTokens();
-    const u = buildUser(match.role);
-    setUser(u);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
-    await loadBackendData();
-    return true;
+    return false;
   };
 
   const logout = () => {
@@ -158,21 +123,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   };
 
-  const setRoleForDev = (role: Role) => {
-    const u = buildUser(role);
-    setUser(u);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(u));
-    // Dev role switching changes the frontend role but cannot update the JWT.
-    // Clear stale tokens so the backend role and the frontend role stay in sync —
-    // otherwise the API calls use the old JWT role and return 403.
-    clearTokens();
-  };
-
   const cmsAccess = checkCmsAccess(user);
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, isLoading, login, logout, setRoleForDev, cmsAccess }}
+      value={{ user, isAuthenticated: !!user, isLoading, login, logout, cmsAccess }}
     >
       {children}
     </AuthContext.Provider>

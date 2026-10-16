@@ -124,7 +124,7 @@ export function InvoicesDashboardPage() {
           clientEmail={clients.find((c) => c.id === emailInvoice.clientId)?.primaryContact.email ?? ""}
           onClose={() => setEmailFor(null)}
           onSend={(id, email) => {
-            sendInvoice(id, email.to || undefined);
+            sendInvoice(id, email.to || "unknown");
             addToast("success", `Invoice sent to ${email.to} (simulated)`);
             setEmailFor(null);
           }}

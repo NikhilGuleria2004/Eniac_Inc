@@ -112,9 +112,7 @@ export function decodeJwtRole(token: string): string | null {
     const payload = token.split(".")[1];
     if (!payload) return null;
     const padding = payload.length % 4 === 0 ? "" : "=";
-    const decoded = typeof atob === "function"
-      ? atob(payload.replace(/-/g, "+").replace(/_/g, "/") + padding)
-      : Buffer.from(payload.replace(/-/g, "+").replace(/_/g, "/") + padding, "base64").toString("utf-8");
+    const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/") + padding);
     const parsed = JSON.parse(decoded) as { role?: string };
     return parsed.role ?? null;
   } catch {
