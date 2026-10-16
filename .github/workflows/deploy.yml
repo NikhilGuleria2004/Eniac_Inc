@@ -1,5 +1,5 @@
 
-name: Deploy EMS Frontend to Hostinger
+name: Deploy Frontends to Hostinger
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
       - master
     paths:
       - "EMSF/**"
+      - "CMSF/**"
       - ".github/workflows/deploy.yml"
   workflow_dispatch:
 
@@ -14,16 +15,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: hostinger-emsf-deploy
+  group: hostinger-frontend-deploy
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  deploy-emsf:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: EMSF
 
     steps:
       - name: Checkout repository
@@ -36,17 +33,19 @@ jobs:
           cache: npm
           cache-dependency-path: EMSF/package-lock.json
 
-      - name: Install dependencies
+      - name: Install EMSF dependencies
+        working-directory: EMSF
         run: npm ci
 
-      - name: Build EMSF frontend
+      - name: Build EMSF
+        working-directory: EMSF
         run: npm run build
 
-      - name: Verify build output
+      - name: Verify EMSF build
+        working-directory: EMSF
         run: test -f dist/index.html
 
       - name: Configure SSH
-        working-directory: .
         env:
           SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
@@ -58,28 +57,82 @@ jobs:
           ssh-keyscan -p "$HOSTINGER_PORT" "$HOSTINGER_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Verify SSH connection
-        working-directory: .
+      - name: Verify EMSF destination
         env:
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
           HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
           HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
         run: |
-          ssh -i ~/.ssh/hostinger_key \
-            -p "$HOSTINGER_PORT" \
+          ssh -i ~/.ssh/hostinger_key -p "$HOSTINGER_PORT" \
             "$HOSTINGER_USER@$HOSTINGER_HOST" \
             'test -d /home/u407424049/domains/eniacinc.com/public_html/ems'
 
-      - name: Upload EMSF frontend
-        working-directory: .
+      - name: Deploy EMSF
         env:
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
           HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
           HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
         run: |
-          rsync -rlvz --delete \
-            --exclude='/.htaccess' \
+          rsync -rlvz --delete --exclude='/.htaccess' \
             -e "ssh -i ~/.ssh/hostinger_key -p $HOSTINGER_PORT" \
             EMSF/dist/ \
             "$HOSTINGER_USER@$HOSTINGER_HOST:/home/u407424049/domains/eniacinc.com/public_html/ems/"
 
+  deploy-cmsf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: CMSF/package-lock.json
+
+      - name: Install CMSF dependencies
+        working-directory: CMSF
+        run: npm ci
+
+      - name: Build CMSF
+        working-directory: CMSF
+        run: npm run build
+
+      - name: Verify CMSF build
+        working-directory: CMSF
+        run: test -f dist/index.html
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/hostinger_key
+          chmod 600 ~/.ssh/hostinger_key
+          ssh-keyscan -p "$HOSTINGER_PORT" "$HOSTINGER_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Verify CMSF destination
+        env:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+        run: |
+          ssh -i ~/.ssh/hostinger_key -p "$HOSTINGER_PORT" \
+            "$HOSTINGER_USER@$HOSTINGER_HOST" \
+            'test -d /home/u407424049/domains/eniacinc.com/public_html/cms'
+
+      - name: Deploy CMSF
+        env:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+        run: |
+          rsync -rlvz --delete --exclude='/.htaccess' \
+            -e "ssh -i ~/.ssh/hostinger_key -p $HOSTINGER_PORT" \
+            CMSF/dist/ \
+            "$HOSTINGER_USER@$HOSTINGER_HOST:/home/u407424049/domains/eniacinc.com/public_html/cms/"
