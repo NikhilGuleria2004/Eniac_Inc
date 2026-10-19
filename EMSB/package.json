@@ -15,6 +15,7 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "typecheck": "tsc --noEmit",
     "seed": "tsx src/scripts/seed.ts",
+    "wipe": "tsx src/scripts/wipe.ts",
     "seed:dev": "tsx src/scripts/seed-dev.ts",
     "seed:cms": "tsx src/scripts/seed-cms.ts",
     "seed:prod": "tsx src/scripts/seed-production.ts"

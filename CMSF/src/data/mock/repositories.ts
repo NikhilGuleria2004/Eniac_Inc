@@ -159,7 +159,7 @@ export function getInvoices(): Invoice[] {
  * and totals immediately after a write, without waiting for a full re-hydrate.
  */
 export function upsertInvoiceLocal(invoice: Invoice): void {
-  const index = mockInvoices.findIndex((i) => i.id === invoice.id || i.invoiceNumber === invoice.invoiceNumber);
+  const index = mockInvoices.findIndex((i) => i.id === invoice.id);
   if (index >= 0) mockInvoices[index] = invoice;
   else mockInvoices.push(invoice);
 }

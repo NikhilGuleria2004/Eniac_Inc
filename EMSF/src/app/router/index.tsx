@@ -39,9 +39,9 @@ function RouteLoading() {
 }
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuth();
-  const showSkeleton = useLoadingVisible(isLoading);
-  if (isLoading) {
+  const { isAuthenticated, isLoading, backendReady } = useAuth();
+  const showSkeleton = useLoadingVisible(isLoading || !backendReady);
+  if (isLoading || !backendReady) {
     return showSkeleton ? <RouteLoading /> : null;
   }
   if (!isAuthenticated) {

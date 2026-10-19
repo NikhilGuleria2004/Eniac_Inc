@@ -29,9 +29,7 @@ export function OnboardingDashboardPage() {
   const [search, setSearch] = useUrlState("q");
   const [stageFilter, setStageFilter] = useState("all");
   const [billingFilter, setBillingFilter] = useState("all");
-  const [pageParam, setPageParam] = useUrlState("page", "1");
-  const page = Math.max(1, parseInt(pageParam, 10) || 1);
-  const setPage = (n: number) => setPageParam(String(n));
+  const [page, setPage] = useState(1);
   const [forceRefresh, setForceRefresh] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const employees = useMemo(() => getEmployees(), [forceRefresh]);

@@ -26,3 +26,8 @@ export function getMailAdapter(): MailAdapter {
 
   return cachedAdapter;
 }
+
+/** Resets the cached adapter (useful for tests). */
+export function resetMailAdapter(): void {
+  cachedAdapter = null;
+}

@@ -11,7 +11,7 @@ import { toISO } from "../utils/dates.js";
 import { writeAuditLog } from "../utils/audit.js";
 import { emitNotification } from "../utils/notification-emitter.js";
 import { runInTransaction } from "../utils/transaction.js";
-import { geographyOf, resolveResourceRate } from "../lib/rates.js";
+import { geographyOf, resolveResourceRate } from "../utils/rates.js";
 import { InvoicePdfService, humanizePaymentTerms } from "./invoice-pdf.service.js";
 import { formatInvoicePdfDate, formatInvoicePdfMoney } from "../integrations/pdf/invoice-pdf.renderer.js";
 import { buildInvoiceEmail, getMailAdapter } from "../integrations/mail/index.js";
@@ -45,7 +45,7 @@ function recompute(invoice: Omit<Invoice, "_id">): void {
   invoice.subtotal = subtotal;
   invoice.taxAmount = taxAmount;
   invoice.totalAmount = totalAmount;
-  invoice.balanceDue = Number((totalAmount - invoice.amountPaid).toFixed(2));
+  invoice.balanceDue = Math.max(0, Number((totalAmount - invoice.amountPaid).toFixed(2)));
 }
 
 export interface InvoiceDTO {
@@ -167,7 +167,7 @@ export class InvoiceService {
       notes: input.notes,
       termsAndConditions: input.termsAndConditions,
       templateId: input.templateId,
-      createdBy: actorRole,
+      createdBy: actorUserId,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -231,7 +231,11 @@ export class InvoiceService {
     const invoice = await this.repo.findById(invoiceId);
     if (!invoice) throw new NotFoundError("Invoice was not found.");
     this.assertDraft(invoice);
-    const lineItems = invoice.lineItems.filter((li) => li.id !== lineItemId).map((li, i) => ({ ...li, sortOrder: i }));
+    const remaining = invoice.lineItems.filter((li) => li.id !== lineItemId);
+    if (remaining.length === 0) {
+      throw new BusinessRuleError("Invoice must have at least one line item.", "EMPTY_INVOICE_LINE_ITEMS");
+    }
+    const lineItems = remaining.map((li, i) => ({ ...li, sortOrder: i }));
     return this.persistLines(invoice, lineItems, actorRole, actorUserId);
   }
 
@@ -368,8 +372,14 @@ export class InvoiceService {
     }
 
     const groups = new Map<string, { rate: number; employeeIds: string[]; projectName: string }>();
+    const empIds = Array.from(new Set(timesheets.map((t) => t.employeeId)));
+    const empMap = new Map<string, { country: string; techRole?: string; designation: string }>();
+    for (const eid of empIds) {
+      const emp = await this.employeeRepo.findByEmployeeId(eid);
+      if (emp) empMap.set(eid, emp);
+    }
     for (const ts of timesheets) {
-      const emp = await this.employeeRepo.findByEmployeeId(ts.employeeId);
+      const emp = empMap.get(ts.employeeId);
       if (!emp) continue;
       const name = `${geographyOf(emp.country)} ${emp.techRole ?? emp.designation}`;
       const rate = resolveResourceRate(emp) ?? 0;

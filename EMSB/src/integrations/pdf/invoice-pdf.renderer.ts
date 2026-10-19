@@ -284,7 +284,11 @@ export async function renderInvoicePdf(model: InvoicePdfModel, branding?: Invoic
   while (index < items.length) {
     let rowTop = lastRowBottom;
     const rowsOnPage = index === 0 ? PAGINATION.rowsFirstPage : PAGINATION.rowsContinuationPage;
-    const rowLimit = Math.min(rowsOnPage, items.length - index);
+    let rowLimit = Math.min(rowsOnPage, items.length - index);
+    if (rowTop + TABLE.rowHeight * rowLimit > PAGINATION.pageRowLimit) {
+      rowLimit = Math.floor((PAGINATION.pageRowLimit - rowTop) / TABLE.rowHeight);
+      if (rowLimit < 0) rowLimit = 0;
+    }
     for (let row = 0; row < rowLimit; row++) {
       drawTableRow(doc, index + 1, items[index], rowTop);
       rowTop += TABLE.rowHeight;
@@ -303,6 +307,12 @@ export async function renderInvoicePdf(model: InvoicePdfModel, branding?: Invoic
   }
 
   // ── Totals, notes and terms ──────────────────────────────────────────────
+  if (index >= items.length && lastRowBottom + PAGINATION.finalPageReserve > PAGINATION.pageRowLimit) {
+    doc.addPage();
+    left(doc, `Invoice #${model.invoiceNumber}`, 45.6, PAGINATION.continuationIdentTop, 9, true, COLORS.text);
+    right(doc, `(continued) - ${model.client.name}`, 560.6, PAGINATION.continuationIdentTop, 9, false, COLORS.text);
+    lastRowBottom = PAGINATION.continuationHeaderTop + TABLE.headerHeight;
+  }
   const bandBottom = drawTotals(doc, model, lastRowBottom);
   let y = bandBottom + SECTIONS.titleTopOffset;
   if (model.notes) {

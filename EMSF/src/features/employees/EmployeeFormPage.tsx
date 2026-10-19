@@ -4,6 +4,7 @@ import type { BillingStatus, Employee, EmploymentStatus, EmploymentType, Role } 
 import { useAuth } from "../auth/AuthContext";
 import { hasPermission } from "../../lib/permissions";
 import { createEmployee, createOnboardingRecord, getEmployeeById, getEmployees, sendOnboardingInvite, updateEmployee } from "../../data/mock/repositories";
+import { ApiRequestError } from "../../lib/api";
 import { CITIES, COUNTRIES, DEPARTMENTS, DESIGNATIONS, EMPLOYMENT_TYPES, ROUTES } from "../../data/constants";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { Navigate } from "react-router-dom";
@@ -83,8 +84,8 @@ function EmployeeForm({ existing, isNew, navigate }: { existing?: Employee; isNe
         if (saved) navigate(ROUTES.EMPLOYEE_DETAIL(saved.id));
         else setError("Could not save employee.");
       }
-    } catch {
-      setError("Could not save employee. Please try again.");
+    } catch (err) {
+      setError(err instanceof ApiRequestError ? err.message : "Could not save employee. Please try again.");
     } finally {
       setSaving(false);
     }

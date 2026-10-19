@@ -35,9 +35,7 @@ export function DocumentListPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [expiryFilter, setExpiryFilter] = useState("all");
   const [countryFilter, setCountryFilter] = useState("all");
-  const [pageParam, setPageParam] = useUrlState("page", "1");
-  const page = Math.max(1, parseInt(pageParam, 10) || 1);
-  const setPage = (n: number) => setPageParam(String(n));
+  const [page, setPage] = useState(1);
   const [preview, setPreview] = useState<Document | null>(null);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [replaceTarget, setReplaceTarget] = useState<Document | null>(null);

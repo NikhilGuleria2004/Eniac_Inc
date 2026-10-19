@@ -2,6 +2,7 @@ import type { Collection, Filter } from "mongodb";
 import type { Invoice } from "../models/invoice.js";
 import type { InvoiceStatus } from "../config/constants.js";
 import { getCollection } from "../config/database.js";
+import { nextInvoiceSuffix } from "../utils/id-generator.js";
 
 export interface InvoiceListFilters {
   clientId?: string;
@@ -29,17 +30,16 @@ export class InvoiceRepository {
       { invoiceNumber: { $regex: `^INV-${year}-` } },
       { sort: { invoiceNumber: -1 }, projection: { invoiceNumber: 1 } }
     );
-    let nextNum = 1;
-    if (max?.invoiceNumber) {
-      const match = max.invoiceNumber.match(/-(\d{3,})$/);
-      if (match) nextNum = parseInt(match[1], 10) + 1;
-    }
-    const suffix = String(nextNum).padStart(3, "0");
-    return { invoiceId: `INV-${year}-${suffix}`, invoiceNumber: `INV-${year}-${suffix}` };
+    const suffix = nextInvoiceSuffix(max?.invoiceNumber, year);
+    return { invoiceId: suffix, invoiceNumber: suffix };
   }
 
   async findById(invoiceId: string): Promise<Invoice | null> {
-    return this.collection.findOne({ $or: [{ invoiceId }, { invoiceNumber: invoiceId }] });
+    return this.collection.findOne({ invoiceId });
+  }
+
+  async findByNumber(invoiceNumber: string): Promise<Invoice | null> {
+    return this.collection.findOne({ invoiceNumber });
   }
 
   async findMany(filters: InvoiceListFilters): Promise<{ invoices: Invoice[]; total: number }> {
@@ -87,12 +87,7 @@ export class InvoiceRepository {
       { invoiceNumber: { $regex: `^INV-${year}-` } },
       { sort: { invoiceNumber: -1 }, projection: { invoiceNumber: 1 } }
     );
-    let nextNum = 1;
-    if (max?.invoiceNumber) {
-      const match = max.invoiceNumber.match(/-(\d{3,})$/);
-      if (match) nextNum = parseInt(match[1], 10) + 1;
-    }
-    return `INV-${year}-${String(nextNum).padStart(3, "0")}`;
+    return nextInvoiceSuffix(max?.invoiceNumber, year);
   }
 
   async update(invoiceId: string, update: Partial<Invoice>): Promise<Invoice | null> {

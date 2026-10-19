@@ -5,9 +5,9 @@ export const INVOICE_TRANSITIONS: Record<InvoiceStatus, InvoiceStatus[]> = {
   DRAFT: ["SENT", "VOID", "CANCELLED"],
   SENT: ["PAID", "OVERDUE", "VOID", "PARTIAL"],
   OVERDUE: ["PAID", "VOID", "PARTIAL"],
-  PARTIAL: ["PAID", "OVERDUE"],
+  PARTIAL: ["PAID", "OVERDUE", "PARTIAL"],
   PAID: [],
-  VOID: ["DRAFT"],
+  VOID: [],
   CANCELLED: [],
 };
 

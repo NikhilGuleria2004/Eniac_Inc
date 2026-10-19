@@ -26,9 +26,7 @@ export function EmployeeDirectoryPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [deptFilter, setDeptFilter] = useState("all");
   const [billingFilter, setBillingFilter] = useState("all");
-  const [pageParam, setPageParam] = useUrlState("page", "1");
-  const page = Math.max(1, parseInt(pageParam, 10) || 1);
-  const setPage = (n: number) => setPageParam(String(n));
+  const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<string[]>([]);
   const [forceRefresh, setForceRefresh] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -36,12 +34,19 @@ export function EmployeeDirectoryPage() {
   const projects = useMemo(() => getProjects(), []);
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
+    const matches = (value?: string) => (value ?? "").toLowerCase().includes(q);
     return employees.filter((e) => {
       if (statusFilter !== "all" && e.employmentStatus !== statusFilter) return false;
       if (deptFilter !== "all" && e.department !== deptFilter) return false;
       if (billingFilter !== "all" && e.billingStatus !== billingFilter) return false;
       if (!q) return true;
-      return e.firstName.toLowerCase().includes(q) || e.lastName.toLowerCase().includes(q) || e.email.toLowerCase().includes(q) || e.employeeCode.toLowerCase().includes(q) || e.designation.toLowerCase().includes(q);
+      return (
+        matches(e.firstName) ||
+        matches(e.lastName) ||
+        matches(e.email) ||
+        matches(e.employeeCode) ||
+        matches(e.designation)
+      );
     });
   }, [employees, search, statusFilter, deptFilter, billingFilter]);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));

@@ -80,6 +80,15 @@ describe("createEmployee persistence", () => {
     await expect(createEmployee(BASE_DATA)).rejects.toThrow();
   });
 
+  it("does not mutate the local store when the backend rejects the create", async () => {
+    apiSpy.mockRejectedValue(
+      new ApiRequestError("CONFLICT", "Email is already in use by another employee.")
+    );
+
+    await expect(createEmployee(BASE_DATA)).rejects.toThrow();
+    expect(getEmployeeById("EMP-2001")).toBeUndefined();
+  });
+
   it("createOnboardingRecord sends POST to /onboarding with employeeId", async () => {
     apiSpy.mockResolvedValue({ success: true, data: {} });
 

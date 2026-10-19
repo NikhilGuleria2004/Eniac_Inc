@@ -1,12 +1,13 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { User, Role } from "../../types";
-import { apiFetch, setTokens, getAccessToken, clearTokens } from "../../lib/api";
+import { apiFetch, setTokens, getAccessToken, refreshAccessToken, clearTokens } from "../../lib/api";
 import { loadBackendData } from "../../data/mock";
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  backendReady: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
@@ -16,11 +17,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [backendReady, setBackendReady] = useState(false);
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = getAccessToken();
-      if (token) {
+      let accessToken = getAccessToken();
+      let authenticated = false;
+
+      if (!accessToken) {
+        const refreshed = await refreshAccessToken();
+        if (refreshed) {
+          accessToken = refreshed;
+        }
+      }
+
+      if (accessToken) {
         try {
           const res = await apiFetch("/auth/me");
           const u = res.data as { id: string; email: string; firstName: string; lastName: string; role: Role; employeeId?: string };
@@ -32,10 +43,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             role: u.role,
             employeeId: u.employeeId
           });
-          await loadBackendData();
+          authenticated = true;
         } catch {
-          clearTokens();
+          const refreshed = await refreshAccessToken();
+          if (refreshed) {
+            try {
+              const res = await apiFetch("/auth/me");
+              const u = res.data as { id: string; email: string; firstName: string; lastName: string; role: Role; employeeId?: string };
+              setUser({
+                id: u.id,
+                email: u.email,
+                firstName: u.firstName,
+                lastName: u.lastName,
+                role: u.role,
+                employeeId: u.employeeId
+              });
+              authenticated = true;
+            } catch {
+              clearTokens();
+            }
+          } else {
+            clearTokens();
+          }
         }
+      }
+
+      if (authenticated) {
+        await loadBackendData();
+        setBackendReady(true);
+      } else {
+        setBackendReady(true);
       }
       setIsLoading(false);
     };
@@ -71,7 +108,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, backendReady, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -22,6 +22,12 @@ export class SmtpMailAdapter implements MailAdapter {
       );
     }
 
+    if (!env.MAIL_FROM) {
+      throw new Error(
+        "SMTP mail provider selected but MAIL_FROM is not configured."
+      );
+    }
+
     this.transporter = nodemailer.createTransport({
       host: env.SMTP_HOST,
       port: env.SMTP_PORT,

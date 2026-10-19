@@ -34,7 +34,7 @@ export const createInvoiceSchema = z
     dueDate: dateStr,
     currency: z.enum(CURRENCIES).default("USD"),
     paymentTerms: z.enum(PAYMENT_TERMS).default("NET_30"),
-    taxRate: z.number().min(0).max(100).default(0),
+    taxRate: z.number().min(0).max(1).step(0.01).default(0),
     notes: z.string().max(2000).optional(),
     termsAndConditions: z.string().max(2000).optional(),
     /** Invoice template driving the PDF branding (default template when omitted). */
@@ -53,7 +53,7 @@ export const updateInvoiceSchema = z.object({
   dueDate: dateStr.optional(),
   currency: z.enum(CURRENCIES).optional(),
   paymentTerms: z.enum(PAYMENT_TERMS).optional(),
-  taxRate: z.number().min(0).max(100).optional(),
+  taxRate: z.number().min(0).max(1).step(0.01).optional(),
   notes: z.string().max(2000).optional(),
   termsAndConditions: z.string().max(2000).optional(),
   templateId: z.string().min(1).optional()

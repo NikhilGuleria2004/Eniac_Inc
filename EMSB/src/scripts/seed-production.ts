@@ -1,33 +1,115 @@
 import "dotenv/config";
+import { randomBytes } from "crypto";
+import { Document } from "mongodb";
 import { connectDatabase, getDb, closeDatabase } from "../config/database.js";
-import { initializeIndexes } from "../config/init-db.js";
 import { hashPassword } from "../utils/auth/jwt.js";
-import type { Document } from "mongodb";
+import { initializeIndexes } from "../config/init-db.js";
+import { env } from "../config/env.js";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-const FIRST_NAMES = [
-  "Arjun", "Priya", "Rohan", "Sneha", "Amit", "Neha", "Karan", "Ananya",
-  "Vikram", "Pooja", "Ravi", "Kavya", "Siddharth", "Meera", "Harsh",
-  "Ishita", "Manoj", "Tina", "Chetan", "Riya",
-] as const;
-
-const LAST_NAMES = [
-  "Sharma", "Desai", "Patel", "Kumar", "Verma", "Joshi", "Mehta", "Singh",
-  "Reddy", "Chauhan", "Yadav", "Thakur", "Mishra", "Rao", "Kapoor", "Gupta",
-  "Shah", "Malhotra", "Saxena", "Ramesh",
-] as const;
-
+const DEPARTMENTS = [
+  "Engineering",
+  "Product",
+  "Sales",
+  "Marketing",
+  "Operations",
+  "HR",
+  "Finance",
+  "Design",
+  "QA",
+  "DevOps",
+  "Support",
+  "Legal",
+];
+const DESIGNATIONS = [
+  "Software Engineer",
+  "Senior Engineer",
+  "Tech Lead",
+  "Product Manager",
+  "Sales Director",
+  "Marketing Manager",
+  "Operations Lead",
+  "HR Manager",
+  "Finance Specialist",
+  "UX Designer",
+  "QA Engineer",
+  "DevOps Engineer",
+  "Support Specialist",
+  "Legal Counsel",
+];
+const COUNTRIES = ["INDIA", "USA"];
+const CITIES_INDIA = [
+  "Bangalore",
+  "Mumbai",
+  "Delhi",
+  "Hyderabad",
+  "Pune",
+  "Chennai",
+  "Kolkata",
+];
+const CITIES_USA = [
+  "San Francisco",
+  "New York",
+  "Austin",
+  "Seattle",
+  "Boston",
+  "Chicago",
+  "Denver",
+];
+const PROJECT_STATUSES = [
+  "PLANNING",
+  "ACTIVE",
+  "ON_HOLD",
+  "COMPLETED",
+  "CANCELLED",
+];
+const PROJECT_HEALTH = ["ON_TRACK", "AT_RISK", "OFF_TRACK"];
+const EMPLOYMENT_STATUSES = ["ACTIVE", "ONBOARDING", "ON_LEAVE", "SUSPENDED"];
+const EMPLOYMENT_TYPES = ["FULL_TIME", "PART_TIME", "CONTRACT", "INTERN"];
+const BILLING_STATUSES = ["BILLABLE", "NON_BILLABLE"];
+const CLIENT_INDUSTRIES = [
+  "Technology",
+  "Finance",
+  "Healthcare",
+  "Manufacturing",
+  "Retail",
+  "Consulting",
+  "Media",
+  "Energy",
+];
 const CLIENT_COMPANIES = [
-  "Acme Corp", "GlobalTech", "Innovation Labs", "NextGen Systems", "Fusion Dynamics",
-  "Vertex Solutions", "Summit Partners", "Pinnacle Group", "Quantum Edge", "Apex Industries",
-  "Zenith Digital", "Meridian Health", "Stellaris", "Nimbus Cloud", "Cobalt Blue",
-] as const;
-
-const CLIENT_INDUSTRIES = ["Technology", "Finance", "Healthcare", "Manufacturing", "Retail", "Consulting", "Media", "Energy"] as const;
-
-const PROJECT_THEMES = ["Phoenix", "Summit", "Nexus", "Atlas", "Quantum", "Voyager", "Horizon", "Apex", "Orbit", "Catalyst", "Vertex", "Echo", "Nova", "Pulse", "Zenith"] as const;
-
+  "Acme Corp",
+  "GlobalTech",
+  "Innovation Labs",
+  "NextGen Systems",
+  "Fusion Dynamics",
+  "Vertex Solutions",
+  "Summit Partners",
+  "Pinnacle Group",
+  "Quantum Edge",
+  "Apex Industries",
+  "Zenith Digital",
+  "Meridian Health",
+];
+const PROJECT_THEMES = [
+  "Phoenix",
+  "Summit",
+  "Nexus",
+  "Atlas",
+  "Quantum",
+  "Voyager",
+  "Horizon",
+  "Apex",
+  "Orbit",
+  "Catalyst",
+  "Vertex",
+  "Echo",
+  "Nova",
+  "Pulse",
+  "Zenith",
+];
+const LEAVE_TYPES = ["PAID", "SICK", "CASUAL", "UNPAID"];
 const TECH_ROLES = [
   "Java Developer",
   "Frontend Developer",
@@ -42,182 +124,762 @@ const TECH_ROLES = [
   "Scrum Master",
   "Data Engineer",
   "Solution Architect",
-] as const;
-
-const TASK_CATEGORIES = ["DEVELOPMENT", "TESTING", "REVIEW", "MEETING", "DESIGN", "OTHER"] as const;
-
-const INVOICE_STATUSES_WITH_RATE: [string, number][] = [
-  ["DRAFT", 0.15],
-  ["SENT", 0.25],
-  ["PAID", 0.20],
-  ["OVERDUE", 0.10],
-  ["PARTIAL", 0.15],
-  ["VOID", 0.05],
-  ["CANCELLED", 0.10],
+];
+const DOC_TYPES = [
+  "OFFER_LETTER",
+  "EMPLOYMENT_AGREEMENT",
+  "ID_PROOF",
+  "ADDRESS_PROOF",
+  "VISA",
+  "BANK_DETAILS",
+];
+const INVOICE_STATUSES = ["DRAFT", "SENT", "PAID", "OVERDUE", "PARTIAL"];
+const TIMESHEET_STATUSES = [
+  "DRAFT",
+  "SUBMITTED",
+  "IN_REVIEW",
+  "APPROVED",
+  "REJECTED",
+  "REVISED",
+  "PAID",
+];
+const AUDIT_ACTIONS = [
+  "employee.created",
+  "employee.updated",
+  "onboarding.completed",
+  "invitation.sent",
+  "document.approved",
+  "leave.approved",
+  "project.created",
+  "invoice.sent",
+  "timesheet.approved",
+  "user.login",
+];
+const AUDIT_ENTITIES = [
+  "employee",
+  "onboarding",
+  "invitation",
+  "document",
+  "leave",
+  "project",
+  "invoice",
+  "timesheet",
+  "user",
 ];
 
-function seededRandom(seed: number) {
-  let s = seed >>> 0;
-  return () => {
-    s = (s + 0x6d2b79f5) >>> 0;
-    let t = s;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+const FIRST_NAMES = [
+  "Arjun",
+  "Priya",
+  "Rohan",
+  "Sneha",
+  "Amit",
+  "Neha",
+  "Karan",
+  "Ananya",
+  "Vikram",
+  "Pooja",
+  "Ravi",
+  "Kavya",
+  "Siddharth",
+  "Meera",
+  "Harsh",
+  "Ishita",
+  "Manoj",
+  "Tina",
+  "Chetan",
+  "Riya",
+  "Deepak",
+  "Sunita",
+  "Gaurav",
+  "Nidhi",
+  "Yash",
+  "Tanya",
+  "Amitabh",
+  "Kriti",
+  "Sanjay",
+  "Maya",
+];
+const LAST_NAMES = [
+  "Sharma",
+  "Desai",
+  "Patel",
+  "Kumar",
+  "Verma",
+  "Joshi",
+  "Mehta",
+  "Singh",
+  "Reddy",
+  "Chauhan",
+  "Yadav",
+  "Thakur",
+  "Mishra",
+  "Rao",
+  "Kapoor",
+  "Gupta",
+  "Shah",
+  "Malhotra",
+  "Saxena",
+  "Ramesh",
+];
+
+function rand<T>(arr: readonly T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+function randInt(min: number, max: number): number {
+  return min + Math.floor(Math.random() * (max - min + 1));
+}
+function hex(n = 4): string {
+  return randomBytes(n).toString("hex");
 }
 
-function createLcg(seed: number) {
-  const rng = seededRandom(seed);
-  return {
-    next: rng,
-    int(min: number, max: number): number {
-      return min + Math.floor(rng() * (max - min + 1));
-    },
-    pick<T>(arr: readonly T[]): T {
-      return arr[Math.floor(rng() * arr.length)];
-    },
-    pickN<T>(arr: readonly T[], n: number): T[] {
-      const result: T[] = [];
-      for (let i = 0; i < n; i++) {
-        result.push(arr[Math.floor(rng() * arr.length)]);
-      }
-      return result;
-    },
-  };
-}
+const ROLE_ACCOUNTS = [
+  {
+    email: "superadmin@eniacinc.com",
+    userId: "user_admin",
+    employeeId: "EMP-001",
+    role: "ADMIN",
+    firstName: "Superadmin",
+    lastName: "User",
+    password: "Eniacinc1",
+  },
+  {
+    email: "hreniac@eniacinc.com",
+    userId: "user_hr",
+    employeeId: "EMP-002",
+    role: "HR",
+    firstName: "HR",
+    lastName: "User",
+    password: "Eniacinc2",
+  },
+  {
+    email: "manager@eniacinc.com",
+    userId: "user_manager",
+    employeeId: "EMP-003",
+    role: "MANAGER",
+    firstName: "Manager",
+    lastName: "User",
+    password: "Eniacinc3",
+  },
+  {
+    email: "supervisor@eniacinc.com",
+    userId: "user_supervisor",
+    employeeId: "EMP-004",
+    role: "SUPERVISOR",
+    firstName: "Supervisor",
+    lastName: "User",
+    password: "Eniacinc4",
+  },
+  {
+    email: "employee@eniacinc.com",
+    userId: "user_employee",
+    employeeId: "EMP-005",
+    role: "EMPLOYEE",
+    firstName: "Employee",
+    lastName: "User",
+    password: "Eniacinc5",
+  },
+];
 
-const rng = createLcg(0x53454544);
+async function insertChunked(
+  db: ReturnType<typeof getDb>,
+  name: string,
+  docs: Document[],
+): Promise<number> {
+  if (!docs.length) return 0;
+  const col = db.collection(name);
+  let inserted = 0;
+  for (let i = 0; i < docs.length; i += 1000) {
+    const chunk = docs.slice(i, i + 1000);
+    await col.insertMany(chunk);
+    inserted += chunk.length;
+  }
+  return inserted;
+}
 
 async function run(): Promise<void> {
   await connectDatabase();
-  await initializeIndexes();
   const db = getDb();
   const now = new Date();
 
-  console.log("Seeding CMS platform data...");
+  // ---- 0. Wipe everything ----
+  const existing = await db.listCollections().toArray();
+  for (const col of existing) {
+    await db.dropCollection(col.name);
+  }
+  console.log(`  Wiped ${existing.length} collections.`);
 
-  await db.collection("invoice_templates").deleteMany({ name: { $regex: "^PROD-TEMPLATE-" } });
-  await db.collection("users").deleteMany({ userId: { $regex: "^PROD-USER-" } });
-  await db.collection("users").deleteMany({ email: { $regex: "@eniac\\.demo$" } });
-  await db.collection("clients").deleteMany({ clientId: { $regex: "^PROD-CLIENT-" } });
-  await db.collection("projects").deleteMany({ projectId: { $regex: "^PROD-PRJ-" } });
-  await db.collection("project_assignments").deleteMany({ assignmentId: { $regex: "^PROD-ASN-" } });
-  await db.collection("daily_logs").deleteMany({ dailyLogId: { $regex: "^PROD-DL-" } });
-  await db.collection("timesheets").deleteMany({ timesheetId: { $regex: "^PROD-TS-" } });
-  await db.collection("invoices").deleteMany({ invoiceId: { $regex: "^PROD-INV-" } });
-  await db.collection("audit_logs").deleteMany({ auditId: { $regex: "^PROD-AUDIT-" } });
-  await db.collection("notifications").deleteMany({ notificationId: { $regex: "^PROD-NOTIF-" } });
-  await db.collection("timesheet_provisioning").deleteMany({});
+  await initializeIndexes();
 
-  // Drop PROD-only collections that had unique index issues from partial runs
-  const colsToDrop = ["employees", "project_assignments", "daily_logs", "timesheets", "invoices"] as const;
-  for (const colName of colsToDrop) {
-    const cols = await db.listCollections({ name: colName }).toArray();
-    if (cols.length > 0) {
-      await db.dropCollection(colName);
-    }
+  let total = 0;
+  async function seed(name: string, docs: Document[]): Promise<void> {
+    const n = await insertChunked(db, name, docs);
+    if (n) console.log(`  ${name}: ${n}`);
+    total += n;
   }
 
-  // Recreate indexes for dropped collections
-  const empColl = db.collection("employees");
-  await empColl.createIndexes([
-    { key: { employeeId: 1 }, unique: true },
-    { key: { email: 1 }, unique: true, sparse: true },
-    { key: { employmentStatus: 1 } },
-    { key: { billingStatus: 1 } },
-    { key: { department: 1 } },
-    { key: { managerId: 1 } },
-    { key: { country: 1 } },
-  ]);
-  await db.collection("project_assignments").createIndexes([
-    { key: { assignmentId: 1 }, unique: true },
-    { key: { employeeId: 1 } },
-    { key: { projectId: 1 } },
-    { key: { status: 1 } },
-  ]);
-  await db.collection("timesheets").createIndexes([
-    { key: { timesheetId: 1 }, unique: true },
-    { key: { employeeId: 1, periodStart: 1, periodEnd: 1 }, unique: true },
-    { key: { status: 1, periodStart: 1 } },
-    { key: { employeeId: 1, periodStart: 1 } },
-  ]);
-  await db.collection("invoices").createIndexes([
-    { key: { invoiceId: 1 }, unique: true },
-    { key: { invoiceNumber: 1 }, unique: true, sparse: true },
-    { key: { clientId: 1, status: 1 } },
-    { key: { issueDate: 1 } },
-  ]);
+  // ---- 1. Users (5 dev role accounts, unchanged) ----
+  const userDocs: Document[] = [];
+  for (const u of ROLE_ACCOUNTS) {
+    userDocs.push({
+      userId: u.userId,
+      email: u.email,
+      firstName: u.firstName,
+      lastName: u.lastName,
+      role: u.role,
+      hashedPassword: await hashPassword(u.password),
+      status: "ACTIVE",
+      employeeId: u.employeeId,
+      workMail: u.email,
+      createdAt: now,
+      updatedAt: now,
+    });
+  }
+  await seed("users", userDocs);
 
-  const adminUserId = "PROD-USER-000";
-  const mgrUserId = "PROD-USER-001";
-  const supUserId = "PROD-USER-002";
-  const empUserId = "PROD-USER-003";
+  // ---- 2. Employees (EMP-001..120; 001-005 are the role accounts) ----
+  const EMP_COUNT = 120;
+  const employeeIds: string[] = [];
+  const employeeDocs: Document[] = [];
+  for (let i = 1; i <= EMP_COUNT; i++) {
+    const employeeId = `EMP-${String(i).padStart(3, "0")}`;
+    employeeIds.push(employeeId);
+    if (i <= 5) {
+      const role = ROLE_ACCOUNTS[i - 1];
+      employeeDocs.push({
+        employeeId,
+        firstName: role.firstName,
+        lastName: role.lastName,
+        email: role.email,
+        workMail: role.email,
+        phone: "+1-555-0001",
+        designation: DESIGNATIONS[i - 1],
+        department: DEPARTMENTS[i - 1],
+        country: COUNTRIES[i % 2],
+        employmentStatus: "ACTIVE",
+        billingStatus: "BILLABLE",
+        employmentType: "FULL_TIME",
+        joiningDate: new Date(now.getTime() - 365 * MS_PER_DAY),
+        managerId: undefined,
+        timesheetEligibility: { eligible: true, reason: "ACTIVE + BILLABLE" },
+        address: {
+          city: "Bangalore",
+          state: "Maharashtra",
+          country: "INDIA",
+          line1: "100 Main St",
+          postalCode: "400001",
+        },
+        compensation: {
+          currency: "INR",
+          salary: 1000000,
+          payFrequency: "MONTHLY",
+        },
+        createdAt: now,
+        updatedAt: now,
+      });
+    } else {
+      const country = rand(COUNTRIES);
+      const cityList = country === "INDIA" ? CITIES_INDIA : CITIES_USA;
+      employeeDocs.push({
+        employeeId,
+        firstName: rand(FIRST_NAMES),
+        lastName: rand(LAST_NAMES),
+        email: `employee${i}@eniacinc.com`,
+        workMail: `emp${i}.${rand(FIRST_NAMES).toLowerCase()}.${rand(LAST_NAMES).toLowerCase()}@eniacinc.com`,
+        phone: `+1-555-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+        designation: rand(TECH_ROLES),
+        department: rand(DEPARTMENTS),
+        country,
+        employmentStatus: rand(EMPLOYMENT_STATUSES) as string,
+        billingStatus: rand(BILLING_STATUSES) as string,
+        employmentType: rand(EMPLOYMENT_TYPES) as string,
+        joiningDate: new Date(
+          now.getTime() - Math.floor(Math.random() * 365) * MS_PER_DAY,
+        ),
+        managerId: i > 10 ? "EMP-003" : undefined,
+        timesheetEligibility: { eligible: Math.random() > 0.3, reason: "AUTO" },
+        address: {
+          city: rand(cityList),
+          state: country === "INDIA" ? "Maharashtra" : "California",
+          country,
+          line1: `${Math.floor(Math.random() * 9000) + 1000} Main St`,
+          postalCode: String(Math.floor(Math.random() * 90000) + 10000),
+        },
+        compensation: {
+          currency: country === "INDIA" ? "INR" : "USD",
+          salary:
+            country === "INDIA"
+              ? 800000 + Math.floor(Math.random() * 500000)
+              : 80000 + Math.floor(Math.random() * 120000),
+          payFrequency: "MONTHLY",
+        },
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+  }
+  await seed("employees", employeeDocs);
 
-  console.log("  Creating users...");
-  await db.collection("users").insertMany([
-    {
-      userId: adminUserId,
-      email: "admin@eniac.demo",
-      firstName: "Admin",
-      lastName: "User",
-      role: "ADMIN",
-      hashedPassword: await hashPassword("demo123"),
-      status: "ACTIVE",
-      employeeId: "PROD-EMP-000",
-      workMail: "admin@eniac.demo",
+  // ---- 3. Onboarding records (one per employee) ----
+  const onboardingStatuses = [
+    "DRAFT",
+    "IN_PROGRESS",
+    "AWAITING_REVIEW",
+    "REVIEWED",
+    "REJECTED",
+    "COMPLETED",
+  ];
+  const onboardingStages = [
+    "EMPLOYEE_INFORMATION",
+    "EMPLOYMENT_DETAILS",
+    "GEOGRAPHY",
+    "BILLING_CLASSIFICATION",
+    "DOCUMENTS",
+    "HR_REVIEW",
+    "ACTIVATION",
+    "TIMESHEET_ELIGIBILITY",
+  ];
+  const onboardingDocs: Document[] = [];
+  for (const empId of employeeIds) {
+    const isSeeded = ROLE_ACCOUNTS.some((r) => r.employeeId === empId);
+    const status = isSeeded ? "COMPLETED" : rand(onboardingStatuses);
+    onboardingDocs.push({
+      employeeId: empId,
+      currentStage: isSeeded ? "TIMESHEET_ELIGIBILITY" : rand(onboardingStages),
+      status,
+      completedStages:
+        status === "COMPLETED"
+          ? [
+              "EMPLOYEE_INFORMATION",
+              "EMPLOYMENT_DETAILS",
+              "GEOGRAPHY",
+              "BILLING_CLASSIFICATION",
+              "DOCUMENTS",
+              "HR_REVIEW",
+              "ACTIVATION",
+            ]
+          : [],
+      documentRequirements: [
+        {
+          type: "OFFER_LETTER",
+          name: "Offer Letter",
+          required: true,
+          uploaded: status === "COMPLETED",
+        },
+        {
+          type: "EMPLOYMENT_AGREEMENT",
+          name: "Employment Agreement",
+          required: true,
+          uploaded: status === "COMPLETED",
+        },
+        {
+          type: "ID_PROOF",
+          name: "ID Proof",
+          required: true,
+          uploaded: status === "COMPLETED",
+        },
+        {
+          type: "ADDRESS_PROOF",
+          name: "Address Proof",
+          required: true,
+          uploaded: status === "COMPLETED",
+        },
+      ],
       createdAt: now,
       updatedAt: now,
-    },
-    {
-      userId: mgrUserId,
-      email: "manager@eniac.demo",
-      firstName: "Manager",
-      lastName: "User",
-      role: "MANAGER",
-      hashedPassword: await hashPassword("demo123"),
-      status: "ACTIVE",
-      employeeId: "PROD-EMP-001",
-      workMail: "manager@eniac.demo",
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      userId: supUserId,
-      email: "supervisor@eniac.demo",
-      firstName: "Supervisor",
-      lastName: "User",
-      role: "SUPERVISOR",
-      hashedPassword: await hashPassword("demo123"),
-      status: "ACTIVE",
-      employeeId: "PROD-EMP-002",
-      workMail: "supervisor@eniac.demo",
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      userId: empUserId,
-      email: "employee@eniac.demo",
-      firstName: "Employee",
-      lastName: "User",
-      role: "EMPLOYEE",
-      hashedPassword: await hashPassword("demo123"),
-      status: "ACTIVE",
-      employeeId: "PROD-EMP-003",
-      workMail: "employee@eniac.demo",
-      createdAt: now,
-      updatedAt: now,
-    },
-  ]);
+    });
+  }
+  await seed("onboarding_records", onboardingDocs);
 
-  console.log("  Creating invoice templates...");
+  // ---- 4. Clients ----
+  const clientIds: string[] = [];
+  const clientDocs: Document[] = [];
+  for (let i = 0; i < 30; i++) {
+    const clientId = `CLI-${String(i + 1).padStart(3, "0")}`;
+    clientIds.push(clientId);
+    clientDocs.push({
+      clientId,
+      code: `CL-${String(i + 1).padStart(3, "0")}`,
+      name: `${rand(CLIENT_COMPANIES)} ${i + 1}`,
+      status: rand([
+        "PROSPECT",
+        "ACTIVE",
+        "INACTIVE",
+        "SUSPENDED",
+        "CLOSED",
+      ]) as string,
+      industry: rand(CLIENT_INDUSTRIES),
+      clientTier: rand(["ENTERPRISE", "MID_MARKET", "SMB", "PROSPECT"]),
+      paymentTerms: rand([
+        "NET_15",
+        "NET_30",
+        "NET_45",
+        "NET_60",
+        "DUE_ON_RECEIPT",
+      ]),
+      contact: {
+        name: `${rand(FIRST_NAMES)} ${rand(LAST_NAMES)}`,
+        email: `contact${i + 1}@example.com`,
+        phone: `+1-555-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+        role: "Procurement Manager",
+      },
+      address: {
+        line1: `${Math.floor(Math.random() * 9000) + 1000} Market St`,
+        city: rand(CITIES_USA),
+        state: "California",
+        country: "USA",
+        postalCode: String(Math.floor(Math.random() * 90000) + 10000),
+      },
+      contacts: [
+        {
+          id: `CON-${i + 1}`,
+          name: "Primary Contact",
+          email: `contact${i + 1}@example.com`,
+          phone: `+1-555-43210`,
+          role: "Contact",
+          isPrimary: true,
+        },
+      ],
+      taxId: `TAX-${String(1000 + i)}`,
+      createdBy: "user_admin",
+      createdAt: now,
+      updatedAt: now,
+    });
+  }
+  await seed("clients", clientDocs);
+
+  // ---- 5. Projects ----
+  const projectIds: string[] = [];
+  const projectDocs: Document[] = [];
+  for (let i = 0; i < 50; i++) {
+    const projectId = `PROJ-${String(i + 1).padStart(3, "0")}`;
+    projectIds.push(projectId);
+    projectDocs.push({
+      projectId,
+      clientId: rand(clientIds),
+      name: `${rand(PROJECT_THEMES)} Project ${i + 1}`,
+      code: `PRJ-${String(i + 1).padStart(3, "0")}`,
+      description: `Project ${i + 1} for client ${rand(CLIENT_COMPANIES)}.`,
+      status: rand(PROJECT_STATUSES),
+      health: rand(PROJECT_HEALTH),
+      startDate: new Date(
+        now.getTime() - Math.floor(Math.random() * 180) * MS_PER_DAY,
+      ),
+      endDate:
+        Math.random() > 0.4
+          ? new Date(
+              now.getTime() + Math.floor(Math.random() * 180) * MS_PER_DAY,
+            )
+          : undefined,
+      managerId: "EMP-003",
+      progressPercent: Math.floor(Math.random() * 100),
+      budget: randInt(50000, 500000),
+      budgetCurrency: "USD",
+      teamSize: randInt(3, 15),
+      billable: true,
+      visibility: rand(["INTERNAL", "CLIENT_VISIBLE"]),
+      tags: ["seed", rand(CLIENT_INDUSTRIES).toLowerCase()],
+      createdBy: "user_admin",
+      createdAt: now,
+      updatedAt: now,
+    });
+  }
+  await seed("projects", projectDocs);
+
+  // ---- 6. Project assignments ----
+  const assignmentDocs: Document[] = [];
+  for (const empId of employeeIds) {
+    if (Math.random() > 0.15) {
+      assignmentDocs.push({
+        assignmentId: `ASGN-${hex()}`,
+        employeeId: empId,
+        projectId: rand(projectIds),
+        role: rand(TECH_ROLES),
+        allocationPercent: randInt(25, 100),
+        billable: Math.random() > 0.3,
+        startDate: new Date(
+          now.getTime() - Math.floor(Math.random() * 90) * MS_PER_DAY,
+        ),
+        endDate:
+          Math.random() > 0.6
+            ? new Date(
+                now.getTime() + Math.floor(Math.random() * 90) * MS_PER_DAY,
+              )
+            : undefined,
+        status: rand(["ACTIVE", "ENDED"]),
+        createdBy: "user_admin",
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+  }
+  await seed("project_assignments", assignmentDocs);
+
+  // ---- 7. Attendance records (30 days per employee; one per employee/date) ----
+  const attendanceDocs: Document[] = [];
+  for (const empId of employeeIds) {
+    for (let d = 30; d >= 1; d--) {
+      const date = new Date(now.getTime() - d * MS_PER_DAY);
+      if (date.getDay() === 0) continue; // skip Sundays
+      const status = rand(["P", "P", "P", "P", "P", "A", "L", "M"]);
+      const doc: Document = {
+        attendanceId: `ATT-${hex()}`,
+        employeeId: empId,
+        date,
+        status,
+        createdAt: now,
+        updatedAt: now,
+      };
+      if (status === "P" || status === "M") {
+        const checkIn = new Date(
+          date.getTime() + 9 * 3600000 + Math.random() * 3600000,
+        );
+        doc.checkIn = checkIn;
+        if (Math.random() > 0.25) {
+          const checkOut = new Date(
+            checkIn.getTime() + 8 * 3600000 + Math.random() * 2 * 3600000,
+          );
+          doc.checkOut = checkOut;
+          doc.workingHours = parseFloat(
+            ((checkOut.getTime() - checkIn.getTime()) / 3600000).toFixed(2),
+          );
+        }
+      }
+      attendanceDocs.push(doc);
+    }
+  }
+  await seed("attendance_records", attendanceDocs);
+
+  // ---- 8. Leave types + balances (one per employee per type) ----
+  const leaveTypeDocs: Document[] = [];
+  const leaveAllowances: Record<string, number> = {
+    PAID: 18,
+    SICK: 10,
+    CASUAL: 12,
+    UNPAID: 0,
+  };
+  for (const lt of LEAVE_TYPES) {
+    leaveTypeDocs.push({
+      typeId: `LT-${lt}`,
+      code: lt,
+      name: lt.replace(/_/g, " "),
+      annualAllowance: leaveAllowances[lt] ?? 0,
+      requiresApproval: true,
+      active: true,
+      createdAt: now,
+      updatedAt: now,
+    });
+  }
+  await seed("leave_types", leaveTypeDocs);
+
+  const leaveBalanceDocs: Document[] = [];
+  for (const empId of employeeIds) {
+    for (const lt of LEAVE_TYPES) {
+      leaveBalanceDocs.push({
+        employeeId: empId,
+        leaveType: lt,
+        balance: lt === "UNPAID" ? 0 : randInt(5, 15),
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+  }
+  await seed("leave_balances", leaveBalanceDocs);
+
+  // ---- 9. Leave requests ----
+  const leaveRequestDocs: Document[] = [];
+  for (const empId of employeeIds) {
+    if (Math.random() > 0.55) {
+      const startDate = new Date(
+        now.getTime() - Math.floor(Math.random() * 30) * MS_PER_DAY,
+      );
+      const days = randInt(1, 5);
+      leaveRequestDocs.push({
+        requestId: `LR-${hex()}`,
+        employeeId: empId,
+        leaveType: rand(LEAVE_TYPES),
+        startDate,
+        endDate: new Date(startDate.getTime() + (days - 1) * MS_PER_DAY),
+        days,
+        reason: "Personal leave",
+        status: rand(["APPROVED", "REJECTED", "PENDING"]),
+        reviewedBy: Math.random() > 0.5 ? "user_hr" : undefined,
+        reviewedAt: Math.random() > 0.5 ? now : undefined,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+  }
+  await seed("leave_requests", leaveRequestDocs);
+
+  // ---- 10. Documents ----
+  const documentDocs: Document[] = [];
+  for (const empId of employeeIds) {
+    for (const docType of DOC_TYPES) {
+      if (Math.random() > 0.5) {
+        const status = rand(["APPROVED", "PENDING", "REJECTED"]);
+        documentDocs.push({
+          documentId: `DOC-${hex()}`,
+          employeeId: empId,
+          type: docType,
+          name: `${docType.replace(/_/g, " ")} for ${empId}`,
+          url: "https://res.cloudinary.com/demo/image/upload/v1700000000/sample.pdf",
+          uploadedAt: now,
+          uploadedBy: "user_hr",
+          status,
+          expiryDate:
+            docType === "VISA"
+              ? new Date(now.getTime() + 180 * MS_PER_DAY)
+              : undefined,
+          createdAt: now,
+          updatedAt: now,
+        });
+      }
+    }
+  }
+  await seed("documents", documentDocs);
+
+  // ---- 11. Invitations ----
+  const invitationDocs: Document[] = [];
+  for (const empId of employeeIds) {
+    if (Math.random() > 0.85) {
+      invitationDocs.push({
+        tokenHash: hex(32),
+        userId: `user_${empId}`,
+        employeeId: empId,
+        email: `employee${parseInt(empId.split("-")[1], 10)}@eniacinc.com`,
+        workMail: `emp${parseInt(empId.split("-")[1], 10)}@eniacinc.com`,
+        role: "EMPLOYEE",
+        status: rand(["PENDING", "ACCEPTED"]),
+        invitedByRole: "HR",
+        expiresAt: new Date(now.getTime() + 7 * MS_PER_DAY),
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+  }
+  await seed("invitations", invitationDocs);
+
+  // ---- 12. Employee reviews ----
+  const reviewDocs: Document[] = [];
+  for (const empId of employeeIds) {
+    if (Math.random() > 0.6) {
+      reviewDocs.push({
+        reviewId: `REV-${hex()}`,
+        employeeId: empId,
+        reviewerId: "user_hr",
+        reviewerName: "HR User",
+        type: rand(["ANNUAL", "PROBATION", "MID_YEAR"]),
+        score: randInt(3, 5),
+        maxScore: 5,
+        status: rand(["COMPLETED", "IN_PROGRESS", "SCHEDULED"]),
+        summary: "Performance review completed.",
+        goals: [
+          "Improve communication skills",
+          "Take ownership of projects",
+          "Mentor junior developers",
+        ],
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+  }
+  await seed("employee_reviews", reviewDocs);
+
+  // ---- 13. Notifications ----
+  const notificationDocs: Document[] = [];
+  const NOTIF_TITLES = [
+    "Leave Request Approved",
+    "Document Uploaded",
+    "Project Update",
+    "Onboarding Reminder",
+    "Attendance Marked",
+    "System Announcement",
+  ];
+  for (let i = 0; i < 500; i++) {
+    const empId = employeeIds[i % employeeIds.length];
+    notificationDocs.push({
+      notificationId: `NOTIF-${hex()}`,
+      userId: `user_${empId}`,
+      type: rand([
+        "LEAVE",
+        "DOCUMENT",
+        "PROJECT",
+        "ONBOARDING",
+        "ATTENDANCE",
+        "SYSTEM",
+      ]),
+      title: rand(NOTIF_TITLES),
+      message: `Notification message for ${empId}.`,
+      read: Math.random() > 0.5,
+      link: "/dashboard",
+      readAt: Math.random() > 0.5 ? now : undefined,
+      createdAt: new Date(
+        now.getTime() - Math.floor(Math.random() * 30) * MS_PER_DAY,
+      ),
+      updatedAt: now,
+    });
+  }
+  await seed("notifications", notificationDocs);
+
+  // ---- 14. Audit logs ----
+  const auditDocs: Document[] = [];
+  for (let i = 0; i < 300; i++) {
+    const empId = employeeIds[Math.floor(Math.random() * employeeIds.length)];
+    auditDocs.push({
+      auditId: `AUDIT-${hex()}`,
+      actorUserId: rand([
+        "user_admin",
+        "user_hr",
+        "user_manager",
+        "user_supervisor",
+        `user_${empId}`,
+      ]),
+      actorRole: rand(["ADMIN", "HR", "MANAGER", "SUPERVISOR", "EMPLOYEE"]),
+      action: rand(AUDIT_ACTIONS),
+      entityType: rand(AUDIT_ENTITIES),
+      entityId: rand([
+        empId,
+        `PROJ-${String(randInt(1, 50)).padStart(3, "0")}`,
+        `CLI-${String(randInt(1, 30)).padStart(3, "0")}`,
+      ]),
+      details: { ipAddress: "192.168.1.1", userAgent: "Mozilla/5.0" },
+      ipAddress: "192.168.1.1",
+      createdAt: new Date(
+        now.getTime() - Math.floor(Math.random() * 90) * MS_PER_DAY,
+      ),
+    });
+  }
+  await seed("audit_logs", auditDocs);
+
+  // ---- 15. Settings ----
+  const settingsDocs: Document[] = [
+    {
+      key: "company_name",
+      value: "Eniac Inc.",
+      createdAt: now,
+      updatedAt: now,
+    },
+    {
+      key: "support_email",
+      value: "support@eniacinc.com",
+      createdAt: now,
+      updatedAt: now,
+    },
+    { key: "timezone", value: "Asia/Kolkata", createdAt: now, updatedAt: now },
+    { key: "date_format", value: "DD/MM/YYYY", createdAt: now, updatedAt: now },
+    { key: "weekend_days", value: "0", createdAt: now, updatedAt: now },
+  ];
+  await seed("settings", settingsDocs);
+
+  // ---- 16. Invoice templates ----
   const templateIds: string[] = [];
-  for (let i = 1; i <= 3; i++) {
-    const tplId = `PROD-TPL-${String(i).padStart(3, "0")}`;
+  const templateDocs: Document[] = [];
+  for (let i = 0; i < 5; i++) {
+    const tplId = `TPL-${i + 1}`;
     templateIds.push(tplId);
-    await db.collection("invoice_templates").insertOne({
+    templateDocs.push({
       invoiceTemplateId: tplId,
-      name: `Production Template ${i}`,
+      name: `Template ${i + 1}`,
       logoUrl: "https://eniacinc.com/logo.png",
       primaryColor: "#0F2B1D",
       secondaryColor: "#0A1E16",
@@ -225,127 +887,18 @@ async function run(): Promise<void> {
       termsAndConditions: "Payment due within 30 days.",
       paymentInstructions: "Bank transfer to A/C 123456789, SWIFT: ENIACBOM.",
       taxSettings: { defaultRate: 0, label: "Tax" },
-      isDefault: i === 1,
-      createdBy: adminUserId,
+      isDefault: i === 0,
+      createdBy: "user_admin",
       createdAt: now,
       updatedAt: now,
     });
   }
+  await seed("invoice_templates", templateDocs);
 
-  console.log("  Creating employees...");
-  const employeeIds: string[] = [];
-  const employeesWithRates: { employeeId: string; rate: number; country: string; techRole: string; designation: string }[] = [];
-
-  const rateMap: Record<string, number> = {
-    "US Based AEM Developer": 23400,
-    "US Based Developer": 23400,
-    "US Based Senior Developer": 27000,
-    "US Based Lead": 32000,
-    "US Based DevOps Engineer": 25000,
-    "US Based QA Engineer": 19000,
-    "US Based Designer": 18000,
-    "US Based Analyst": 17000,
-    "EU Based Web Developer": 20584,
-    "EU Based Developer": 20584,
-    "EU Based Senior Developer": 23000,
-    "EU Based Lead": 28000,
-    "EU Based DevOps Engineer": 19500,
-    "EU Based QA Engineer": 16500,
-    "EU Based Designer": 15000,
-    "EU Based Analyst": 14500,
-    "India-Based AEM Developer": 6240,
-    "India-Based Developer": 6240,
-    "India-Based Senior Developer": 8000,
-    "India-Based Lead": 10000,
-    "India-Based 24/7 Offshore Dev-ops personnel": 13996,
-    "India-Based DevOps Engineer": 11000,
-    "India-Based QA Engineer": 4800,
-    "India-Based Designer": 4200,
-    "India-Based Analyst": 5400,
-  };
-
-  const COUNTRY_FOR_RATE: Record<string, string> = {
-    "US Based": "United States",
-    "EU Based": "Germany",
-    "India-Based": "India",
-  };
-
-  const employeeRateEntries: { key: string; rate: number; country: string }[] = [];
-  for (const [key, rate] of Object.entries(rateMap)) {
-    const countryMatch = Object.keys(COUNTRY_FOR_RATE).find((prefix) => key.startsWith(prefix));
-    if (countryMatch) {
-       employeeRateEntries.push({ key, rate, country: COUNTRY_FOR_RATE[countryMatch] });
-    }
-  }
-
-  const numEmployees = 30;
-  for (let i = 0; i < numEmployees; i++) {
-    const empId = `PROD-EMP-${String(i + 1).padStart(3, "0")}`;
-    employeeIds.push(empId);
-    const rateEntry = employeeRateEntries[i % employeeRateEntries.length];
-    const techRole = rateEntry.key.split(" ").slice(2).join(" ");
-    const designation = rateEntry.key.split(" ").slice(2).join(" ");
-
-    employeesWithRates.push({
-      employeeId: empId,
-      rate: rateEntry.rate,
-      country: rateEntry.country,
-      techRole,
-      designation,
-    });
-
-    const firstName = FIRST_NAMES[i % FIRST_NAMES.length];
-    const lastName = LAST_NAMES[i % LAST_NAMES.length];
-    const empEmail = `${empId.toLowerCase()}@eniac.demo`;
-
-    await db.collection("employees").insertOne({
-      employeeId: empId,
-      firstName,
-      lastName,
-      email: empEmail,
-      phone: `+1-555-${String(1000 + i).padStart(4, "0")}`,
-      profilePhotoUrl: `https://i.pravatar.cc/150?img=${i + 1}`,
-      designation,
-      department: ["Engineering", "Product", "Sales", "Design", "QA"][i % 5],
-      managerId: i >= 5 ? employeeIds[1] : undefined,
-      country: rateEntry.country,
-      employmentStatus: "ACTIVE",
-      billingStatus: "BILLABLE",
-      workMail: empEmail,
-      joiningDate: new Date(now.getTime() - (rng.int(30, 365) * MS_PER_DAY)),
-      employmentType: rng.pick(["FULL_TIME", "PART_TIME", "CONTRACT", "INTERN"]),
-      address: {
-        line1: `${rng.int(100, 999)} Main Street`,
-        city: rateEntry.country === "India" ? "Bangalore" : rateEntry.country === "United States" ? "Austin" : "Berlin",
-        state: rateEntry.country === "India" ? "KA" : rateEntry.country === "United States" ? "TX" : "BE",
-        postalCode: String(rng.int(10000, 99999)),
-        country: rateEntry.country,
-      },
-      emergencyContact: {
-        name: `${FIRST_NAMES[(i + 10) % FIRST_NAMES.length]} ${LAST_NAMES[(i + 10) % LAST_NAMES.length]}`,
-        relationship: "Spouse",
-        phone: `+1-555-${String(2000 + i).padStart(4, "0")}`,
-      },
-      timesheetEligibility: { eligible: true, eligibleAt: now, reason: "ACTIVE + BILLABLE" },
-      techRole,
-      compensation: {
-        currency: rateEntry.country === "India" ? "INR" : "USD",
-        salary: rateEntry.rate * 12,
-        payFrequency: "MONTHLY",
-      },
-      billRate: {
-        currency: "USD",
-        amount: rateEntry.rate,
-        unit: "MONTHLY",
-      },
-      createdAt: now,
-      updatedAt: now,
-    });
-  }
-
-  await db.collection("timesheet_provisioning").deleteMany({ employeeId: { $regex: "^PROD-EMP-" } });
+  // ---- 17. Timesheet provisioning (one per employee) ----
+  const provisioningDocs: Document[] = [];
   for (const empId of employeeIds) {
-    await db.collection("timesheet_provisioning").insertOne({
+    provisioningDocs.push({
       employeeId: empId,
       status: "PROVISIONED",
       eligible: true,
@@ -354,476 +907,225 @@ async function run(): Promise<void> {
       updatedAt: now,
     });
   }
+  await seed("timesheet_provisioning", provisioningDocs);
 
-  console.log("  Creating clients...");
-  const clientIds: string[] = [];
-  const clients: { clientId: string; name: string; code: string; country: string; industry: string; status: string; clientTier: string; paymentTerms: string; billingAddress: { line1?: string; line2?: string; city?: string; state?: string; postalCode?: string; country?: string } }[] = [];
-
-  for (let i = 0; i < 15; i++) {
-    const clientId = `PROD-CLIENT-${String(i + 1).padStart(3, "0")}`;
-    clientIds.push(clientId);
-    const country = ["United States", "India", "Germany", "United Kingdom", "France"][i % 5];
-    const industry = CLIENT_INDUSTRIES[i % CLIENT_INDUSTRIES.length];
-    const tier = ["ENTERPRISE", "MID_MARKET", "SMB", "PROSPECT"][i % 4];
-    const status = i === 0 ? "ACTIVE" : i === 2 ? "SUSPENDED" : i === 4 ? "CLOSED" : "ACTIVE";
-    const terms = ["NET_15", "NET_30", "NET_45", "NET_60", "DUE_ON_RECEIPT"][i % 5];
-
-    const billingAddr = {
-      line1: `${rng.int(100, 999)} Business Ave`,
-      city: country === "India" ? "Mumbai" : country === "United States" ? "New York" : country === "Germany" ? "Berlin" : country === "United Kingdom" ? "London" : "Paris",
-      state: country === "India" ? "MH" : country === "United States" ? "NY" : "DE",
-      postalCode: String(rng.int(10000, 99999)),
-      country,
-    };
-
-    clients.push({ clientId, name: `${CLIENT_COMPANIES[i % CLIENT_COMPANIES.length]} ${i + 1}`, code: `PC${String(i + 1).padStart(3, "0")}`, country, industry, status, clientTier: tier, paymentTerms: terms, billingAddress: billingAddr });
-
-    await db.collection("clients").insertOne({
-      clientId,
-      name: `${CLIENT_COMPANIES[i % CLIENT_COMPANIES.length]} ${i + 1}`,
-      code: `PC${String(i + 1).padStart(3, "0")}`,
-      status,
-      industry,
-      contact: {
-        name: `${FIRST_NAMES[(i + 5) % FIRST_NAMES.length]} ${LAST_NAMES[(i + 5) % LAST_NAMES.length]}`,
-        email: `contact${i + 1}@${CLIENT_COMPANIES[i % CLIENT_COMPANIES.length].toLowerCase().replace(/\s+/g, "")}.com`,
-        phone: `+1-555-${String(3000 + i).padStart(4, "0")}`,
-        role: "Procurement Manager",
-      },
-      address: {
-        line1: `${rng.int(100, 999)} Business Ave`,
-        city: country === "India" ? "Mumbai" : country === "United States" ? "New York" : country === "Germany" ? "Berlin" : country === "United Kingdom" ? "London" : "Paris",
-        state: country === "India" ? "MH" : country === "United States" ? "NY" : country === "Germany" ? "BE" : country === "United Kingdom" ? "ENG" : "IDF",
-        postalCode: String(rng.int(10000, 99999)),
-        country,
-      },
-      clientTier: tier,
-      paymentTerms: terms,
-      taxId: `TAX-${String(1000 + i).padStart(5, "0")}`,
-      contacts: [
-        {
-          id: `CON-${i + 1}`,
-          name: `${FIRST_NAMES[(i + 3) % FIRST_NAMES.length]} ${LAST_NAMES[(i + 3) % LAST_NAMES.length]}`,
-          email: `contact${i + 1}@${CLIENT_COMPANIES[i % CLIENT_COMPANIES.length].toLowerCase().replace(/\s+/g, "")}.com`,
-          phone: `+1-555-${String(4000 + i).padStart(4, "0")}`,
-          role: "Project Manager",
-          isPrimary: true,
-        },
-      ],
-      billingAddress: billingAddr,
-      createdBy: adminUserId,
-      createdAt: now,
-      updatedAt: now,
-    });
-  }
-
-  console.log("  Creating projects...");
-  const projectDefs: { projectId: string; clientId: string; clientName: string; clientCode: string }[] = [];
-  let projIdx = 0;
-
-  for (let c = 0; c < clients.length; c++) {
-    const numProjects = 3 + (c % 4);
-    for (let p = 0; p < numProjects; p++) {
-      const projectId = `PROD-PRJ-${String(projIdx + 1).padStart(3, "0")}`;
-      projectDefs.push({ projectId, clientId: clients[c].clientId, clientName: clients[c].name, clientCode: clients[c].code });
-
-      await db.collection("projects").insertOne({
-        projectId,
-        clientId: clients[c].clientId,
-        name: `${PROJECT_THEMES[p % PROJECT_THEMES.length]} ${clients[c].name.split(" ").slice(-1)[0]}`,
-        code: `PPJ${String(projIdx + 1).padStart(3, "0")}`,
-        description: `Project for ${clients[c].name} — ${PROJECT_THEMES[p % PROJECT_THEMES.length]} phase.`,
-        status: rng.pick(["PLANNING", "ACTIVE", "ACTIVE", "ACTIVE", "ON_HOLD", "COMPLETED"]),
-        health: rng.pick(["ON_TRACK", "ON_TRACK", "AT_RISK", "OFF_TRACK"]),
-        startDate: new Date(now.getTime() - rng.int(30, 120) * MS_PER_DAY),
-        endDate: new Date(now.getTime() + rng.int(30, 180) * MS_PER_DAY),
-        managerId: employeeIds[1],
-        supervisorId: employeeIds[2],
-        progressPercent: rng.int(10, 95),
-        budget: rng.int(50000, 500000),
-        budgetCurrency: "USD",
-        teamSize: rng.int(3, 12),
-        billable: true,
-        visibility: rng.pick(["INTERNAL", "CLIENT_VISIBLE"]),
-        tags: ["production", clients[c].industry.toLowerCase()],
-        createdBy: adminUserId,
-        createdAt: now,
-        updatedAt: now,
-      });
-
-      projIdx++;
-    }
-  }
-
-  console.log("  Creating project assignments...");
-  const allEmployeeIds = employeeIds.slice(0);
-  let assignmentCounter = 0;
-  for (const proj of projectDefs) {
-    const numAssignees = rng.int(3, 8);
-    const shuffled = [...allEmployeeIds].sort(() => rng.next() - 0.5);
-    for (let a = 0; a < Math.min(numAssignees, shuffled.length); a++) {
-      const empId = shuffled[a];
-      assignmentCounter++;
-      await db.collection("project_assignments").insertOne({
-        assignmentId: `PROD-ASN-${String(assignmentCounter).padStart(6, "0")}`,
-        employeeId: empId,
-        projectId: proj.projectId,
-        role: rng.pick(TECH_ROLES),
-        allocationPercent: rng.int(25, 100),
-        billable: true,
-        startDate: new Date(now.getTime() - rng.int(30, 90) * MS_PER_DAY),
-        endDate: rng.int(0, 1) === 0 ? new Date(now.getTime() + rng.int(30, 180) * MS_PER_DAY) : undefined,
-        status: rng.pick(["ACTIVE", "ACTIVE", "ACTIVE", "ENDED"]),
-        createdBy: adminUserId,
-        createdAt: now,
-        updatedAt: now,
-      });
-    }
-  }
-
-  const today = new Date();
-  const periodStart = new Date(today.getFullYear(), today.getMonth(), 1);
-  const periodEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-  const periodStartISO = periodStart.toISOString().slice(0, 10);
-  const periodEndISO = periodEnd.toISOString().slice(0, 10);
-  const periodLabel = `June 1-${periodEnd.getDate()}, ${today.getFullYear()}`;
-
-  console.log("  Creating daily logs...");
-  const dailyLogIds: string[] = [];
+  // ---- 18. Daily logs ----
+  const dailyLogDocs: Document[] = [];
   let dlCounter = 0;
-  for (const proj of projectDefs) {
-    const numEmps = rng.int(2, 5);
-    const shuffledEmps = [...allEmployeeIds].sort(() => rng.next() - 0.5).slice(0, numEmps);
-
-    for (const empId of shuffledEmps) {
-      const empInfo = employeesWithRates.find((e) => e.employeeId === empId)!;
-      const numDays = rng.int(8, 12);
-      const startDayOffset = rng.int(15, 25);
-
-      for (let d = 0; d < numDays; d++) {
-        const workDate = new Date(today.getTime() - (startDayOffset - d) * MS_PER_DAY);
-        if (workDate.getDay() === 0) continue;
-
-        dlCounter++;
-        const dlId = `PROD-DL-${String(dlCounter).padStart(5, "0")}`;
-        dailyLogIds.push(dlId);
-
-        const regularHours = rng.int(6, 8);
-        const overtimeHours = rng.next() < 0.3 ? rng.int(1, 4) : 0;
-        const totalHours = regularHours + overtimeHours;
-        const billable = true;
-
-        await db.collection("daily_logs").insertOne({
-          dailyLogId: dlId,
-          employeeId: empId,
-          employeeName: `${empInfo.designation} ${empId}`,
-          projectId: proj.projectId,
-          projectName: proj.projectId,
-          workDate,
-          workDateStr: workDate.toISOString().slice(0, 10),
-          dayOfWeek: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][workDate.getDay()],
-          taskCategory: rng.pick(TASK_CATEGORIES),
-          description: `Development work for ${proj.projectId} — day ${d + 1}`,
-          regularHours,
-          overtimeHours,
-          totalHours,
-          billable,
-          billingType: "BILLABLE",
-          status: "LOCKED",
-          timesheetId: `PROD-TS-${String(rng.int(1, 40)).padStart(4, "0")}`,
-          reviewedBy: "user_manager",
-          reviewedAt: now,
-          tags: ["seed"],
-          createdBy: mgrUserId,
-          createdAt: workDate,
-          updatedAt: workDate,
-        });
-      }
-    }
-  }
-
-  console.log("  Creating timesheets...");
-  const timesheetIds: string[] = [];
-  const timesheetByClient: Record<string, string[]> = {};
-
-  for (let i = 1; i <= 40; i++) {
-    const empInfo = employeesWithRates[(i - 1) % employeesWithRates.length];
-    const empId = empInfo.employeeId;
-    const proj = projectDefs[(i - 1) % projectDefs.length];
-    const tsId = `PROD-TS-${String(i).padStart(4, "0")}`;
-    timesheetIds.push(tsId);
-
-    if (!timesheetByClient[proj.clientId]) timesheetByClient[proj.clientId] = [];
-    timesheetByClient[proj.clientId].push(tsId);
-
-    const totalHours = rng.int(30, 60);
-    const billableHours = Math.floor(totalHours * 0.9);
-    const regularHours = totalHours - billableHours;
-    const billableAmount = Number((billableHours * (empInfo.rate / 21 / 8)).toFixed(2));
-
-    await db.collection("timesheets").insertOne({
-      timesheetId: tsId,
+  const activeEmployees = employeeIds;
+  for (let i = 0; i < 600; i++) {
+    const empId =
+      activeEmployees[Math.floor(Math.random() * activeEmployees.length)];
+    const proj = rand(projectIds);
+    const workDate = new Date(
+      now.getTime() - Math.floor(Math.random() * 45) * MS_PER_DAY,
+    );
+    if (workDate.getDay() === 0) continue;
+    dlCounter++;
+    dailyLogDocs.push({
+      dailyLogId: `DL-${String(dlCounter).padStart(5, "0")}`,
       employeeId: empId,
-      employeeName: `${empInfo.designation} ${empId}`,
-      periodStart: periodStartISO,
-      periodEnd: periodEndISO,
-      periodLabel,
-      billingPeriod: today.getMonth() + 1,
-      year: today.getFullYear(),
-      month: today.getMonth() + 1,
-      totalDays: rng.int(10, 15),
-      totalRegularHours: regularHours,
-      totalOvertimeHours: rng.int(0, 4),
-      totalBillableHours: billableHours,
-      totalNonBillableHours: regularHours,
-      totalHours,
-      billableAmount: Number(billableAmount.toFixed(2)),
-      currency: "USD",
-      status: rng.pick(["DRAFT", "SUBMITTED", "APPROVED", "APPROVED", "APPROVED", "REVISED", "PAID"]),
-      submittedAt: now,
-      submittedBy: empId,
-      reviewedBy: supUserId,
-      reviewedAt: now,
-      approvedAt: now,
-      paidAt: rng.next() < 0.3 ? now : undefined,
-      dailyLogIds: dailyLogIds.slice(0, 10),
-      projectBreakdown: [
-        {
-          projectId: proj.projectId,
-          projectName: proj.projectId,
-          employeeBillRate: Number((empInfo.rate / 21 / 8).toFixed(2)),
-          billableHours: billableHours,
-          billableAmount: Number(billableAmount.toFixed(2)),
-        },
+      employeeName: `${rand(FIRST_NAMES)} ${rand(LAST_NAMES)}`,
+      projectId: proj,
+      projectName: proj,
+      workDate,
+      workDateStr: workDate.toISOString().slice(0, 10),
+      dayOfWeek: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][
+        workDate.getDay()
       ],
-      createdBy: mgrUserId,
-      createdAt: now,
-      updatedAt: now,
+      taskCategory: rand([
+        "DEVELOPMENT",
+        "TESTING",
+        "REVIEW",
+        "MEETING",
+        "DESIGN",
+        "OTHER",
+      ]),
+      description: `Development work — day ${i + 1}`,
+      regularHours: randInt(6, 8),
+      overtimeHours: Math.random() < 0.3 ? randInt(1, 4) : 0,
+      totalHours: 0,
+      billable: true,
+      billingType: "BILLABLE",
+      status: rand(["DRAFT", "SUBMITTED", "SUBMITTED", "LOCKED"]),
+      timesheetId: `TS-${String(randInt(1, 60)).padStart(4, "0")}`,
+      reviewedBy: "user_manager",
+      reviewedAt: now,
+      tags: ["seed"],
+      createdBy: "user_manager",
+      createdAt: workDate,
+      updatedAt: workDate,
     });
   }
-
-  for (const [clientId, tsIds] of Object.entries(timesheetByClient)) {
-    const client = clients.find((c) => c.clientId === clientId)!;
-    console.log(`    Client ${client.name}: ${tsIds.length} timesheets`);
+  for (const doc of dailyLogDocs) {
+    const total = (doc.regularHours as number) + (doc.overtimeHours as number);
+    doc.totalHours = total;
   }
+  await seed("daily_logs", dailyLogDocs);
 
-  console.log("  Creating invoices...");
-  let invoiceCounter = 0;
-  for (const client of clients) {
-    if (client.status === "CLOSED") continue;
-
-    const clientTsIds = timesheetByClient[client.clientId] || [];
-    if (clientTsIds.length === 0) continue;
-
-    const numInvoices = rng.int(2, 4);
-    const clientProjects = projectDefs.filter((p) => p.clientId === client.clientId);
-
-    for (let i = 0; i < numInvoices && i < clientTsIds.length; i++) {
-      invoiceCounter++;
-      const invId = `PROD-INV-${String(invoiceCounter).padStart(3, "0")}`;
-      const invNum = `INV-PROD-${String(invoiceCounter).padStart(5, "0")}`;
-
-      const numLines = rng.int(1, Math.min(4, clientProjects.length));
-      const selectedProjects = clientProjects.slice(0, numLines);
-
-      const lineItems = selectedProjects.map((proj, li) => {
-        const empInfo = employeesWithRates[li % employeesWithRates.length];
-        const rate = rng.pick([empInfo.rate, empInfo.rate, empInfo.rate * 0.8, empInfo.rate * 1.2]);
-        const desc = `${geographyOf(empInfo.country)} ${empInfo.techRole}`;
-        return {
-          id: `LI-${invId}-${li}`,
-          description: desc,
-          quantity: rng.int(1, 3),
-          rate: Number(rate.toFixed(2)),
-          amount: Number((rate * rng.int(1, 3)).toFixed(2)),
-          currency: "USD",
-          employeeId: empInfo.employeeId,
-          employeeName: empInfo.designation,
-          projectId: proj.projectId,
-          projectName: proj.projectId,
-          manual: false,
-          sortOrder: li,
-        };
+  // ---- 19. Timesheets (unique per employee per period) ----
+  const months: { periodStart: Date; periodEnd: Date; label: string }[] = [];
+  for (let m = 0; m < 4; m++) {
+    const periodStart = new Date(now.getFullYear(), now.getMonth() - m, 1);
+    const periodEnd = new Date(now.getFullYear(), now.getMonth() - m + 1, 0);
+    months.push({
+      periodStart,
+      periodEnd,
+      label: `${periodStart.toLocaleString("en-US", { month: "long" })} ${periodStart.getFullYear()}`,
+    });
+  }
+  const timesheetDocs: Document[] = [];
+  let tsIdx = 0;
+  const used: Set<string> = new Set();
+  for (let mi = 0; mi < months.length; mi++) {
+    const month = months[mi];
+    for (let e = 0; e < 15; e++) {
+      const emp = employeeIds[(mi * 15 + e) % employeeIds.length];
+      const key = `${emp}|${month.label}`;
+      if (used.has(key)) continue;
+      used.add(key);
+      tsIdx++;
+      const totalHours = randInt(30, 70);
+      const billableHours = Math.floor(totalHours * 0.9);
+      const rate = randInt(40, 120);
+      timesheetDocs.push({
+        timesheetId: `TS-${String(tsIdx).padStart(4, "0")}`,
+        employeeId: emp,
+        employeeName: `${rand(FIRST_NAMES)} ${rand(LAST_NAMES)}`,
+        periodStart: month.periodStart.toISOString().slice(0, 10),
+        periodEnd: month.periodEnd.toISOString().slice(0, 10),
+        periodLabel: month.label,
+        billingPeriod: month.periodStart.getMonth() + 1,
+        year: month.periodStart.getFullYear(),
+        month: month.periodStart.getMonth() + 1,
+        totalDays: randInt(8, 14),
+        totalRegularHours: totalHours - (totalHours - billableHours),
+        totalOvertimeHours: randInt(0, 8),
+        totalBillableHours: billableHours,
+        totalNonBillableHours: totalHours - billableHours,
+        totalHours,
+        billableAmount: billableHours * rate,
+        currency: "USD",
+        status: rand(TIMESHEET_STATUSES),
+        submittedAt: now,
+        submittedBy: emp,
+        reviewedBy: "user_supervisor",
+        reviewedAt: now,
+        approvedAt: now,
+        paidAt: Math.random() < 0.3 ? now : undefined,
+        dailyLogIds: [],
+        projectBreakdown: [
+          {
+            projectId: rand(projectIds),
+            projectName: rand(PROJECT_THEMES),
+            employeeBillRate: rate,
+            billableHours,
+            billableAmount: billableHours * rate,
+          },
+        ],
+        createdBy: "user_manager",
+        createdAt: now,
+        updatedAt: now,
       });
+    }
+  }
+  await seed("timesheets", timesheetDocs);
 
-      const subtotal = Number(lineItems.reduce((s, li) => s + li.amount, 0).toFixed(2));
-      const taxRate = 0;
-      const taxAmount = Number((subtotal * taxRate).toFixed(2));
-      const totalAmount = Number((subtotal + taxAmount).toFixed(2));
-
-      const [statusEntry] = INVOICE_STATUSES_WITH_RATE.filter(([s]) => s !== "VOID" && s !== "CANCELLED");
-      const status = statusEntry[0] as "DRAFT" | "SENT" | "PAID" | "OVERDUE" | "PARTIAL";
-
-      const issueDate = new Date(now.getTime() - rng.int(5, 60) * MS_PER_DAY);
+  // ---- 20. Invoices (with line items) ----
+  const invoiceCounter = { n: 0 };
+  const invoiceDocs: Document[] = [];
+  const tsIds = timesheetDocs.map((t) => t.timesheetId as string);
+  for (const client of clientDocs) {
+    if ((client.status as string) === "CLOSED") continue;
+    const clientTs = tsIds.filter(() => Math.random() > 0.5);
+    if (clientTs.length === 0) continue;
+    const numInvoices = randInt(1, 3);
+    const clientProjects = projectIds
+      .filter(() => Math.random() > 0.5)
+      .slice(0, 4);
+    for (let i = 0; i < numInvoices && i < clientTs.length; i++) {
+      invoiceCounter.n++;
+      const invId = `INV-${String(invoiceCounter.n).padStart(4, "0")}`;
+      const rate = randInt(40, 120);
+      const numLines = Math.min(randInt(1, 4), clientProjects.length || 1);
+      const selProjects = clientProjects.slice(0, numLines);
+      const lineItems = (
+        selProjects.length ? selProjects : [rand(projectIds)]
+      ).map((projectId, li) => ({
+        id: `LI-${invId}-${li}`,
+        description: `${rand(["US Based", "India-Based"])} ${rand(TECH_ROLES)}`,
+        quantity: 1,
+        rate,
+        amount: rate * randInt(1, 3),
+        currency: "USD",
+        employeeId: employeeIds[Math.floor(Math.random() * employeeIds.length)],
+        employeeName: `${rand(FIRST_NAMES)} ${rand(LAST_NAMES)}`,
+        projectId,
+        projectName: projectId,
+        manual: false,
+        sortOrder: li,
+      }));
+      const subtotal = lineItems.reduce((s, li) => s + li.amount, 0);
+      const totalAmount = subtotal;
+      const status = rand(INVOICE_STATUSES);
+      const issueDate = new Date(
+        now.getTime() - Math.floor(Math.random() * 60) * MS_PER_DAY,
+      );
       const dueDate = new Date(issueDate.getTime() + 30 * MS_PER_DAY);
-      const amountPaid = status === "PAID" ? totalAmount : status === "PARTIAL" ? Number((totalAmount / 2).toFixed(2)) : 0;
-      const balanceDue = Number((totalAmount - amountPaid).toFixed(2));
-
-      const tsCount = rng.int(1, Math.min(5, clientTsIds.length));
-      const selectedTsIds = clientTsIds.slice(i * tsCount, (i + 1) * tsCount);
-
-      await db.collection("invoices").insertOne({
+      invoiceDocs.push({
         invoiceId: invId,
-        invoiceNumber: invNum,
+        invoiceNumber: `INV-${invId}`,
         clientId: client.clientId,
         clientName: client.name,
         clientCode: client.code,
-        clientAddress: client.billingAddress,
-        poNumber: `PO-${String(100000 + invoiceCounter).slice(-6)}`,
+        clientAddress: client.address,
+        poNumber: `PO-${String(100000 + invoiceCounter.n).slice(-6)}`,
         subject: "Professional Services — Development & Consulting",
-        periodStart: periodStartISO,
-        periodEnd: periodEndISO,
-        periodLabel,
+        periodStart: months[0].periodStart.toISOString().slice(0, 10),
+        periodEnd: months[0].periodEnd.toISOString().slice(0, 10),
+        periodLabel: months[0].label,
         issueDate: issueDate.toISOString().slice(0, 10),
         dueDate: dueDate.toISOString().slice(0, 10),
         currency: "USD",
         paymentTerms: client.paymentTerms,
-        taxRate,
-        taxAmount,
+        taxRate: 0,
+        taxAmount: 0,
         subtotal,
         totalAmount,
-        amountPaid,
-        balanceDue,
+        amountPaid:
+          status === "PAID"
+            ? totalAmount
+            : status === "PARTIAL"
+              ? totalAmount / 2
+              : 0,
+        balanceDue:
+          totalAmount -
+          (status === "PAID"
+            ? totalAmount
+            : status === "PARTIAL"
+              ? totalAmount / 2
+              : 0),
         status,
         lineItems,
-        timesheetIds: selectedTsIds,
-        notes: `Auto-generated from ${tsCount} approved timesheets.`,
+        timesheetIds: clientTs.slice(i * 2, (i + 1) * 2),
+        notes: `Auto-generated from ${clientTs.length} approved timesheets.`,
         termsAndConditions: "Payment due within 30 days of invoice date.",
         templateId: templateIds[0],
         sentAt: status !== "DRAFT" ? issueDate : undefined,
-        sentBy: status !== "DRAFT" ? mgrUserId : undefined,
+        sentBy: status !== "DRAFT" ? "user_manager" : undefined,
         paidAt: status === "PAID" ? dueDate : undefined,
-        createdBy: mgrUserId,
+        createdBy: "user_manager",
         createdAt: issueDate,
         updatedAt: issueDate,
       });
     }
-
-    const draftInvoiceId = `PROD-INV-DRAFT-${client.clientId}`;
-    const draftLineItems = clientProjects.slice(0, 2).map((proj, li) => {
-      const empInfo = employeesWithRates[li % employeesWithRates.length];
-      const rate = empInfo.rate;
-      return {
-        id: `LI-${draftInvoiceId}-${li}`,
-        description: `${geographyOf(empInfo.country)} ${empInfo.techRole}`,
-        quantity: 1,
-        rate: Number(rate.toFixed(2)),
-        amount: Number(rate.toFixed(2)),
-        currency: "USD",
-        employeeId: empInfo.employeeId,
-        employeeName: empInfo.designation,
-        projectId: proj.projectId,
-        projectName: proj.projectId,
-        manual: false,
-        sortOrder: li,
-      };
-    });
-
-    const draftSubtotal = Number(draftLineItems.reduce((s, li) => s + li.amount, 0).toFixed(2));
-    await db.collection("invoices").insertOne({
-      invoiceId: draftInvoiceId,
-      invoiceNumber: `INV-DRAFT-${client.code}`,
-      clientId: client.clientId,
-      clientName: client.name,
-      clientCode: client.code,
-      clientAddress: client.billingAddress,
-      poNumber: `PO-DRAFT-${String(100000 + invoiceCounter).slice(-6)}`,
-      subject: "Draft Invoice — Pending Timesheet Review",
-      periodStart: periodStartISO,
-      periodEnd: periodEndISO,
-      periodLabel,
-      issueDate: now.toISOString().slice(0, 10),
-      dueDate: new Date(now.getTime() + 30 * MS_PER_DAY).toISOString().slice(0, 10),
-      currency: "USD",
-      paymentTerms: client.paymentTerms,
-      taxRate: 0,
-      taxAmount: 0,
-      subtotal: draftSubtotal,
-      totalAmount: draftSubtotal,
-      amountPaid: 0,
-      balanceDue: draftSubtotal,
-      status: "DRAFT",
-      lineItems: draftLineItems,
-      timesheetIds: clientTsIds.slice(0, 3),
-      notes: "Draft — ready for review/auto-populate.",
-      templateId: templateIds[0],
-      createdBy: mgrUserId,
-      createdAt: now,
-      updatedAt: now,
-    });
-    invoiceCounter++;
   }
+  await seed("invoices", invoiceDocs);
 
-  console.log("  Creating audit logs...");
-  const auditActions = [
-    "invoice.created", "invoice.updated", "invoice.sent", "invoice.paid",
-    "timesheet.approved", "timesheet.submitted", "timesheet.paid",
-    "daily_log.created", "daily_log.locked",
-    "client.updated", "project.updated", "assignment.created",
-    "user.login", "user.logout",
-  ];
-  const auditEntityTypes = ["invoice", "timesheet", "daily_log", "client", "project", "assignment", "user"];
-
-  const auditDocs: Document[] = [];
-  for (let i = 0; i < 300; i++) {
-    auditDocs.push({
-      auditId: `PROD-AUDIT-${String(i + 1).padStart(4, "0")}`,
-      actorUserId: rng.pick([adminUserId, mgrUserId, supUserId, empUserId]),
-      actorRole: rng.pick(["ADMIN", "MANAGER", "SUPERVISOR", "EMPLOYEE"]),
-      action: rng.pick(auditActions),
-      entityType: rng.pick(auditEntityTypes),
-      entityId: `PROD-INV-${String(rng.int(1, invoiceCounter)).padStart(3, "0")}`,
-      before: { status: "DRAFT" },
-      after: { status: rng.pick(["DRAFT", "SENT", "PAID", "OVERDUE", "PARTIAL"]) },
-      ipAddress: `192.168.1.${rng.int(1, 254)}`,
-      userAgent: "Mozilla/5.0 (X11; Linux x86_64) ProductionSeed/1.0",
-      createdAt: new Date(now.getTime() - rng.int(0, 90) * MS_PER_DAY),
-      updatedAt: new Date(now.getTime() - rng.int(0, 90) * MS_PER_DAY),
-    });
-  }
-  await db.collection("audit_logs").insertMany(auditDocs);
-
-  console.log("  Creating notifications...");
-  const notificationDocs: Document[] = [];
-  const notificationTitles = ["Invoice Sent", "Timesheet Approved", "Daily Log Locked", "Project Update", "Payment Received", "System Maintenance", "Invoice Overdue"];
-  const notificationTypes = ["INVOICE", "TIMESHEET", "PROJECT", "SYSTEM"] as const;
-
-  for (let i = 0; i < 50; i++) {
-    notificationDocs.push({
-      notificationId: `PROD-NOTIF-${String(i + 1).padStart(4, "0")}`,
-      userId: rng.pick([adminUserId, mgrUserId, supUserId, empUserId]),
-      type: rng.pick(notificationTypes),
-      title: rng.pick(notificationTitles),
-      message: `Notification #${i + 1}: Action required on your timesheet or invoice.`,
-      read: rng.next() < 0.6,
-      link: ["/invoices", "/timesheets", "/projects", "/dashboard"][i % 4],
-      readAt: rng.next() < 0.6 ? now : undefined,
-      createdAt: new Date(now.getTime() - rng.int(0, 30) * MS_PER_DAY),
-      updatedAt: new Date(now.getTime() - rng.int(0, 30) * MS_PER_DAY),
-    });
-  }
-  await db.collection("notifications").insertMany(notificationDocs);
-
-  console.log("\n✅ Seed complete!");
-  console.log(`   Users:         4`);
-  console.log(`   Templates:     3`);
-  console.log(`   Employees:     ${numEmployees}`);
-  console.log(`   Clients:       ${clients.length}`);
-  console.log(`   Projects:      ${projectDefs.length}`);
-  console.log(`   Daily Logs:    ${dailyLogIds.length}`);
-  console.log(`   Timesheets:    ${timesheetIds.length}`);
-  console.log(`   Invoices:      ${invoiceCounter}`);
-  console.log(`   Audit Logs:    ${auditDocs.length}`);
-  console.log(`   Notifications: ${notificationDocs.length}`);
-  console.log(`   Database: ${process.env.MONGODB_DATABASE ?? "N/A"}`);
-
+  console.log(
+    `\n✅ Seed complete. Database: ${env.MONGODB_DATABASE} | total documents seeded: ${total}`,
+  );
   await closeDatabase();
-}
-
-function geographyOf(country: string): string {
-  if (country === "India") return "India-Based";
-  if (country === "United States") return "US Based";
-  return "EU Based";
 }
 
 run().catch((error) => {

@@ -25,7 +25,6 @@ export async function createEmployee(data: Omit<Employee, "id" | "createdAt" | "
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  mockEmployees.push(newEmployee);
   await apiFetch("/employees", {
     method: "POST",
     body: JSON.stringify({
@@ -59,6 +58,7 @@ export async function createEmployee(data: Omit<Employee, "id" | "createdAt" | "
         : undefined
     })
   });
+  mockEmployees.push(newEmployee);
   return newEmployee;
 }
 
