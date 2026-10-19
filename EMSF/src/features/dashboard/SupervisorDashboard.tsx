@@ -1,6 +1,5 @@
 import { useAuth } from "../../features/auth/AuthContext";
 import { getProjects, getAssignments, getAuditLogs, getEmployees, getClients } from "../../data/mock/repositories";
-import { AttendanceMarker } from "../../components/dashboard/AttendanceMarker";
 
 export function SupervisorDashboard() {
   const { user } = useAuth();
@@ -53,9 +52,6 @@ export function SupervisorDashboard() {
          <h1 className="text-xl font-semibold text-gray-900">Supervisor Workspace</h1>
          <p className="text-sm text-gray-500 mt-1">Project resources and operational overview</p>
        </div>
-
-      <AttendanceMarker />
-
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Assigned Projects" value={assignedProjects.length.toString()} />

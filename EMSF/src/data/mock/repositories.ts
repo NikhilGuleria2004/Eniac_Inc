@@ -1,5 +1,5 @@
 import type { Employee, Client, Project, Attendance, LeaveRequest, LeaveBalance, Document, ProjectAssignment, Review, Notification, AuditLog, TimesheetStatus, EmploymentStatus, BillingStatus, TimesheetEligibility } from "../../types";
-import { apiFetch } from "../../lib/api";
+import { apiFetch, ApiRequestError } from "../../lib/api";
 import { mockEmployees, mockClients, mockProjects, mockAssignments, mockAttendance, mockLeaveRequests, mockDocuments, mockReviews, mockNotifications, mockAuditLogs } from "./index";
 
 export function getEmployees(): Employee[] {
@@ -404,24 +404,35 @@ export async function checkIn(data: { employeeId?: string; checkIn?: string }): 
     };
     mockAttendance.push(att);
     return att;
-  } catch {
+  } catch (error) {
+    console.error(
+      "Attendance check-in failed:",
+      error instanceof ApiRequestError ? `${error.message} (${error.code})` : error
+    );
     return null;
   }
 }
 
-export async function checkOut(data: { checkOut?: string }): Promise<Attendance | null> {
+export async function checkOut(data: { employeeId?: string; checkOut?: string }): Promise<Attendance | null> {
   try {
     const res = await apiFetch<Attendance>("/attendance/check-out", {
       method: "POST",
       body: JSON.stringify(data)
     });
-    const index = mockAttendance.length - 1;
-    if (index >= 0) {
-      mockAttendance[index] = { ...mockAttendance[index], checkOut: res.data.checkOut, workingHours: res.data.workingHours };
-      return mockAttendance[index];
+    const today = res.data.date || new Date().toISOString().split("T")[0];
+    const idx = data.employeeId
+      ? mockAttendance.findIndex((a) => a.employeeId === data.employeeId && a.date === today)
+      : -1;
+    if (idx >= 0) {
+      mockAttendance[idx] = { ...mockAttendance[idx], checkOut: res.data.checkOut, workingHours: res.data.workingHours };
+      return mockAttendance[idx];
     }
     return null;
-  } catch {
+  } catch (error) {
+    console.error(
+      "Attendance check-out failed:",
+      error instanceof ApiRequestError ? `${error.message} (${error.code})` : error
+    );
     return null;
   }
 }

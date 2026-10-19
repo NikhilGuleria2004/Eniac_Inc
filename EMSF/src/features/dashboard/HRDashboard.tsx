@@ -2,7 +2,6 @@ import { getEmployees, getDocuments, getLeaveRequests, getReviews } from "../../
 import { EmployeeDistributionChart } from "../../components/charts/EmployeeDistributionChart";
 import { LeaveStatusChart } from "../../components/charts/LeaveStatusChart";
 import { DocumentStatusChart } from "../../components/charts/DocumentStatusChart";
-import { AttendanceMarker } from "../../components/dashboard/AttendanceMarker";
 import {
   CHART_HUE,
   EMPLOYEE_STATUS_COLORS,
@@ -92,9 +91,6 @@ export function HRDashboard() {
          <h1 className="text-xl font-semibold text-gray-900">Human Resources Dashboard</h1>
          <p className="text-sm text-gray-500 mt-1">Employee lifecycle, compliance and workforce operations</p>
        </div>
-
-      <AttendanceMarker />
-
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         <StatCard label="Total Employees" value={totalEmployees.toString()} />

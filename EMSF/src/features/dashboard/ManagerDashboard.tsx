@@ -1,6 +1,5 @@
 import { getClients, getProjects, getAssignments, getAuditLogs } from "../../data/mock/repositories";
 import { ProjectHealthChart } from "../../components/charts/ProjectHealthChart";
-import { AttendanceMarker } from "../../components/dashboard/AttendanceMarker";
 import { PROJECT_HEALTH_COLORS, PROJECT_STATUS_COLORS, CHART_FALLBACK_COLOR } from "../../components/charts/palette";
 
 export function ManagerDashboard() {
@@ -50,9 +49,6 @@ export function ManagerDashboard() {
          <h1 className="text-xl font-semibold text-gray-900">Management Dashboard</h1>
          <p className="text-sm text-gray-500 mt-1">Clients, projects and resource allocation</p>
        </div>
-
-      <AttendanceMarker />
-
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Active Clients" value={activeClients.length.toString()} />

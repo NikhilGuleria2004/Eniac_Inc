@@ -1,11 +1,41 @@
 import { useState, useEffect, useMemo } from "react";
 import { Clock, Calendar, FolderOpen, FileText, Loader2 } from "lucide-react";
 import { useAuth } from "../../features/auth/AuthContext";
-import { checkIn, getAttendanceByEmployee, getLeaveRequestsByEmployee, getAssignmentsByEmployee, getDocumentsByEmployee, getNotificationsByUser, getProjects, getClients } from "../../data/mock/repositories";
+import { useToast } from "../../components/ui/Toast";
+import { checkIn, checkOut, getAttendanceByEmployee, getLeaveRequestsByEmployee, getAssignmentsByEmployee, getDocumentsByEmployee, getNotificationsByUser, getProjects, getClients } from "../../data/mock/repositories";
 import { LEAVE_QUOTAS, type LeaveType } from "../../features/leave/leave";
+
+function formatWorkedHours(hours: number | undefined): string {
+  if (hours == null || Number.isNaN(hours)) return "";
+  const totalMs = Math.round(Math.max(0, hours) * 3600000);
+  const h = Math.floor(totalMs / 3600000);
+  const m = Math.floor((totalMs % 3600000) / 60000);
+  const s = Math.floor((totalMs % 60000) / 1000);
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+function ActiveDuration({ startISO, endISO }: { startISO?: string; endISO?: string }) {
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((n) => n + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const hours = useMemo(() => {
+    if (!startISO) return null;
+    const start = new Date(startISO);
+    if (!Number.isFinite(start.getTime())) return null;
+    const end = endISO ? new Date(endISO) : new Date();
+    const ms = end.getTime() - start.getTime();
+    return Number.isFinite(ms) ? ms / 3600000 : null;
+  }, [startISO, endISO, tick]);
+  return <span>{hours != null ? formatWorkedHours(hours) : ""}</span>;
+}
 
 export function EmployeeDashboard() {
   const { user } = useAuth();
+  const { addToast } = useToast();
   const [actionLoading, setActionLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -23,6 +53,7 @@ export function EmployeeDashboard() {
   const todayDate = new Date().toISOString().split("T")[0];
   const today = attendance.find((a) => a.date === todayDate);
   const checkedIn = today?.checkIn !== undefined;
+  const checkedOut = today?.checkOut !== undefined;
   const leaveRequests = getLeaveRequestsByEmployee(employeeId);
   const assignments = getAssignmentsByEmployee(employeeId);
   const documents = getDocumentsByEmployee(employeeId);
@@ -92,22 +123,65 @@ export function EmployeeDashboard() {
               {currentTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}
             </p>
             <p className="text-sm text-gray-600 mt-2">
-              Status: <span className={`font-medium ${checkedIn || today?.status === "PRESENT" ? "text-green-600" : "text-gray-500"}`}>
-                {checkedIn || today?.status === "PRESENT" ? "Checked In" : "Not Checked In"}
+              Status: <span className={`font-medium ${checkedOut ? "text-blue-600" : checkedIn || today?.status === "PRESENT" ? "text-green-600" : "text-gray-500"}`}>
+                {checkedOut ? "Checked Out" : checkedIn || today?.status === "PRESENT" ? "Checked In" : "Not Checked In"}
               </span>
+              {checkedIn ? (
+                <span className={checkedOut ? "text-gray-500" : "text-green-600"}>
+                  {" · "}<ActiveDuration startISO={today?.checkIn} endISO={checkedOut ? today?.checkOut : undefined} />{checkedOut ? " worked" : " active"}
+                </span>
+              ) : null}
             </p>
           </div>
-              <div className="flex gap-2">
-                {!checkedIn ? (
-                  <button onClick={async () => { setActionLoading(true); await checkIn({ employeeId, checkIn: new Date().toISOString() }); setActionLoading(false); setRefreshKey((n) => n + 1); }} disabled={actionLoading} className="btn btn-primary">
-                    {actionLoading ? <><Loader2 aria-hidden="true" size={16} className="animate-spin" /> Checking in…</> : "Mark Attendance"}
-                  </button>
-                ) : (
-                  <button disabled className="btn btn-secondary">
-                    Marked
-                  </button>
-                )}
-              </div>
+          <div className="flex gap-2">
+            {!checkedIn ? (
+              <button
+                onClick={async () => {
+                  setActionLoading(true);
+                  try {
+                    const result = await checkIn({ employeeId, checkIn: new Date().toISOString() });
+                    if (result) {
+                      setRefreshKey((n) => n + 1);
+                      addToast("success", "Attendance marked.");
+                    } else {
+                      addToast("error", "Could not mark attendance. See console for details.");
+                    }
+                  } finally {
+                    setActionLoading(false);
+                  }
+                }}
+                disabled={actionLoading}
+                className="btn btn-primary"
+              >
+                {actionLoading ? <><Loader2 aria-hidden="true" size={16} className="animate-spin" /> Checking in…</> : "Mark Attendance"}
+              </button>
+            ) : checkedOut ? (
+              <button disabled className="btn btn-secondary">
+                Checked Out
+              </button>
+            ) : (
+              <button
+                onClick={async () => {
+                  setActionLoading(true);
+                  try {
+                    const result = await checkOut({ employeeId, checkOut: new Date().toISOString() });
+                    if (result) {
+                      setRefreshKey((n) => n + 1);
+                      addToast("success", "Attendance checked out.");
+                    } else {
+                      addToast("error", "Could not check out. See console for details.");
+                    }
+                  } finally {
+                    setActionLoading(false);
+                  }
+                }}
+                disabled={actionLoading}
+                className="btn btn-primary"
+              >
+                {actionLoading ? <><Loader2 aria-hidden="true" size={16} className="animate-spin" /> Checking out…</> : "Check Out"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
