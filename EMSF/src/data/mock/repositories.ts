@@ -1,6 +1,7 @@
 import type { Employee, Client, Project, Attendance, LeaveRequest, LeaveBalance, Document, ProjectAssignment, Review, Notification, AuditLog, TimesheetStatus, EmploymentStatus, BillingStatus, TimesheetEligibility } from "../../types";
 import { apiFetch, ApiRequestError } from "../../lib/api";
-import { mockEmployees, mockClients, mockProjects, mockAssignments, mockAttendance, mockLeaveRequests, mockDocuments, mockReviews, mockNotifications, mockAuditLogs } from "./index";
+import { mockEmployees, refreshEmployees, mockClients, mockProjects, mockAssignments, mockAttendance, mockLeaveRequests, mockDocuments, mockReviews, mockNotifications, mockAuditLogs } from "./index";
+export { subscribeEmployees, getEmployeesVersion } from "./index";
 
 export function getEmployees(): Employee[] {
   return [...mockEmployees];
@@ -59,6 +60,7 @@ export async function createEmployee(data: Omit<Employee, "id" | "createdAt" | "
     })
   });
   mockEmployees.push(newEmployee);
+  refreshEmployees();
   return newEmployee;
 }
 
@@ -90,6 +92,7 @@ export async function updateEmployee(id: string, data: Partial<Employee>): Promi
     method: "PATCH",
     body: JSON.stringify(body)
   });
+  refreshEmployees();
   return mockEmployees[index];
 }
 
@@ -98,7 +101,8 @@ export async function deleteEmployee(id: string): Promise<void> {
   if (index !== -1) {
     mockEmployees.splice(index, 1);
   }
-  await apiFetch(`/employees/${id}`, { method: "DELETE" }).catch(() => {});
+  await apiFetch(`/employees/${id}`, { method: "DELETE" }).catch((e: unknown) => console.warn("API write failed:", e));
+  refreshEmployees();
 }
 
 export async function createOnboardingRecord(employeeId: string): Promise<void> {
@@ -231,7 +235,7 @@ export function createClient(
        email: data.primaryContact.email,
        status: data.status
      })
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return newClient;
 }
 
@@ -245,7 +249,7 @@ export function updateClient(
   apiFetch(`/clients/${id}`, {
     method: "PATCH",
     body: JSON.stringify(data)
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return mockClients[index];
 }
 
@@ -297,7 +301,7 @@ export function createProject(
   apiFetch("/projects", {
     method: "POST",
     body: JSON.stringify(data)
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return newProject;
 }
 
@@ -311,7 +315,7 @@ export function updateProject(
   apiFetch(`/projects/${id}`, {
     method: "PATCH",
     body: JSON.stringify(data)
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return mockProjects[index];
 }
 
@@ -345,7 +349,7 @@ export function createAssignment(
   apiFetch("/assignments", {
     method: "POST",
     body: JSON.stringify(data)
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return newAssignment;
 }
 
@@ -359,7 +363,7 @@ export function updateAssignment(
   apiFetch(`/assignments/${id}`, {
     method: "PATCH",
     body: JSON.stringify(data)
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return mockAssignments[index];
 }
 
@@ -370,7 +374,7 @@ export function deleteAssignment(id: string, endDate?: string): boolean {
   apiFetch(`/assignments/${id}/end`, {
     method: "POST",
     body: JSON.stringify({ endDate: endDate ?? new Date().toISOString() })
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return true;
 }
 
@@ -444,7 +448,7 @@ export function requestAttendanceCorrection(
   apiFetch(`/attendance/${attendanceId}/correction`, {
     method: "POST",
     body: JSON.stringify(data ?? { reason: "Correction request" })
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return true;
 }
 
@@ -456,7 +460,7 @@ export function reviewAttendanceCorrection(
   apiFetch(`/attendance/corrections/${correctionId}/${decision.toLowerCase()}`, {
     method: "POST",
     body: JSON.stringify({ comments })
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return true;
 }
 
@@ -557,7 +561,7 @@ export function createDocument(
       name: data.name,
       url: data.url
     })
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return newDoc;
 }
 
@@ -568,7 +572,7 @@ export function updateDocument(id: string, data: Partial<Document>): Document | 
   apiFetch(`/documents/${id}`, {
     method: "PATCH",
     body: JSON.stringify(data)
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return mockDocuments[index];
 }
 
@@ -578,7 +582,7 @@ export function deleteDocument(id: string): boolean {
   mockDocuments.splice(index, 1);
   apiFetch(`/documents/${id}`, {
     method: "DELETE"
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return true;
 }
 
@@ -599,7 +603,7 @@ export function reviewDocument(
   apiFetch(path, {
     method: "POST",
     body: JSON.stringify({ comments })
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return mockDocuments[index];
 }
 
@@ -629,7 +633,7 @@ export function createReview(data: Omit<Review, "id" | "status">): Review {
   apiFetch("/reviews", {
     method: "POST",
     body: JSON.stringify(data)
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return newReview;
 }
 
@@ -640,7 +644,7 @@ export function updateReview(id: string, data: Partial<Review>): Review | undefi
   apiFetch(`/reviews/${id}`, {
     method: "PATCH",
     body: JSON.stringify(data)
-  }).catch(() => {});
+  }).catch((e: unknown) => console.warn("API write failed:", e));
   return mockReviews[index];
 }
 
@@ -648,7 +652,7 @@ export function submitReview(id: string): Review | null {
   const index = mockReviews.findIndex((r) => r.id === id);
   if (index === -1) return null;
   mockReviews[index] = { ...mockReviews[index], status: "IN_PROGRESS" };
-  apiFetch(`/reviews/${id}/submit`, { method: "POST" }).catch(() => {});
+  apiFetch(`/reviews/${id}/submit`, { method: "POST" }).catch((e: unknown) => console.warn("API write failed:", e));
   return mockReviews[index];
 }
 
@@ -656,7 +660,7 @@ export function completeReview(id: string): Review | null {
   const index = mockReviews.findIndex((r) => r.id === id);
   if (index === -1) return null;
   mockReviews[index] = { ...mockReviews[index], status: "COMPLETED" };
-  apiFetch(`/reviews/${id}/complete`, { method: "POST" }).catch(() => {});
+  apiFetch(`/reviews/${id}/complete`, { method: "POST" }).catch((e: unknown) => console.warn("API write failed:", e));
   return mockReviews[index];
 }
 
@@ -676,7 +680,7 @@ export function markNotificationAsRead(id: string): boolean {
   const index = mockNotifications.findIndex((n) => n.id === id);
   if (index === -1) return false;
   mockNotifications[index] = { ...mockNotifications[index], read: true, readAt: new Date().toISOString() };
-  apiFetch(`/notifications/${id}/read`, { method: "POST" }).catch(() => {});
+  apiFetch(`/notifications/${id}/read`, { method: "POST" }).catch((e: unknown) => console.warn("API write failed:", e));
   return true;
 }
 
@@ -688,7 +692,7 @@ export function markAllNotificationsAsRead(userId: string): number {
       count++;
     }
   });
-  apiFetch("/notifications/read-all", { method: "POST" }).catch(() => {});
+  apiFetch("/notifications/read-all", { method: "POST" }).catch((e: unknown) => console.warn("API write failed:", e));
   return count;
 }
 

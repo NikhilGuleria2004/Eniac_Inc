@@ -12,6 +12,25 @@ export const mockReviews: Review[] = [];
 export const mockNotifications: Notification[] = [];
 export const mockAuditLogs: AuditLog[] = [];
 
+let employeesVersion = 0;
+const employeesListeners = new Set<() => void>();
+
+export function refreshEmployees(): void {
+  employeesVersion++;
+  employeesListeners.forEach((cb) => cb());
+}
+
+export function subscribeEmployees(cb: () => void): () => void {
+  employeesListeners.add(cb);
+  return () => {
+    employeesListeners.delete(cb);
+  };
+}
+
+export function getEmployeesVersion(): number {
+  return employeesVersion;
+}
+
 export async function loadBackendData(): Promise<void> {
   const loadEmployees = async () => {
     const res = await apiFetch<Employee[]>("/employees?pageSize=100");
@@ -132,4 +151,5 @@ export async function loadBackendData(): Promise<void> {
     loadNotifications().catch((e) => console.error("Failed to load notifications:", e)),
     loadAuditLogs().catch((e) => console.error("Failed to load audit logs:", e)),
   ]);
+  refreshEmployees();
 }

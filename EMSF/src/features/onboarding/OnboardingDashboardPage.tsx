@@ -1,12 +1,12 @@
 import { useUrlState } from "../../lib/useUrlState";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Plus, Trash2, Loader2 } from "lucide-react";
 import type { Employee } from "../../types";
 import { useAuth } from "../auth/AuthContext";
 import { hasPermission } from "../../lib/permissions";
 import { Navigate } from "react-router-dom";
-import { deleteEmployee, getEmployees, getDocuments } from "../../data/mock/repositories";
+import { deleteEmployee, getEmployees, getDocuments, subscribeEmployees, getEmployeesVersion } from "../../data/mock/repositories";
 import { ROUTES } from "../../data/constants";
 import { PageHeader } from "../../components/layout/PageHeader";
 import { DataTable } from "../../components/tables/DataTable";
@@ -30,9 +30,9 @@ export function OnboardingDashboardPage() {
   const [stageFilter, setStageFilter] = useState("all");
   const [billingFilter, setBillingFilter] = useState("all");
   const [page, setPage] = useState(1);
-  const [forceRefresh, setForceRefresh] = useState(0);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const employees = useMemo(() => getEmployees(), [forceRefresh]);
+  const employeesVersion = useSyncExternalStore(subscribeEmployees, getEmployeesVersion);
+  const employees = useMemo(() => getEmployees(), [employeesVersion]);
   const documents = useMemo(() => getDocuments(), []);
   const records = useMemo(() => employees.map((e) => {
     const steps = getOnboardingStepData(e, documents);
@@ -62,7 +62,6 @@ export function OnboardingDashboardPage() {
     if (!confirm(`Delete ${e.firstName} ${e.lastName} from onboarding? This cannot be undone.`)) return;
     setDeletingId(e.id);
     await deleteEmployee(e.id);
-    setForceRefresh((n) => n + 1);
     setDeletingId(null);
   };
   return (
