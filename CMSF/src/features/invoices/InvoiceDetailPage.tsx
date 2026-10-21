@@ -20,7 +20,7 @@ import {
 } from "../../data/mock/repositories";
 import { ROUTES } from "../../data/constants";
 import { formatCurrency } from "../../lib/charts";
-import { getApiBaseUrl, getAccessToken } from "../../lib/api";
+import { getApiBaseUrl, getAccessToken, refreshAccessToken, clearTokens } from "../../lib/api";
 import { isInvoiceOverdue, computeInvoiceTotals, formatInvoiceDate } from "./invoices";
 import { InvoiceEmailModal } from "./InvoiceEmailModal";
 import type { Invoice, InvoiceLineItem, Employee } from "../../types";
@@ -64,10 +64,23 @@ export function InvoiceDetailPage() {
 
   const downloadPdf = async () => {
     try {
-      const token = getAccessToken();
-      const res = await fetch(`${getApiBaseUrl()}/invoices/${encodeURIComponent(invoice.id)}/pdf?download=1`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
+      const fetchWithAuth = async (attempt: number): Promise<Response> => {
+        let token = getAccessToken();
+        const res = await fetch(`${getApiBaseUrl()}/invoices/${encodeURIComponent(invoice.id)}/pdf?download=1`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        if (!res.ok && res.status === 401 && attempt === 0) {
+          const refreshed = await refreshAccessToken();
+          if (refreshed) {
+            return fetchWithAuth(1);
+          }
+          clearTokens();
+          throw new Error("Session expired. Please log in again.");
+        }
+        return res;
+      };
+
+      const res = await fetchWithAuth(0);
       if (!res.ok) throw new Error(`PDF download failed (${res.status})`);
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);

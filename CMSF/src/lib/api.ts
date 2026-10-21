@@ -77,12 +77,7 @@ export async function refreshAccessToken(): Promise<boolean> {
     const body = (await res.json().catch(() => ({}))) as ApiResponse<{ accessToken: string }> | ApiError;
 
     if (!res.ok || !body.success) {
-      const errorMsg = (body as ApiError).error?.message || "Token refresh failed";
-      const err = new ApiRequestError(
-        (body as ApiError).error?.code || "AUTH_ERROR",
-        errorMsg
-      );
-      throw err;
+      return false;
     }
 
     const newToken = body.data.accessToken;
@@ -90,7 +85,6 @@ export async function refreshAccessToken(): Promise<boolean> {
     setTokens(newToken, existingRefresh ?? undefined);
     return true;
   } catch {
-    clearTokens();
     return false;
   } finally {
     isRefreshing = false;

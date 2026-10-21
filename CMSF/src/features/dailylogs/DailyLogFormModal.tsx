@@ -213,16 +213,35 @@ export function DailyLogFormModal({ open, initialData, onClose }: DailyLogFormMo
               <option value="NON_BILLABLE">Non-billable</option>
             </Select>
           </div>
-          <div>
-            <label className="form-label">Regular Hours (0.25 steps)</label>
-            <Input type="number" min={0} max={24} step={0.25} value={regularHours} onChange={(e) => setRegularHours(Number(e.target.value))} />
-            {showError(errors.regular)}
-          </div>
-          <div>
-            <label className="form-label">Overtime Hours {!weekend && "(weekend only)"}</label>
-            <Input type="number" min={0} max={24} step={0.25} value={overtimeHours} onChange={(e) => setOvertimeHours(Number(e.target.value))} disabled={!weekend} />
-            {!weekend && <p className="text-xs text-gray-400 mt-1">Overtime is only allowed on Saturday and Sunday.</p>}
-            {showError(errors.total)}
+          <div className="flex flex-row items-start gap-2">
+            <div className="flex-1">
+              <label className="form-label whitespace-nowrap">Regular Hours (0.25 steps)</label>
+              <Input
+                className="w-full"
+                type="number"
+                min={0}
+                max={24}
+                step={0.25}
+                value={regularHours}
+                onChange={(e) => setRegularHours(Number(e.target.value))}
+              />
+              {showError(errors.regular)}
+            </div>
+            <div className="flex-1">
+              <label className="form-label whitespace-nowrap">Overtime Hours {!weekend && "(weekend only)"}</label>
+              <Input
+                className="w-full"
+                type="number"
+                min={0}
+                max={24}
+                step={0.25}
+                value={overtimeHours}
+                onChange={(e) => setOvertimeHours(Number(e.target.value))}
+                disabled={!weekend}
+              />
+              {!weekend && <p className="text-xs text-gray-400 mt-1">Overtime is only allowed on Saturday and Sunday.</p>}
+              {showError(errors.total)}
+            </div>
           </div>
           <div>
             <label className="form-label">Status</label>
@@ -231,7 +250,7 @@ export function DailyLogFormModal({ open, initialData, onClose }: DailyLogFormMo
               <option value="SUBMITTED">Submitted</option>
             </Select>
           </div>
-          <div className="flex items-end">
+          <div className="flex items-center justify-between pt-2">
             <p className="text-sm text-gray-600">Total: <span className="font-semibold text-gray-900">{total} h</span></p>
           </div>
         </div>

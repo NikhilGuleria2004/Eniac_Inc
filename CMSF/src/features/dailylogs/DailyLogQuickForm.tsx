@@ -129,30 +129,36 @@ export function DailyLogQuickForm() {
         <div>
           <label className="form-label">Hours</label>
           <div className="flex items-end gap-2">
-            <div className="flex-1">
-              <label className="text-xs text-gray-500">Regular</label>
-              <Input
-                type="number"
-                min={0}
-                max={24}
-                step={0.25}
-                value={regularHours}
-                onChange={(e) => setRegularHours(Number(e.target.value))}
-              />
-              {showError(errors.regular)}
-            </div>
-            <div className="flex-1">
-              <label className="text-xs text-gray-500">Overtime {!weekend && "(weekend)"}</label>
-              <Input
-                type="number"
-                min={0}
-                max={24}
-                step={0.25}
-                value={overtimeHours}
-                onChange={(e) => setOvertimeHours(Number(e.target.value))}
-                disabled={!weekend}
-              />
-              {!weekend && <p className="text-xs text-gray-400">Sat/Sun only</p>}
+            <div className="flex flex-row items-start gap-2">
+              <div className="flex-1">
+                <label className="text-xs text-gray-500 whitespace-nowrap">Regular</label>
+                <Input
+                  className="w-full"
+                  type="number"
+                  min={0}
+                  max={24}
+                  step={0.25}
+                  value={regularHours}
+                  onChange={(e) => setRegularHours(Number(e.target.value))}
+                />
+                {showError(errors.regular)}
+              </div>
+              <div className="flex-1">
+                <label className="text-xs text-gray-500 whitespace-nowrap">
+                  Overtime {!weekend && "(weekend)"}
+                </label>
+                <Input
+                  className="w-full"
+                  type="number"
+                  min={0}
+                  max={24}
+                  step={0.25}
+                  value={overtimeHours}
+                  onChange={(e) => setOvertimeHours(Number(e.target.value))}
+                  disabled={!weekend}
+                />
+                {!weekend && <p className="text-xs text-gray-400">Sat/Sun only</p>}
+              </div>
             </div>
             <div className="flex items-center gap-1 text-sm font-medium text-gray-900">
               <Clock size={16} />

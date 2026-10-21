@@ -182,25 +182,25 @@ export function DailyLogsDashboardPage() {
               const weekend = d.dayOfWeek === "Sat" || d.dayOfWeek === "Sun";
               return (
                 <div className="flex items-center gap-1">
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex-1 flex items-center gap-0.5">
                     <span className="text-xs text-gray-500">Reg</span>
                     <input
                       type="number" step={0.25} min={0} max={24} value={d.regularHours}
                       disabled={lockedIds.has(d.id)}
                       onChange={(e) => handleInlineHours(d, { regularHours: Number(e.target.value) })}
                       onClick={(e) => e.stopPropagation()}
-                      className="w-14 rounded border border-gray-300 px-1 py-0.5 text-sm disabled:bg-gray-100"
+                      className="w-full rounded border border-gray-300 px-1 py-0.5 text-sm disabled:bg-gray-100"
                     />
                   </div>
                   {weekend && (
-                    <div className="flex items-center gap-0.5">
+                    <div className="flex-1 flex items-center gap-0.5">
                       <span className="text-xs text-gray-500">OT</span>
                       <input
                         type="number" step={0.25} min={0} max={24} value={d.overtimeHours}
                         disabled={lockedIds.has(d.id)}
                         onChange={(e) => handleInlineHours(d, { overtimeHours: Number(e.target.value) })}
                         onClick={(e) => e.stopPropagation()}
-                        className="w-14 rounded border border-gray-300 px-1 py-0.5 text-sm disabled:bg-gray-100"
+                        className="w-full rounded border border-gray-300 px-1 py-0.5 text-sm disabled:bg-gray-100"
                       />
                     </div>
                   )}
