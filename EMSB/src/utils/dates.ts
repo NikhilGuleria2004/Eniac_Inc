@@ -12,6 +12,3 @@ export function formatDateOnly(date: Date | string | undefined): string | undefi
   return d.toISOString().split("T")[0];
 }
 
-export function nowUTC(): Date {
-  return new Date();
-}

@@ -51,8 +51,6 @@ function makePagination<T>(items: T[], page = 1, pageSize = 100): { data: T[]; p
   };
 }
 
-export const getMockUsers = () => ({});
-
 export function getEmployees(): Employee[] {
   return [...mockEmployees];
 }

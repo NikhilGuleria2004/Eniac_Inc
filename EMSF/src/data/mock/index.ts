@@ -33,21 +33,25 @@ export function getEmployeesVersion(): number {
 
 export async function loadBackendData(): Promise<void> {
   const loadEmployees = async () => {
-    const res = await apiFetch<Employee[]>("/employees?pageSize=100");
     mockEmployees.length = 0;
-    mockEmployees.push(
-      ...res.data.map(
-        (e: any): Employee => ({
-          id: e.employeeCode,
-          employeeCode: e.employeeCode,
-          firstName: e.firstName,
-          lastName: e.lastName,
-          email: e.email,
-          workMail: e.workMail,
-          phone: e.phone ?? "",
-          avatar: e.avatar,
-          designation: e.designation,
-          department: e.department,
+    let page = 1;
+    const pageSize = 100;
+    let hasMore = true;
+    while (hasMore) {
+      const res = await apiFetch<Employee[]>(`/employees?page=${page}&pageSize=${pageSize}`);
+      mockEmployees.push(
+        ...res.data.map(
+          (e: any): Employee => ({
+            id: e.employeeCode,
+            employeeCode: e.employeeCode,
+            firstName: e.firstName,
+            lastName: e.lastName,
+            email: e.email,
+            workMail: e.workMail,
+            phone: e.phone ?? "",
+            avatar: e.avatar,
+            designation: e.designation,
+            department: e.department,
           country: e.country === "INDIA" ? "India" : "United States",
           state: e.state,
           city: e.city ?? "",
@@ -68,6 +72,9 @@ export async function loadBackendData(): Promise<void> {
         }),
       ),
     );
+      page++;
+      hasMore = res.pagination ? res.pagination.hasNextPage : res.data.length === pageSize;
+    }
   };
 
   const loadClients = async () => {

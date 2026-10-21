@@ -86,7 +86,4 @@ export async function loadBackendData(): Promise<void> {
   if (templates) replaceArray(mockInvoiceTemplates, templates);
 }
 
-export function getMockUsers() {
-  return {};
-}
 

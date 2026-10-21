@@ -178,26 +178,33 @@ export function DailyLogsDashboardPage() {
             { key: "dayOfWeek", header: "Day", cell: (d) => d.dayOfWeek },
             { key: "projectName", header: "Project", cell: (d) => d.projectName },
             { key: "description", header: "Work Description", cell: (d) => <span className="line-clamp-1 max-w-xs text-gray-600">{d.description}</span> },
-            { key: "regularHours", header: "Regular Hours", cell: (d) => (
-              <input
-                type="number" step={0.25} min={0} max={24} value={d.regularHours}
-                disabled={lockedIds.has(d.id)}
-                onChange={(e) => handleInlineHours(d, { regularHours: Number(e.target.value) })}
-                onClick={(e) => e.stopPropagation()}
-                className="w-20 rounded border border-gray-300 px-2 py-1 text-sm disabled:bg-gray-100"
-              />
-            ) },
-            { key: "overtimeHours", header: "Overtime Hours", cell: (d) => {
+            { key: "hours", header: "Hours", cell: (d) => {
               const weekend = d.dayOfWeek === "Sat" || d.dayOfWeek === "Sun";
-              if (!weekend) return <span className="text-gray-400">—</span>;
               return (
-                <input
-                  type="number" step={0.25} min={0} max={24} value={d.overtimeHours}
-                  disabled={lockedIds.has(d.id)}
-                  onChange={(e) => handleInlineHours(d, { overtimeHours: Number(e.target.value) })}
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-20 rounded border border-gray-300 px-2 py-1 text-sm disabled:bg-gray-100"
-                />
+                <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-0.5">
+                    <span className="text-xs text-gray-500">Reg</span>
+                    <input
+                      type="number" step={0.25} min={0} max={24} value={d.regularHours}
+                      disabled={lockedIds.has(d.id)}
+                      onChange={(e) => handleInlineHours(d, { regularHours: Number(e.target.value) })}
+                      onClick={(e) => e.stopPropagation()}
+                      className="w-14 rounded border border-gray-300 px-1 py-0.5 text-sm disabled:bg-gray-100"
+                    />
+                  </div>
+                  {weekend && (
+                    <div className="flex items-center gap-0.5">
+                      <span className="text-xs text-gray-500">OT</span>
+                      <input
+                        type="number" step={0.25} min={0} max={24} value={d.overtimeHours}
+                        disabled={lockedIds.has(d.id)}
+                        onChange={(e) => handleInlineHours(d, { overtimeHours: Number(e.target.value) })}
+                        onClick={(e) => e.stopPropagation()}
+                        className="w-14 rounded border border-gray-300 px-1 py-0.5 text-sm disabled:bg-gray-100"
+                      />
+                    </div>
+                  )}
+                </div>
               );
             } },
             { key: "totalHours", header: "Total Hours", cell: (d) => `${d.totalHours} h` },

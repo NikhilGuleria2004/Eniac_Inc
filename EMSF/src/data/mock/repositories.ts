@@ -7,10 +7,6 @@ export function getEmployees(): Employee[] {
   return [...mockEmployees];
 }
 
-export function getMockUsers() {
-  return {};
-}
-
 export function getEmployeeById(id: string): Employee | undefined {
   return mockEmployees.find((e) => e.id === id || e.employeeCode === id);
 }

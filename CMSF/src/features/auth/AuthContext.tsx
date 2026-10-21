@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 import type { User, CmsAccess } from "../../types";
 import { loadBackendData } from "../../data/mock";
-import { apiFetch, setTokens, clearTokens, getAccessToken, getRefreshToken, USE_API, refreshAccessToken, clearTokensIfRoleMismatch } from "../../lib/api";
+import { apiFetch, setTokens, clearTokens, USE_API, clearTokensIfRoleMismatch } from "../../lib/api";
 
 interface AuthContextType {
   user: User | null;
@@ -30,54 +30,41 @@ export function checkCmsAccess(user: User | null): CmsAccess {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return null;
+    try {
+      const storedUser = JSON.parse(stored) as User;
+      if (USE_API && storedUser.role) {
+        clearTokensIfRoleMismatch(storedUser.role);
+      }
+      return storedUser;
+    } catch {
+      localStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+  });
+  const [isLoading, setIsLoading] = useState(!user);
 
   useEffect(() => {
-    let cancelled = false;
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
 
+    const controller = new AbortController();
     const boot = async () => {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      let storedUser: User | null = null;
-      if (stored) {
-        try {
-          storedUser = JSON.parse(stored) as User;
-        } catch {
-          localStorage.removeItem(STORAGE_KEY);
-          storedUser = null;
-        }
-      }
-
-      if (storedUser) {
-        if (!cancelled) setUser(storedUser);
-
-        // If the JWT in localStorage has a role that doesn't match the stored
-        // user, clear the stale tokens so the API calls use the correct role.
-        if (USE_API && storedUser.role) {
-          clearTokensIfRoleMismatch(storedUser.role);
-        }
-
-        // Proactively refresh an expired access token before hitting the API
-        // for the data bootstrap.
-        if (USE_API && getAccessToken() && getRefreshToken()) {
-          const refreshed = await refreshAccessToken();
-          if (!refreshed) {
-            clearTokens();
-            localStorage.removeItem(STORAGE_KEY);
-            if (!cancelled) setUser(null);
-          }
-        }
-
+      if (USE_API && !controller.signal.aborted) {
         await loadBackendData();
       }
-      if (!cancelled) setIsLoading(false);
+      if (!controller.signal.aborted) {
+        setIsLoading(false);
+      }
     };
 
     void boot();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    return () => controller.abort();
+  }, [user]);
 
   const login = async (email: string, password: string): Promise<boolean> => {
     if (USE_API) {

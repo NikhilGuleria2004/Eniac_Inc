@@ -9,7 +9,7 @@ import {
   techRoleToTier,
   resolveResourceRate,
   STANDARD_RESOURCE_RATES,
-} from "../src/lib/rates.js";
+} from "../src/utils/rates.js";
 
 async function getAccessToken(app: Express, email: string): Promise<string> {
   const user = TEST_USERS.find((u) => u.email === email);

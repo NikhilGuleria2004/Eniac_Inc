@@ -185,8 +185,6 @@ export const ALL_PERMISSIONS: Permission[] = [
   "billRate.view",
 ];
 
-export const PERMISSIONS: Permission[] = [...ALL_PERMISSIONS];
-
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   ADMIN: ALL_PERMISSIONS,
   HR: [

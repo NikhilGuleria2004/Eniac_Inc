@@ -1,12 +1,5 @@
 import { env } from "../config/env.js";
 
-export interface MetaData {
-  page?: number;
-  pageSize?: number;
-  total?: number;
-  totalPages?: number;
-}
-
 export interface ApiResponse<T> {
   success: boolean;
   data: T | null;

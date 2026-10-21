@@ -35,13 +35,8 @@ export type BillingStatus = (typeof BILLING_STATUSES)[number];
 export const COUNTRIES = ["INDIA", "USA"] as const;
 export type Country = (typeof COUNTRIES)[number];
 
-export const VALID_COUNTRIES = ["INDIA", "USA"];
-
 export const EMPLOYMENT_TYPES = ["FULL_TIME", "PART_TIME", "CONTRACT", "INTERN"] as const;
 export type EmploymentType = (typeof EMPLOYMENT_TYPES)[number];
-
-export const VALID_DEMO_ROLES = ["ADMIN", "HR", "MANAGER", "SUPERVISOR", "EMPLOYEE"] as const;
-export type ValidRole = (typeof VALID_DEMO_ROLES)[number];
 
 export const SETTING_CATEGORIES = ["leave_types", "attendance", "documents", "organization", "notifications", "departments", "designations", "employment_types", "countries", "document_types"] as const;
 export type SettingCategory = (typeof SETTING_CATEGORIES)[number];

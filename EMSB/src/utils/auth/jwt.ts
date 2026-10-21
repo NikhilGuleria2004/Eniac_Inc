@@ -24,12 +24,6 @@ export interface JwtPayload {
   tokenType?: "access" | "refresh";
 }
 
-export function generateToken(payload: JwtPayload, expiresIn?: string): string {
-  return jwt.sign(payload, env.JWT_SECRET, {
-    expiresIn: (expiresIn ?? env.JWT_EXPIRES_IN) as jwt.SignOptions["expiresIn"]
-  });
-}
-
 export function generateAccessToken(payload: JwtPayload): string {
   return jwt.sign({ ...payload, tokenType: "access" }, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"]

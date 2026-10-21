@@ -20,63 +20,74 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [backendReady, setBackendReady] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     const initAuth = async () => {
       let accessToken = getAccessToken();
       let authenticated = false;
 
       if (!accessToken) {
         const refreshed = await refreshAccessToken();
-        if (refreshed) {
+        if (!cancelled && refreshed) {
           accessToken = refreshed;
         }
       }
 
-      if (accessToken) {
+      if (accessToken && !cancelled) {
         try {
           const res = await apiFetch("/auth/me");
-          const u = res.data as { id: string; email: string; firstName: string; lastName: string; role: Role; employeeId?: string };
-          setUser({
-            id: u.id,
-            email: u.email,
-            firstName: u.firstName,
-            lastName: u.lastName,
-            role: u.role,
-            employeeId: u.employeeId
-          });
-          authenticated = true;
+          if (!cancelled) {
+            const u = res.data as { id: string; email: string; firstName: string; lastName: string; role: Role; employeeId?: string };
+            setUser({
+              id: u.id,
+              email: u.email,
+              firstName: u.firstName,
+              lastName: u.lastName,
+              role: u.role,
+              employeeId: u.employeeId
+            });
+            authenticated = true;
+          }
         } catch {
-          const refreshed = await refreshAccessToken();
-          if (refreshed) {
-            try {
-              const res = await apiFetch("/auth/me");
-              const u = res.data as { id: string; email: string; firstName: string; lastName: string; role: Role; employeeId?: string };
-              setUser({
-                id: u.id,
-                email: u.email,
-                firstName: u.firstName,
-                lastName: u.lastName,
-                role: u.role,
-                employeeId: u.employeeId
-              });
-              authenticated = true;
-            } catch {
+          if (!cancelled) {
+            const refreshed = await refreshAccessToken();
+            if (refreshed) {
+              try {
+                const res = await apiFetch("/auth/me");
+                if (!cancelled) {
+                  const u = res.data as { id: string; email: string; firstName: string; lastName: string; role: Role; employeeId?: string };
+                  setUser({
+                    id: u.id,
+                    email: u.email,
+                    firstName: u.firstName,
+                    lastName: u.lastName,
+                    role: u.role,
+                    employeeId: u.employeeId
+                  });
+                  authenticated = true;
+                }
+              } catch {
+                clearTokens();
+              }
+            } else {
               clearTokens();
             }
-          } else {
-            clearTokens();
           }
         }
       }
 
       if (authenticated) {
-        await loadBackendData();
-        setBackendReady(true);
+        if (!cancelled) await loadBackendData();
+        if (!cancelled) setBackendReady(true);
       } else {
-        setBackendReady(true);
+        if (!cancelled) setBackendReady(true);
       }
-      setIsLoading(false);
+      if (!cancelled) setIsLoading(false);
     };
     initAuth();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {

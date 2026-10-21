@@ -42,14 +42,4 @@ export class TimesheetAdapter {
     };
   }
 
-  /**
-   * Update an employee's details in the Timesheet system.
-   */
-  async updateEmployee(employee: Employee): Promise<ProvisionResult> {
-    // Stub: simulate a successful update call.
-    return {
-      success: true,
-      externalId: `ts_${employee.employeeId}`
-    };
-  }
 }

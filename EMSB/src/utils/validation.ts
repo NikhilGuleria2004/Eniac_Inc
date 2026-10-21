@@ -9,7 +9,7 @@ export function escapeRegex(value: string): string {
   return value.replace(REGEX_SPECIAL_CHARS, "\\$&");
 }
 
-export interface FormattedValidationError {
+interface FormattedValidationError {
   message: string;
   fields: Record<string, string[]>;
 }

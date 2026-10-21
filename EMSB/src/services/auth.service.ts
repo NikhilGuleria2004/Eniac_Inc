@@ -1,7 +1,8 @@
 import type { UserDocument } from "../repositories/user.repository.js";
 import type { Role } from "../config/constants.js";
 import { env } from "../config/env.js";
-import { JwtPayload, generateAccessToken, generateRefreshToken, verifyToken } from "../utils/auth/jwt.js";
+import { JwtPayload, comparePassword, generateAccessToken, generateRefreshToken, verifyToken } from "../utils/auth/jwt.js";
+import { AuthenticationError } from "../utils/errors.js";
 
 export class AuthService {
      constructor(private userRepository: {
@@ -12,11 +13,8 @@ export class AuthService {
   async login(
     email: string,
     password: string
-  ): Promise<{ accessToken: string; refreshToken: string; expiresIn: number; user: LoginUserResponse }> {
-    const { comparePassword } = await import("../utils/auth/jwt.js");
-    const { AuthenticationError } = await import("../utils/errors.js");
-
-     const user = await this.userRepository.findByEmailOrWorkMail(email);
+  ): Promise<{ accessToken: string; refreshToken: string; expiresIn: number; user: AuthUser }> {
+    const user = await this.userRepository.findByEmailOrWorkMail(email);
     if (!user) {
       throw new AuthenticationError("Invalid email or password.");
     }
@@ -62,8 +60,6 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string): Promise<{ accessToken: string; expiresIn: number }> {
-    const { AuthenticationError } = await import("../utils/errors.js");
-
     let payload: JwtPayload;
     try {
       payload = verifyToken(refreshToken);
@@ -99,9 +95,7 @@ export class AuthService {
     };
   }
 
-  async getMe(userId: string): Promise<MeResponse> {
-    const { AuthenticationError } = await import("../utils/errors.js");
-
+  async getMe(userId: string): Promise<AuthUser> {
     const user = await this.userRepository.findByUserId(userId);
     if (!user) {
       throw new AuthenticationError("User not found.");
@@ -127,16 +121,7 @@ export class AuthService {
   }
 }
 
-export interface LoginUserResponse {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: Role;
-  employeeId?: string;
-}
-
-export interface MeResponse {
+export interface AuthUser {
   id: string;
   email: string;
   firstName: string;
