@@ -18,7 +18,9 @@
     "wipe": "tsx src/scripts/wipe.ts",
     "seed:dev": "tsx src/scripts/seed-dev.ts",
     "seed:cms": "tsx src/scripts/seed-cms.ts",
-    "seed:prod": "tsx src/scripts/seed-production.ts"
+    "seed:cms:test": "tsx src/scripts/seed-cms-test.ts",
+    "seed:prod": "tsx src/scripts/seed-production.ts",
+    "seed:test": "tsx src/scripts/wipe.ts && tsx src/scripts/seed.ts"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
